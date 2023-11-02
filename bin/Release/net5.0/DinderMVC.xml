@@ -1,0 +1,183 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>DinderMVC</name>
+    </assembly>
+    <members>
+        <member name="M:DinderBackEndv2.Controllers.AppInstallsController.GetAppInstallAsync(System.Guid,System.Guid)">
+            <summary>
+            Retrieves a App Install by GUID
+            </summary>
+            <param name="appInstallID">Your AppInstallID</param>
+            <param name="lookupGUID">AppInstallGUID to look up</param>
+            <returns>A response with an App Install</returns>
+            <response code="200">Returns the App Install list</response>
+            <response code="404">If App Install is not exists</response>
+            <response code="500">If there was an internal server error</response>
+        </member>
+        <member name="M:DinderBackEndv2.Controllers.AppInstallsController.PostAppInstallAsync(DinderBackEndv2.Models.PostAppInstallRequest)">
+            <summary>
+            Creates a new App Install
+            </summary>
+            <param name="request">Request model</param>
+            <returns>A response with new App Install</returns>
+            <response code="200">Returns the App Install list</response>
+            <response code="201">A response as creation of App Install</response>
+            <response code="400">For bad request</response>
+            <response code="500">If there was an internal server error</response>
+        </member>
+        <member name="M:DinderBackEndv2.Controllers.MealsController.GetMealsAsync(System.Guid,System.Int32,System.Int32,System.Nullable{System.Guid},System.Nullable{System.Int32},System.String,System.String,System.Nullable{System.Guid},System.Nullable{System.Boolean})">
+            <summary>
+            Retrieves meals
+            </summary>
+            <param name="appInstallID">AppInstallID</param>
+            <param name="pageSize">Page size</param>
+            <param name="pageNumber">Page number</param>
+            <param name="userGUID">User GUID</param>
+            <param name="mealID">Meal ID</param>
+            <param name="mealName">Meal Name</param>
+            <param name="mealDescription">Meal Description</param>
+            <param name="globalLink">Global Link Guid</param>
+            <param name="madeItBefore">Whether or not they have made it before</param>
+            <returns>A response with stock items list</returns>
+            <response code="200">Returns the stock items list</response>
+            <response code="500">If there was an internal server error</response>
+        </member>
+        <member name="M:DinderBackEndv2.Controllers.MealsController.GetMealsAsync(System.Guid,System.Int32)">
+            <summary>
+            Retrieves a meal by MealID
+            </summary>
+            <param name="appInstallID">AppInstallID</param>
+            <param name="id">User GUID</param>
+            <param name="mealID">Meal ID</param>
+            <returns>A response with a meal</returns>
+            <response code="200">Returns the meal list</response>
+            <response code="404">If meal is not exists</response>
+            <response code="500">If there was an internal server error</response>
+        </member>
+        <member name="M:DinderBackEndv2.Controllers.MealsController.PostMealAsync(DinderBackEndv2.Models.PostMealRequest)">
+            <summary>
+            Creates a new meal
+            </summary>
+            <param name="request">Request model</param>
+            <returns>A response with new meal</returns>
+            <response code="200">Returns the meal list</response>
+            <response code="201">A response as creation of meal</response>
+            <response code="400">For bad request</response>
+            <response code="500">If there was an internal server error</response>
+        </member>
+        <member name="M:DinderBackEndv2.Controllers.MealsController.PutMealsAsync(System.Int32,DinderBackEndv2.Models.PutMealRequest)">
+            <summary>
+            Updates an existing meal
+            </summary>
+            <param name="MealID">Meal ID</param>
+            <param name="request">Request model</param>
+            <returns>A response as update meal result</returns>
+            <response code="200">If meal was updated successfully</response>
+            <response code="400">For bad request</response>
+            <response code="500">If there was an internal server error</response>
+        </member>
+        <member name="M:DinderBackEndv2.Controllers.MealsController.DeleteMealAsync(System.Guid,System.Guid,System.Int32)">
+            <summary>
+            Deletes an existing meal
+            </summary>
+            <param name="appInstallID">AppInstallID</param>
+            <param name="userGuid">UserGuid</param>
+            <param name="mealID">Meal ID</param>
+            <returns>A response as delete meal result</returns>
+            <response code="200">If meal was deleted successfully</response>
+            <response code="500">If there was an internal server error</response>
+        </member>
+        <member name="M:DinderBackEndv2.Controllers.RootController.GetRootsAsync(System.Guid,System.Int32,System.Int32)">
+            <summary>
+            Retrieves roots
+            </summary>
+            <param name="appInstallID">AppInstallID</param>
+            <param name="pageSize">Page size</param>
+            <param name="pageNumber">Page number</param>
+            <returns>A response with stock items list</returns>
+            <response code="200">Returns the stock items list</response>
+            <response code="500">If there was an internal server error</response>
+        </member>
+        <member name="M:DinderBackEndv2.Controllers.UsersController.GetUsersAsync(System.Guid,System.Int32,System.Int32,System.String,System.Nullable{System.DateTime},System.Nullable{System.DateTime})">
+            <summary>
+            Retrieves users
+            </summary>
+            <param name="appInstallID">AppInstallID</param>
+            <param name="pageSize">Page size</param>
+            <param name="pageNumber">Page number</param>
+            <param name="displayName">Display Name</param>
+            <param name="createDate">User Created Since</param>
+            <param name="lastActiveDate">User Active Since</param>
+            <returns>A response with stock items list</returns>
+            <response code="200">Returns the stock items list</response>
+            <response code="500">If there was an internal server error</response>
+        </member>
+        <member name="M:DinderBackEndv2.Controllers.UsersController.GetUserFriendsAsync(System.Guid,System.Guid)">
+            <summary>
+            Retrieves user friends
+            </summary>
+            <param name="appInstallID">AppInstallID</param>
+            <param name="UserGuid">User Guid</param>
+            <returns>A response with stock items list</returns>
+            <response code="200">Returns the stock items list</response>
+            <response code="500">If there was an internal server error</response>
+        </member>
+        <member name="M:DinderBackEndv2.Controllers.UsersController.GetUserMealsAsync(System.Guid,System.Guid,System.Int32,System.Int32)">
+            <summary>
+            Retrieves user meals
+            </summary>
+            <param name="appInstallID">AppInstallID</param>
+            <param name="pageSize">Page size</param>
+            <param name="pageNumber">Page number</param>
+            <param name="userGuid">User Guid</param>
+            <returns>A response with stock items list</returns>
+            <response code="200">Returns the stock items list</response>
+            <response code="500">If there was an internal server error</response>
+        </member>
+        <member name="M:DinderBackEndv2.Controllers.UsersController.GetUserAsync(System.Guid,System.Guid)">
+            <summary>
+            Retrieves a user by GUID
+            </summary>
+            <param name="appInstallID">AppInstallID</param>
+            <param name="userGuid">User GUID</param>
+            <returns>A response with a user</returns>
+            <response code="200">Returns the user list</response>
+            <response code="404">If user is not exists</response>
+            <response code="500">If there was an internal server error</response>
+        </member>
+        <member name="M:DinderBackEndv2.Controllers.UsersController.PostUserAsync(DinderBackEndv2.Models.PostUserRequest)">
+            <summary>
+            Creates a new user
+            </summary>
+            <param name="request">Request model</param>
+            <returns>A response with new user</returns>
+            <response code="200">Returns the user list</response>
+            <response code="201">A response as creation of user</response>
+            <response code="400">For bad request</response>
+            <response code="500">If there was an internal server error</response>
+        </member>
+        <member name="M:DinderBackEndv2.Controllers.UsersController.PutUsersAsync(System.Guid,System.Guid,DinderBackEndv2.Models.PutUserRequest)">
+            <summary>
+            Updates an existing user
+            </summary>
+            <param name="appInstallID">AppInstallID</param>
+            <param name="userGuid">User GUID</param>
+            <param name="request">Request model</param>
+            <returns>A response as update user result</returns>
+            <response code="200">If user was updated successfully</response>
+            <response code="400">For bad request</response>
+            <response code="500">If there was an internal server error</response>
+        </member>
+        <member name="M:DinderBackEndv2.Controllers.UsersController.DeleteUserAsync(System.Guid,System.Guid)">
+            <summary>
+            Deletes an existing user
+            </summary>
+            <param name="appInstallID">AppInstallID</param>
+            <param name="userGuid">User GUID</param>
+            <returns>A response as delete user result</returns>
+            <response code="200">If user was deleted successfully</response>
+            <response code="500">If there was an internal server error</response>
+        </member>
+    </members>
+</doc>

@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30907.101
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DinderMVC", "DinderMVC.csproj", "{12285169-2AEC-4D06-A7D0-FE381F8133CC}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{12285169-2AEC-4D06-A7D0-FE381F8133CC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{12285169-2AEC-4D06-A7D0-FE381F8133CC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{12285169-2AEC-4D06-A7D0-FE381F8133CC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{12285169-2AEC-4D06-A7D0-FE381F8133CC}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {63C39BFC-F9A3-4FD6-9C32-205DA11DD53F}
+	EndGlobalSection
+EndGlobal
