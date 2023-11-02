@@ -57,16 +57,16 @@ namespace DinderBackEndv2.Models
                     .IsRequired()
                     .HasDefaultValueSql("(newid())");
 
+
+
                 builder.HasMany(x => x.Meals).WithOne(b => b.User).HasForeignKey(b => b.UserGUID).OnDelete(DeleteBehavior.Restrict);
                 builder.HasMany(x => x.Parties).WithOne(b => b.Cook).HasForeignKey(b => b.CookGuid).OnDelete(DeleteBehavior.Restrict);
                 //builder.HasMany(x => x.Friends).WithOne(b => b.User).HasForeignKey(b => b.UserGUID).OnDelete(DeleteBehavior.Restrict);
 
 
                 // Set configuration for columns
-                builder.Property(p => p.UserName).HasColumnType("varchar(255)").IsRequired();
-                builder.Property(p => p.DisplayName).HasColumnType("varchar(50)");
-                builder.Property(p => p.CreateDate).HasColumnType("datetime").IsRequired();
-                builder.Property(p => p.LastActiveDate).HasColumnType("datetime").IsRequired();
+                builder.Property(p => p.UserName).HasColumnType("varchar(100)").IsRequired();
+                builder.Property(p => p.DisplayName).HasColumnType("varchar(50)").IsRequired();
 
                 builder
                     .Property(p => p.CreateDate)
