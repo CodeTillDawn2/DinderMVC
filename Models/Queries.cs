@@ -390,8 +390,9 @@ namespace DinderBackEndv2.Queries
         }
         public static async Task<UserDM> GetUsersByUsernameAsync(this DinderContext dbContext, User entity)
         {
-            UserDM userDM = (await dbContext.Users.AsNoTracking().FirstOrDefaultAsync(item => item.UserName == entity.UserName)).ReturnDM();
-            return userDM;
+            User user = (await dbContext.Users.AsNoTracking().FirstOrDefaultAsync(item => item.UserName == entity.UserName));
+            if (user != null) return user.ReturnDM();
+            return null;
         }
 
 

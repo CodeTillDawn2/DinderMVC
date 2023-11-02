@@ -34,7 +34,7 @@ namespace DinderBackEndv2.Models
 
         public UserDM ReturnDM()
         {
-            return new UserDM(UserGUID, UserName, DisplayName, CreateDate, LastActiveDate, Meals.ConvertAll(x => x.ReturnDM()), Parties.ConvertAll(x => x.ReturnDM()));
+            return new UserDM(UserGUID, UserName, DisplayName, CreateDate, LastActiveDate, Meals?.ConvertAll(x => x.ReturnDM()), Parties?.ConvertAll(x => x.ReturnDM()));
         }
 
         public class UsersConfiguration : IEntityTypeConfiguration<User>

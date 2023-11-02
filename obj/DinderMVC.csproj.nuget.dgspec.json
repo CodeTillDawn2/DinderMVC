@@ -48,23 +48,19 @@
           "dependencies": {
             "Dapper": {
               "target": "Package",
-              "version": "[2.0.78, )"
+              "version": "[2.1.15, )"
             },
             "Dapper.Contrib": {
               "target": "Package",
               "version": "[2.0.78, )"
             },
-            "Microsoft.AspNetCore.Mvc.Formatters.Json": {
-              "target": "Package",
-              "version": "[2.2.0, )"
-            },
             "Microsoft.EntityFrameworkCore.SqlServer": {
               "target": "Package",
-              "version": "[5.0.5, )"
+              "version": "[7.0.13, )"
             },
             "Swashbuckle.AspNetCore": {
               "target": "Package",
-              "version": "[6.1.2, )"
+              "version": "[6.5.0, )"
             },
             "System.Runtime.Serialization.Json": {
               "target": "Package",
