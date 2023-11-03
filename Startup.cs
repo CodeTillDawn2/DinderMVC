@@ -1,5 +1,5 @@
-using DinderBackEndv2.Controllers;
-using DinderBackEndv2.Models;
+using DinderMVC.Controllers;
+using DinderMVC.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -13,7 +13,7 @@ using System;
 using System.IO;
 using System.Reflection;
 
-namespace DinderBackEndv2
+namespace DinderMVC
 {
 #pragma warning disable CS1591
     public class Startup

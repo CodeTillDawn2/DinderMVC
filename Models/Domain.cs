@@ -1,18 +1,18 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.Reflection;
-using static DinderBackEndv2.Models.AppInstall;
-using static DinderBackEndv2.Models.GlobalMeal;
-using static DinderBackEndv2.Models.Meal;
-using static DinderBackEndv2.Models.Party;
-using static DinderBackEndv2.Models.PartyMeal;
-using static DinderBackEndv2.Models.PartySettingMatrix;
-using static DinderBackEndv2.Models.PartySettingType;
-using static DinderBackEndv2.Models.PartySettingValue;
-using static DinderBackEndv2.Models.SwipeChoice;
-using static DinderBackEndv2.Models.User;
-using static DinderBackEndv2.Models.UserFriend;
+using static DinderMVC.Models.AppInstall;
+using static DinderMVC.Models.GlobalMeal;
+using static DinderMVC.Models.Meal;
+using static DinderMVC.Models.Party;
+using static DinderMVC.Models.PartyMeal;
+using static DinderMVC.Models.PartySettingMatrix;
+using static DinderMVC.Models.PartySettingType;
+using static DinderMVC.Models.PartySettingValue;
+using static DinderMVC.Models.SwipeChoice;
+using static DinderMVC.Models.User;
+using static DinderMVC.Models.UserFriend;
 
-namespace DinderBackEndv2.Models
+namespace DinderMVC.Models
 {
 #pragma warning disable CS1591
 
@@ -37,13 +37,13 @@ namespace DinderBackEndv2.Models
             GlobalMealsConfiguration GlobalMealsConfiguation = new GlobalMealsConfiguration();
             MealsConfiguration MealsConfig = new MealsConfiguration();
             PartyConfiguration PartyConfig = new PartyConfiguration();
-            PartyMealConfiguration PartyMealConfiguration = new PartyMealConfiguration();
+            PartyMealConfiguration PartyMealConfig = new PartyMealConfiguration();
             PartySettingMatrixConfiguration partySettingMatrix = new PartySettingMatrixConfiguration();
             PartySettingTypeConfiguration partySettingType = new PartySettingTypeConfiguration();
             PartySettingValueConfiguration partySettingValue = new PartySettingValueConfiguration();
-            SwipeChoiceConfiguration SwipeChoiceConfiguration = new SwipeChoiceConfiguration();
+            SwipeChoiceConfiguration SwipeChoiceConfig = new SwipeChoiceConfiguration();
             UsersConfiguration Userconfig = new UsersConfiguration();
-            UserFriendConfiguration UserFriendConfiguration = new UserFriendConfiguration();
+            UserFriendConfiguration UserFriendConfig = new UserFriendConfiguration();
             //DataTypeConfiguration dataTypeConfiguration = new DataTypeConfiguration();
 
 

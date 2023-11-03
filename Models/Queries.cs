@@ -1,6 +1,7 @@
 ﻿using Dapper;
-using DataModels;
-using DinderBackEndv2.Models;
+using DinderMVC;
+using DinderDLL.DataModels;
+using DinderMVC.Models;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -9,7 +10,7 @@ using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace DinderBackEndv2.Queries
+namespace DinderMVC.Queries
 {
 #pragma warning disable CS1591
     public static class DbContextQueries

@@ -1,14 +1,15 @@
-﻿using DataModels;
-using DinderBackEndv2.Models;
-using DinderBackEndv2.Queries;
-using DinderBackEndv2.Responses;
+﻿
+using DinderDLL.DataModels;
+using DinderMVC.Queries;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using DinderDLL.Responses;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using DinderMVC.Models;
 
-namespace DinderBackEndv2.Controllers
+namespace DinderMVC.Controllers
 {
 #pragma warning disable CS1591
 

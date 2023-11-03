@@ -1,9 +1,10 @@
-﻿using DinderBackEndv2.Responses;
+﻿
+using DinderDLL.Responses;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
 
 
-namespace DinderBackEndv2.Models
+namespace DinderMVC.Models
 {
 #pragma warning disable CS1591
 

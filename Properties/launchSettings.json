@@ -17,7 +17,7 @@
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
-    "DinderBackEndv2": {
+    "DinderMVC": {
       "commandName": "Project",
       "dotnetRunMessages": "true",
       "launchBrowser": true,

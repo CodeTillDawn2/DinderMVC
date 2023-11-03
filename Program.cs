@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 
-namespace DinderBackEndv2
+namespace DinderMVC
 {
     public class Program
     {

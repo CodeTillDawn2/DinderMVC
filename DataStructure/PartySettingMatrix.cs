@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace DinderBackEndv2.Models
+namespace DinderMVC.Models
 {
 #pragma warning disable CS1591
 

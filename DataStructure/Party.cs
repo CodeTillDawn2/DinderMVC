@@ -1,11 +1,11 @@
-﻿using DataModels;
+﻿using DinderDLL.DataModels;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace DinderBackEndv2.Models
+namespace DinderMVC.Models
 {
 #pragma warning disable CS1591
 

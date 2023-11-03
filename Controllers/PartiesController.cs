@@ -1,18 +1,18 @@
-﻿using DataModels;
-using DinderBackEndv2.Models;
-using DinderBackEndv2.Queries;
-using DinderBackEndv2.Responses;
-using DTOs;
+﻿using DinderDLL.DataModels;
+using DinderDLL.Requests;
+using DinderMVC.Models;
+using DinderMVC.Queries;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using Requests;
+using DinderDLL.Responses;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using DinderDLL.DTOs;
 
-namespace DinderBackEndv2.Controllers
+namespace DinderMVC.Controllers
 {
 #pragma warning disable CS1591
     [ApiController]
@@ -87,6 +87,8 @@ namespace DinderBackEndv2.Controllers
 
             return response.ToHttpResponse();
         }
+
+
         // GET
         // api/v1/Party/PartyID/Settings
 

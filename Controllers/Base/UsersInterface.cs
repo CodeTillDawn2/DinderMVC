@@ -1,9 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Requests;
+﻿using DinderDLL.Requests;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Threading.Tasks;
 
-namespace DinderBackEndv2.Controllers
+namespace DinderMVC.Controllers
 {
 #pragma warning disable CS1591
     public interface UsersInterface

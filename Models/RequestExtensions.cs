@@ -1,7 +1,7 @@
-﻿using Requests;
+﻿using DinderDLL.Requests;
 using System;
 
-namespace DinderBackEndv2.Models
+namespace DinderMVC.Models
 {
 #pragma warning disable CS1591
 

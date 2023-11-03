@@ -1,9 +1,10 @@
-﻿using DinderBackEndv2.Models;
+﻿using DinderDLL.Models;
+using DinderMVC.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
 
-namespace DinderBackEndv2.Controllers
+namespace DinderMVC.Controllers
 {
 #pragma warning disable CS1591
     public class DinderControllerBase<T> : ControllerBase

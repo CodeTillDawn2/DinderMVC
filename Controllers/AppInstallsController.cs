@@ -1,14 +1,14 @@
-﻿using DataModels;
-using DinderBackEndv2.Models;
-using DinderBackEndv2.Queries;
-using DinderBackEndv2.Responses;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Requests;
 using System;
 using System.Threading.Tasks;
+using DinderDLL.Requests;
+using DinderDLL.DataModels;
+using DinderDLL.Responses;
+using DinderMVC.Models;
+using DinderMVC.Queries;
 
-namespace DinderBackEndv2.Controllers
+namespace DinderMVC.Controllers
 {
 #pragma warning disable CS1591
 
@@ -78,6 +78,8 @@ namespace DinderBackEndv2.Controllers
 
             return response.ToHttpResponse();
         }
+
+
 
         //    // POST
         //    // api/v1/AppInstall/
