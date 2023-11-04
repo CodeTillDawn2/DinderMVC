@@ -13,6 +13,7 @@ namespace DinderMVC.Models
         public int PartyID { get; set; }
 
         public Guid UserGUID { get; set; }
+        public Guid CookGUID { get; set; }
 
         public int MealID { get; set; }
 
@@ -23,9 +24,10 @@ namespace DinderMVC.Models
         {
         }
 
-        public PartyChoice(int partyid, Guid userGUID, int mealid, int swipeChoice)
+        public PartyChoice(int partyid, Guid userGUID, Guid cookGUID, int mealid, int swipeChoice)
         {
             PartyID = partyid;
+            CookGUID = cookGUID;
             UserGUID = userGUID;
             MealID = mealid;
             SwipeChoice = swipeChoice;

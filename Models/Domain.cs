@@ -2,7 +2,7 @@
 using System.Reflection;
 using static DinderMVC.Models.AppInstall;
 using static DinderMVC.Models.GlobalMeal;
-using static DinderMVC.Models.Meal;
+using static DinderMVC.Models.UserMeal;
 using static DinderMVC.Models.Party;
 using static DinderMVC.Models.PartyMeal;
 using static DinderMVC.Models.PartySettingMatrix;
@@ -35,7 +35,7 @@ namespace DinderMVC.Models
 
             AppInstallConfiguration AppInstallConfig = new AppInstallConfiguration();
             GlobalMealsConfiguration GlobalMealsConfiguation = new GlobalMealsConfiguration();
-            MealsConfiguration MealsConfig = new MealsConfiguration();
+            UserMealsConfiguration UserMealsConfig = new UserMealsConfiguration();
             PartyConfiguration PartyConfig = new PartyConfiguration();
             PartyMealConfiguration PartyMealConfig = new PartyMealConfiguration();
             PartySettingMatrixConfiguration partySettingMatrix = new PartySettingMatrixConfiguration();
@@ -57,7 +57,7 @@ namespace DinderMVC.Models
 
         public DbSet<AppInstall> AppInstalls { get; set; }
         public DbSet<GlobalMeal> GlobalMeals { get; set; }
-        public DbSet<Meal> Meals { get; set; }
+        public DbSet<UserMeal> UserMeals { get; set; }
 
         public DbSet<Party> Parties { get; set; }
         public DbSet<PartyChoice> PartyChoices { get; set; }

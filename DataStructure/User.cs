@@ -18,7 +18,7 @@ namespace DinderMVC.Models
         public DateTime LastActiveDate { get; set; }
 
         [NotMapped]
-        public virtual List<Meal> Meals { get; set; }
+        public virtual List<UserMeal> Meals { get; set; }
 
         [NotMapped]
         public virtual List<Party> Parties { get; set; }
@@ -59,7 +59,7 @@ namespace DinderMVC.Models
 
 
 
-                builder.HasMany(x => x.Meals).WithOne(b => b.User).HasForeignKey(b => b.UserGUID).OnDelete(DeleteBehavior.Restrict);
+                builder.HasMany(x => x.Meals).WithOne(b => b.Cook).HasForeignKey(b => b.CookGuid).OnDelete(DeleteBehavior.Restrict);
                 builder.HasMany(x => x.Parties).WithOne(b => b.Cook).HasForeignKey(b => b.CookGuid).OnDelete(DeleteBehavior.Restrict);
                 //builder.HasMany(x => x.Friends).WithOne(b => b.User).HasForeignKey(b => b.UserGUID).OnDelete(DeleteBehavior.Restrict);
 

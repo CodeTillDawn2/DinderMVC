@@ -8,6 +8,7 @@ using DinderDLL.DataModels;
 using DinderMVC.Models;
 using DinderMVC.Queries;
 using DinderDLL.Requests;
+using Microsoft.EntityFrameworkCore;
 
 namespace DinderMVC.Controllers
 {
@@ -181,7 +182,7 @@ namespace DinderMVC.Controllers
         }
 
         // GET
-        // api/v1/Users/
+        // api/v1/Users/{UserGuid}/Meals
 
         /// <summary>
         /// Retrieves user meals
@@ -617,6 +618,339 @@ namespace DinderMVC.Controllers
                 response.DidError = true;
                 response.ErrorMessage = "There was an internal error, please contact to technical support.";
 
+                LogError(ex, name);
+            }
+
+            return response.ToHttpResponse();
+        }
+
+
+
+        // GET
+        // api/v1/Users/{UserGUID}/Meals
+
+        /// <summary>
+        /// Retrieves meals
+        /// </summary>
+        /// <param name="appInstallID">AppInstallID</param>
+        /// <param name="pageSize">Page size</param>
+        /// <param name="pageNumber">Page number</param>
+        /// <param name="userGUID">User GUID</param>
+        /// <param name="mealID">Meal ID</param>
+        /// <param name="mealName">Meal Name</param>
+        /// <param name="mealDescription">Meal Description</param>
+        /// <param name="globalLink">Global Link Guid</param>
+        /// <param name="madeItBefore">Whether or not they have made it before</param>
+        /// <returns>A response with stock items list</returns>
+        /// <response code="200">Returns the stock items list</response>
+        /// <response code="500">If there was an internal server error</response>
+        [HttpGet("Users/{UserGuid}/Meals")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(500)]
+        public async Task<IActionResult> GetUserMealsAsync(Guid appInstallID, Guid userGUID, int pageSize = 10, int pageNumber = 1, 
+            int? mealID = null, string mealName = null, string mealDescription = null, Guid? globalLink = null, bool? madeItBefore = null)
+        {
+
+            string name = nameof(GetUserMealsAsync);
+
+
+            var response = new PagedResponse<MealDM>();
+
+            try
+            {
+
+                LogMethodInvoked(name);
+
+                if (!(await DbContext.AppInstallRegistered(appInstallID)))
+                {
+                    LogInvalidInstall(appInstallID, name);
+                    return BadRequest();
+                }
+
+                var query = DbContext.GetUserMeals(userGUID, mealID, mealName, mealDescription, globalLink, madeItBefore);
+
+                response.detailed = false;
+
+                response.PageSize = pageSize;
+                response.PageNumber = pageNumber;
+
+                response.ItemsCount = await query.CountAsync();
+
+                response.Model = await query.Paging(pageSize, pageNumber).ToListAsync();
+
+                response.Message = string.Format("Page {0} of {1}, Total of meals: {2}.", pageNumber, response.PageCount, response.ItemsCount);
+
+                LogCustom("The meals have been retrieved successfully.", name);
+            }
+            catch (Exception ex)
+            {
+                response.DidError = true;
+                response.ErrorMessage = "There was an internal error, please contact technical support.";
+
+                LogError(ex, name);
+            }
+
+            return response.ToHttpResponse();
+        }
+
+
+        // GET
+        // api/v1/Users/{UserGUID}/Meals/{MealID}
+
+        /// <summary>
+        /// Retrieves a meal by MealID
+        /// </summary>
+        /// <param name="appInstallID">AppInstallID</param>
+        /// <param name="UserGuid">UserGuid</param>
+        /// <param name="mealID">Meal ID</param>
+        /// <returns>A response with a meal</returns>
+        /// <response code="200">Returns the meal list</response>
+        /// <response code="404">If meal is not exists</response>
+        /// <response code="500">If there was an internal server error</response>
+        [HttpGet("Users/{UserGuid}/Meals/{MealID}")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(500)]
+        public async Task<IActionResult> GetUserMealAsync(Guid appInstallID, Guid UserGuid, int mealID)
+        {
+
+            string name = nameof(GetUserMealAsync);
+            var response = new SingleResponse<MealDM>();
+
+            try
+            {
+                LogMethodInvoked(name);
+
+
+                if (!(await DbContext.AppInstallRegistered(appInstallID)))
+                {
+                    LogInvalidInstall(appInstallID, name);
+                    return BadRequest();
+                }
+
+
+                // Get the stock item by id
+                UserMeal meal = (await DbContext.GetUserMealByIDEditableAsync(new UserMeal(UserGuid, mealID)));
+
+                if (meal != null)
+                    response.Model = meal.ReturnDM();
+
+                response.detailed = false;
+            }
+            catch (Exception ex)
+            {
+                response.DidError = true;
+                response.ErrorMessage = "There was an internal error, please contact to technical support.";
+
+                LogError(ex, name);
+            }
+
+            return response.ToHttpResponse();
+        }
+
+        // POST
+        // api/v1/Users/{UserGUID}/Meals
+
+        /// <summary>
+        /// Creates a new meal
+        /// </summary>
+        /// <param name="request">Request model</param>
+        /// <returns>A response with new meal</returns>
+        /// <response code="200">Returns the meal list</response>
+        /// <response code="201">A response as creation of meal</response>
+        /// <response code="400">For bad request</response>
+        /// <response code="500">If there was an internal server error</response>
+        [HttpPost("Users/{UserGuid}/Meals")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(201)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(500)]
+        public async Task<IActionResult> PostUserMealAsync([FromBody] PostMealRequest request)
+        {
+
+            string name = nameof(PostUserMealAsync);
+
+            var response = new SingleResponse<MealDM>();
+
+            try
+            {
+                LogMethodInvoked(name);
+
+
+                if (!(await DbContext.AppInstallRegistered(request.appInstallID)))
+                {
+                    LogInvalidInstall(request.appInstallID, name);
+                    return BadRequest();
+                }
+
+
+                var existingEntity = await DbContext
+                    .GetUserMealByMealNameAsync(new UserMeal
+                    {
+                        MealName = request.mealName,
+                        CookGuid = request.userGUID
+                    });
+
+                if (existingEntity != null)
+                    ModelState.AddModelError("MealName", "Meal Name is already taken");
+
+                if (!ModelState.IsValid)
+                    return BadRequest();
+
+                // Create entity from request model
+                var entity = request.ToEntity();
+
+
+                DbContext.Meals.Add(entity);
+
+                // Save entity in database
+                await DbContext.SaveChangesAsync();
+
+                // Set the entity to response model
+                response.Model = entity.ReturnDM();
+                response.detailed = false;
+            }
+            catch (Exception ex)
+            {
+                response.DidError = true;
+                response.ErrorMessage = "There was an internal error, please contact to technical support.";
+
+                LogError(ex, name);
+            }
+
+            return response.ToHttpResponse();
+        }
+
+
+        // DELETE
+        // api/v1/Users/{UserGUID}/Meals/{mealID}
+
+        /// <summary>
+        /// Deletes an existing meal
+        /// </summary>
+        /// <param name="appInstallID">AppInstallID</param>
+        /// <param name="userGuid">UserGuid</param>
+        /// <param name="mealID">Meal ID</param>
+        /// <returns>A response as delete meal result</returns>
+        /// <response code="200">If meal was deleted successfully</response>
+        /// <response code="500">If there was an internal server error</response>
+        [HttpDelete("Users/{UserGuid}/Meals/{MealID}")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(500)]
+        public async Task<IActionResult> DeleteUserMealAsync(Guid appInstallID, Guid userGuid, int mealID)
+        {
+            string name = nameof(DeleteUserMealAsync);
+
+            var response = new Response();
+
+            try
+            {
+                LogMethodInvoked(name);
+
+                if (!(await DbContext.AppInstallRegistered(appInstallID)))
+                {
+                    LogInvalidInstall(appInstallID, name);
+                    return BadRequest();
+                }
+
+                // Get stock item by id
+                var entity = await DbContext.GetUserMealByIDEditableAsync(new UserMeal(userGuid, mealID));
+
+                // Validate if entity exists
+                if (entity == null)
+                    return NotFound();
+
+                if (entity.CookGuid != userGuid)
+                    return Forbid();
+
+                // Remove entity from repository
+                DbContext.Remove(entity);
+
+                // Delete entity in database
+                await DbContext.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                response.DidError = true;
+                response.ErrorMessage = "There was an internal error, please contact to technical support.";
+
+                LogError(ex, name);
+            }
+
+            return response.ToHttpResponse();
+        }
+
+        // PUT
+        // api/v1/Users/Meals/5
+
+        /// <summary>
+        /// Updates an existing meal
+        /// </summary>
+        /// <param name="MealID">Meal ID</param>
+        /// <param name="userGuid">userGuid</param>
+        /// <param name="request">Request model</param>
+        /// <returns>A response as update meal result</returns>
+        /// <response code="200">If meal was updated successfully</response>
+        /// <response code="400">For bad request</response>
+        /// <response code="500">If there was an internal server error</response>
+        [HttpPut("Users/{UserGuid}/Meals/{MealID}")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(500)]
+        public async Task<IActionResult> PutUserMealsAsync(Guid userGuid, int MealID, [FromBody] PutMealRequest request)
+        {
+            string name = nameof(PutUserMealsAsync);
+            var response = new SingleResponse<MealDM>();
+
+
+
+            try
+            {
+                LogMethodInvoked(name);
+
+                if (!(await DbContext.AppInstallRegistered(request.appInstallID)))
+                {
+                    LogInvalidInstall(request.appInstallID, name);
+                    return BadRequest();
+                }
+
+
+                // Get stock item by id
+                var entity = await DbContext.GetUserMealByIDEditableAsync(new UserMeal(userGuid, MealID));
+
+                // Validate if entity exists
+                if (entity == null)
+                    return NotFound();
+
+                if (entity.CookGuid != request.userGUID)
+                    return Forbid();
+
+                // Set changes to entity
+                if (request.mealName != null)
+                    entity.MealName = request.mealName;
+                if (request.mealDescription != null)
+                    entity.MealDescription = request.mealDescription;
+
+                if (request.globalLink != null)
+                    entity.GlobalLink = request.globalLink;
+                entity.MadeItBefore = request.madeItBefore;
+                if (request.privateNotes != null)
+                    entity.PrivateNotes = request.privateNotes;
+
+
+                // Update entity in repository
+                DbContext.Update(entity);
+
+                // Save entity in database
+                await DbContext.SaveChangesAsync();
+
+                response.Model = entity.ReturnDM();
+                response.detailed = false;
+            }
+            catch (Exception ex)
+            {
+                response.DidError = true;
+                response.ErrorMessage = "There was an internal error, please contact to technical support.";
                 LogError(ex, name);
             }
 

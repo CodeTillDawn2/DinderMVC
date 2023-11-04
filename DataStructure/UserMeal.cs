@@ -8,10 +8,10 @@ namespace DinderMVC.Models
 {
 #pragma warning disable CS1591
 
-    public class Meal
+    public class UserMeal
     {
 
-        public Guid UserGUID { get; set; }
+        public Guid CookGuid { get; set; }
         public int MealID { get; set; }
         public string MealName { get; set; }
         public string MealDescription { get; set; }
@@ -22,43 +22,44 @@ namespace DinderMVC.Models
 
         public string PrivateNotes { get; set; }
         [NotMapped]
-        public virtual User User { get; set; }
+        public virtual User Cook { get; set; }
 
 
-        public Meal()
+        public UserMeal()
         {
 
         }
 
-        public Meal(int mealID)
+        public UserMeal(Guid cookGuid, int mealID)
         {
             MealID = mealID;
+            CookGuid = cookGuid;
         }
 
         public MealDM ReturnDM()
         {
-            return new MealDM(UserGUID, MealID, MealName, MealDescription, MadeItBefore, PrivateNotes, GlobalLink);
+            return new MealDM("", CookGuid, MealID, MealName, MealDescription, MadeItBefore, PrivateNotes, GlobalLink);
         }
 
-        public class MealsConfiguration : IEntityTypeConfiguration<Meal>
+        public class UserMealsConfiguration : IEntityTypeConfiguration<UserMeal>
         {
-            public void Configure(EntityTypeBuilder<Meal> builder)
+            public void Configure(EntityTypeBuilder<UserMeal> builder)
             {
 
 
                 // Set configuration for entity
-                builder.ToTable("Meals", "dbo");
+                builder.ToTable("UserMeals", "dbo");
 
                 // Set key for entity
                 builder.HasKey(p => p.MealID);
+                builder.HasKey(p => p.CookGuid);
 
                 // Columns with default value
 
                 builder
-                    .Property(p => p.UserGUID)
+                    .Property(p => p.CookGuid)
                     .HasColumnType("uniqueidentifier")
-                    .IsRequired()
-                    .HasDefaultValueSql("(newid())");
+                    .IsRequired();
 
                 builder.Property(p => p.MealID).HasColumnType("int").UseIdentityColumn();
 

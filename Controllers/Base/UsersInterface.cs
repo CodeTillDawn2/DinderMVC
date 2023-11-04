@@ -29,7 +29,16 @@ namespace DinderMVC.Controllers
         public abstract Task<IActionResult> PostUserFriendAsync(Guid userGuid, [FromBody] PostUserFriendRequest request);
         public abstract Task<IActionResult> PutUserFriendAsync(Guid userGuid, Guid friendGUID, [FromBody] PutUserFriendRequest request);
         public abstract Task<IActionResult> DeleteUserFriendAsync(Guid appInstallID, Guid userGuid, Guid friendGuid);
+        public abstract Task<IActionResult> GetUserMealsAsync(Guid appInstallID, Guid userGUID, int pageSize = 10, int pageNumber = 1,
+            int? mealID = null, string mealName = null, string mealDescription = null, Guid? globalLink = null, bool? madeItBefore = null);
 
+        public abstract Task<IActionResult> GetUserMealAsync(Guid appInstallID, Guid UserGuid, int mealID);
+
+        public abstract Task<IActionResult> PostUserMealAsync([FromBody] PostMealRequest request);
+
+        public abstract Task<IActionResult> PutUserMealsAsync(Guid userGuid, int MealID, [FromBody] PutMealRequest request);
+
+        public abstract Task<IActionResult> DeleteUserMealAsync(Guid appInstallID, Guid userGuid, int mealID);
 #pragma warning restore CS1591
     }
 }

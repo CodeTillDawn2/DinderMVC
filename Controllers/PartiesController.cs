@@ -32,7 +32,7 @@ namespace DinderMVC.Controllers
         // api/v1/Party/
 
         /// <summary>
-        /// Retrieves parties
+        /// Retrieves parties --Untested
         /// </summary>
         /// <param name="appInstallID">AppInstallID</param>
         /// <param name="pageSize">Page size</param>
@@ -45,7 +45,8 @@ namespace DinderMVC.Controllers
         /// <response code="200">Returns the stock items list</response>
         /// <response code="500">If there was an internal server error</response>
         [HttpGet("")]
-        [ProducesResponseType(200)]
+        [ProducesResponseType(typeof(PagedResponse<PartyDM>),200)]
+        [ProducesResponseType(400)]
         [ProducesResponseType(500)]
         public async Task<IActionResult> GetPartiesAsync(Guid appInstallID, int pageSize = 10, int pageNumber = 1, Guid? cookGuid = null,
             int? partyID = null, string sessionName = null, string sessionMessage = null)
@@ -93,7 +94,7 @@ namespace DinderMVC.Controllers
         // api/v1/Party/PartyID/Settings
 
         /// <summary>
-        /// Retrieves party settings
+        /// Retrieves party settings --Untested
         /// </summary>
         /// <param name="appInstallID">AppInstallID</param>
         /// <param name="PartyID">PartyID</param>
@@ -102,7 +103,8 @@ namespace DinderMVC.Controllers
         /// <response code="200">Returns the stock items list</response>
         /// <response code="500">If there was an internal server error</response>
         [HttpGet("{PartyID}/Settings")]
-        [ProducesResponseType(200)]
+        [ProducesResponseType(typeof(PagedResponse<PartySettingsViewCO>),200)]
+        [ProducesResponseType(400)]
         [ProducesResponseType(500)]
         public async Task<IActionResult> GetPartySettingsAsync(Guid appInstallID, int PartyID, Guid UserGuid)
         {
@@ -126,8 +128,6 @@ namespace DinderMVC.Controllers
                     LogInvalidUser(UserGuid, name);
                     return Unauthorized();
                 }
-
-
 
                 response.Model = await DbContext.GetPartySettingsAsync(PartyID);
                 response.PageSize = 100;
@@ -315,6 +315,7 @@ namespace DinderMVC.Controllers
         /// Creates a new party
         /// </summary>
         /// <param name="request">Request model</param>
+        /// <param name="UserGuid">UserGuid</param>
         /// <returns>A response with new meal</returns>
         /// <response code="200">Returns the meal list</response>
         /// <response code="201">A response as creation of party</response>
@@ -325,7 +326,7 @@ namespace DinderMVC.Controllers
         [ProducesResponseType(201)]
         [ProducesResponseType(400)]
         [ProducesResponseType(500)]
-        public async Task<IActionResult> PostPartyAsync([FromBody] PostPartyRequest request)
+        public async Task<IActionResult> PostPartyAsync(Guid UserGuid, [FromBody] PostPartyRequest request)
         {
             string name = nameof(PostPartyAsync);
             var response = new SingleResponse<PartyDM>();
@@ -357,10 +358,10 @@ namespace DinderMVC.Controllers
                 await DbContext.SaveChangesAsync();
 
                 //Meals
-                List<Meal> userMeals = DbContext.Meals.Where(x => x.UserGUID == request.userGUID).ToList();
-                foreach (Meal meal in userMeals)
+                List<UserMeal> userMeals = DbContext.Meals.Where(x => x.CookGuid == request.userGUID).ToList();
+                foreach (UserMeal meal in userMeals)
                 {
-                    PartyMeal partyMeal = new PartyMeal(entity.PartyID, meal.MealID);
+                    PartyMeal partyMeal = new PartyMeal(entity.PartyID, UserGuid, meal.MealID);
                     entity.Meals.Add(partyMeal);
                 }
 
@@ -658,8 +659,9 @@ namespace DinderMVC.Controllers
         /// <response code="200">If meal was updated successfully</response>
         /// <response code="400">For bad request</response>
         /// <response code="500">If there was an internal server error</response>
-        [HttpPut("{partyID}/Invites/{userGuid}/")]
-        [ProducesResponseType(200)]
+        /// <response code="200">Returns an instance of ResponseObject</response>
+        [HttpPut("{PartyID}/Invites/{userGuid}/")]
+        [ProducesResponseType(typeof(PartyInviteDM), 200)]
         [ProducesResponseType(400)]
         [ProducesResponseType(500)]
         public async Task<IActionResult> PutPartyInviteAsync(int PartyID, Guid userGuid, PutPartyInviteRequest request)
@@ -780,7 +782,7 @@ namespace DinderMVC.Controllers
         /// <response code="200">If meal was updated successfully</response>
         /// <response code="400">For bad request</response>
         /// <response code="500">If there was an internal server error</response>
-        [HttpPut("{partyID}/Choices/{userGuid}/{mealID}")]
+        [HttpPut("{PartyID}/Choices/{userGuid}/{mealID}")]
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]
         [ProducesResponseType(500)]
@@ -803,7 +805,7 @@ namespace DinderMVC.Controllers
 
 
                 // Get stock item by id
-                var entity = await DbContext.GetPartyChoiceEditableAsync(new Party(partyID), new User(userGuid), new Meal(mealID));
+                var entity = await DbContext.GetPartyChoiceEditableAsync(new Party(partyID), new User(userGuid), new UserMeal(userGuid,mealID));
 
                 // Validate if entity exists
                 if (entity == null)

@@ -14,11 +14,11 @@ namespace DinderMVC.Models
                 DisplayName = request.displayName,
 
             };
-        public static Meal ToEntity(this PostMealRequest request)
-            => new Meal
+        public static UserMeal ToEntity(this PostMealRequest request)
+            => new UserMeal
             {
 
-                UserGUID = request.userGUID,
+                CookGuid = request.userGUID,
                 MealName = request.mealName,
                 MealDescription = request.mealDescription,
                 GlobalLink = request.globalLink,

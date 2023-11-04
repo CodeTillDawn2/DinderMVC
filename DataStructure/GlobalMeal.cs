@@ -13,6 +13,8 @@ namespace DinderMVC.Models
         public Guid GlobalMealGUID { get; set; }
         public string MealName { get; set; }
         public string MealDescription { get; set; }
+        public Guid MealCreator { get; set; }
+        public DateTime CreateDate { get; set; }
 
         public GlobalMeal()
         {
@@ -52,6 +54,8 @@ namespace DinderMVC.Models
                 // Set configuration for columns
                 builder.Property(p => p.MealName).HasColumnType("varchar(50)").IsRequired();
                 builder.Property(p => p.MealDescription).HasColumnType("varchar(255)");
+                builder.Property(p => p.MealCreator).HasColumnType("uniqueidentifier").IsRequired();
+                builder.Property(p => p.CreateDate).HasColumnType("DateTime").IsRequired().HasDefaultValue("(getdate())");
             }
         }
 

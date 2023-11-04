@@ -14,47 +14,44 @@ namespace DinderMVC.Controllers
 #pragma warning disable CS1591
     [ApiController]
     [Route("api/v1/[controller]")]
-    public partial class MealsController : DinderControllerBase<MealsController>, MealsInterface
+    public partial class GlobalMealsController : DinderControllerBase<GlobalMealsController>, GlobalMealsInterface
     {
 
 
 
 
-        public MealsController(ILogger<MealsController> logger, DinderContext dbContext) : base(logger, dbContext)
+        public GlobalMealsController(ILogger<GlobalMealsController> logger, DinderContext dbContext) : base(logger, dbContext)
         {
 
         }
 #pragma warning restore CS1591
 
         // GET
-        // api/v1/Meals/
+        // api/v1/GlobalMeals/
 
         /// <summary>
-        /// Retrieves meals
+        /// Retrieves global meals --untested
         /// </summary>
         /// <param name="appInstallID">AppInstallID</param>
         /// <param name="pageSize">Page size</param>
         /// <param name="pageNumber">Page number</param>
-        /// <param name="userGUID">User GUID</param>
-        /// <param name="mealID">Meal ID</param>
         /// <param name="mealName">Meal Name</param>
         /// <param name="mealDescription">Meal Description</param>
-        /// <param name="globalLink">Global Link Guid</param>
-        /// <param name="madeItBefore">Whether or not they have made it before</param>
         /// <returns>A response with stock items list</returns>
         /// <response code="200">Returns the stock items list</response>
         /// <response code="500">If there was an internal server error</response>
         [HttpGet("")]
-        [ProducesResponseType(200)]
+        [ProducesResponseType(typeof(PagedResponse<GlobalMealDM>),200)]
+        [ProducesResponseType(400)]
         [ProducesResponseType(500)]
-        public async Task<IActionResult> GetMealsAsync(Guid appInstallID, int pageSize = 10, int pageNumber = 1, Guid? userGUID = null,
-            int? mealID = null, string mealName = null, string mealDescription = null, Guid? globalLink = null, bool? madeItBefore = null)
+        public async Task<IActionResult> GetGlobalMealsAsync(Guid appInstallID, int pageSize = 10, int pageNumber = 1, 
+            string mealName = null, string mealDescription = null)
         {
 
-            string name = nameof(GetMealsAsync);
+            string name = nameof(GetGlobalMealsAsync);
 
 
-            var response = new PagedResponse<MealDM>();
+            var response = new PagedResponse<GlobalMealDM>();
 
             try
             {
@@ -67,7 +64,7 @@ namespace DinderMVC.Controllers
                     return BadRequest();
                 }
 
-                var query = DbContext.GetMeals(userGUID, mealID, mealName, mealDescription, globalLink, madeItBefore);
+                var query = DbContext.GetGlobalMeals(mealName, mealDescription);
 
                 response.detailed = false;
 
@@ -80,7 +77,7 @@ namespace DinderMVC.Controllers
 
                 response.Message = string.Format("Page {0} of {1}, Total of meals: {2}.", pageNumber, response.PageCount, response.ItemsCount);
 
-                LogCustom("The meals have been retrieved successfully.", name);
+                LogCustom("The global meals have been retrieved successfully.", name);
             }
             catch (Exception ex)
             {
@@ -94,27 +91,26 @@ namespace DinderMVC.Controllers
         }
 
         // GET
-        // api/v1/Meals/MealID/
+        // api/v1/GlobalMeals/{MealGuid}/
 
         /// <summary>
-        /// Retrieves a meal by MealID
+        /// Retrieves a Global Meal by MealGuid -- Untested
         /// </summary>
         /// <param name="appInstallID">AppInstallID</param>
-        /// <param name="id">User GUID</param>
-        /// <param name="mealID">Meal ID</param>
+        /// <param name="globalMealGuid">Global Meal Guid</param>
         /// <returns>A response with a meal</returns>
-        /// <response code="200">Returns the meal list</response>
+        /// <response code="200">Returns the global meal list</response>
         /// <response code="404">If meal is not exists</response>
         /// <response code="500">If there was an internal server error</response>
-        [HttpGet("{MealID}")]
-        [ProducesResponseType(200)]
+        [HttpGet("{MealGuid}")]
+        [ProducesResponseType(typeof(GlobalMealDM),200)]
         [ProducesResponseType(404)]
         [ProducesResponseType(500)]
-        public async Task<IActionResult> GetMealAsync(Guid appInstallID, int mealID)
+        public async Task<IActionResult> GetGlobalMealAsync(Guid appInstallID, Guid globalMealGuid)
         {
 
-            string name = nameof(GetMealAsync);
-            var response = new SingleResponse<MealDM>();
+            string name = nameof(GetGlobalMealAsync);
+            var response = new SingleResponse<GlobalMealDM>();
 
             try
             {
@@ -129,7 +125,7 @@ namespace DinderMVC.Controllers
 
 
                 // Get the stock item by id
-                Meal meal = (await DbContext.GetMealByIDEditableAsync(new Meal(mealID)));
+                GlobalMeal meal = (await DbContext.GetGlobalMealEditableAsync(globalMealGuid));
 
                 if (meal != null)
                     response.Model = meal.ReturnDM();
@@ -148,10 +144,10 @@ namespace DinderMVC.Controllers
         }
 
         // POST
-        // api/v1/Meals/
+        // api/v1/GlobalMeals/
 
         /// <summary>
-        /// Creates a new meal
+        /// Creates a new global meal --untested
         /// </summary>
         /// <param name="request">Request model</param>
         /// <returns>A response with new meal</returns>
@@ -160,16 +156,16 @@ namespace DinderMVC.Controllers
         /// <response code="400">For bad request</response>
         /// <response code="500">If there was an internal server error</response>
         [HttpPost("")]
-        [ProducesResponseType(200)]
+        [ProducesResponseType(typeof(SingleResponse<GlobalMealDM>),200)]
         [ProducesResponseType(201)]
         [ProducesResponseType(400)]
         [ProducesResponseType(500)]
-        public async Task<IActionResult> PostMealAsync([FromBody] PostMealRequest request)
+        public async Task<IActionResult> PostGlobalMealAsync([FromBody] PostGlobalMealRequest request)
         {
 
-            string name = nameof(PostMealAsync);
+            string name = nameof(PostGlobalMealAsync);
 
-            var response = new SingleResponse<MealDM>();
+            var response = new SingleResponse<GlobalMealDM>();
 
             try
             {
@@ -184,11 +180,7 @@ namespace DinderMVC.Controllers
 
 
                 var existingEntity = await DbContext
-                    .GetUserMealByMealNameAsync(new Meal
-                    {
-                        MealName = request.mealName,
-                        UserGUID = request.userGUID
-                    });
+                    .GetGlobalMealByName(request.mealName);
 
                 if (existingEntity != null)
                     ModelState.AddModelError("MealName", "Meal Name is already taken");
@@ -200,7 +192,7 @@ namespace DinderMVC.Controllers
                 var entity = request.ToEntity();
 
 
-                DbContext.Meals.Add(entity);
+                DbContext.GlobalMeals.Add(entity);
 
                 // Save entity in database
                 await DbContext.SaveChangesAsync();
@@ -227,6 +219,7 @@ namespace DinderMVC.Controllers
         /// Updates an existing meal
         /// </summary>
         /// <param name="MealID">Meal ID</param>
+        /// <param name="userGuid">userGuid</param>
         /// <param name="request">Request model</param>
         /// <returns>A response as update meal result</returns>
         /// <response code="200">If meal was updated successfully</response>
@@ -236,9 +229,9 @@ namespace DinderMVC.Controllers
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]
         [ProducesResponseType(500)]
-        public async Task<IActionResult> PutMealsAsync(int MealID, [FromBody] PutMealRequest request)
+        public async Task<IActionResult> PutGlobalMealAsync(Guid userGuid, int MealID, [FromBody] PutGlobalMealRequest request)
         {
-            string name = nameof(PutMealsAsync);
+            string name = nameof(PutGlobalMealAsync);
             var response = new SingleResponse<MealDM>();
 
 
@@ -255,13 +248,13 @@ namespace DinderMVC.Controllers
 
 
                 // Get stock item by id
-                var entity = await DbContext.GetMealByIDEditableAsync(new Meal(MealID));
+                var entity = await DbContext.GetUserMealByIDEditableAsync(new UserMeal(userGuid, MealID));
 
                 // Validate if entity exists
                 if (entity == null)
                     return NotFound();
 
-                if (entity.UserGUID != request.userGUID)
+                if (entity.CookGuid != request.userGUID)
                     return Forbid();
 
                 // Set changes to entity
@@ -328,13 +321,13 @@ namespace DinderMVC.Controllers
                 }
 
                 // Get stock item by id
-                var entity = await DbContext.GetMealByIDEditableAsync(new Meal(mealID));
+                var entity = await DbContext.GetUserMealByIDEditableAsync(new UserMeal(userGuid, mealID));
 
                 // Validate if entity exists
                 if (entity == null)
                     return NotFound();
 
-                if (entity.UserGUID != userGuid)
+                if (entity.CookGuid != userGuid)
                     return Forbid();
 
                 // Remove entity from repository

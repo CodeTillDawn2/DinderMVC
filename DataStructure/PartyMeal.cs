@@ -1,6 +1,7 @@
 ﻿using DinderDLL.DataModels;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using System;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace DinderMVC.Models
@@ -12,6 +13,7 @@ namespace DinderMVC.Models
         [NotMapped]
         public virtual Party Party { get; set; }
         public int PartyID { get; set; }
+        public Guid CookGuid { get; set; }
 
         public int MealID { get; set; }
 
@@ -20,15 +22,16 @@ namespace DinderMVC.Models
         {
         }
 
-        public PartyMeal(int partyid, int mealid)
+        public PartyMeal(int partyid, Guid cookGuid, int mealid)
         {
             PartyID = partyid;
+            CookGuid = cookGuid;
             MealID = mealid;
         }
 
         public PartyMealDM ReturnDM()
         {
-            return new PartyMealDM(PartyID, MealID);
+            return new PartyMealDM(PartyID, CookGuid, MealID);
         }
 
         public class PartyMealConfiguration : IEntityTypeConfiguration<PartyMeal>
@@ -42,6 +45,7 @@ namespace DinderMVC.Models
 
                 // Set key for entity
                 builder.HasKey(p => p.PartyID);
+                builder.HasKey(p => p.CookGuid);
                 builder.HasKey(p => p.MealID);
 
                 // Columns with default value
@@ -49,6 +53,11 @@ namespace DinderMVC.Models
                 builder
                     .Property(p => p.PartyID)
                     .HasColumnType("int")
+                    .IsRequired();
+
+                builder
+                    .Property(p => p.CookGuid)
+                    .HasColumnType("uniqueidentifier")
                     .IsRequired();
 
                 builder

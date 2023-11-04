@@ -412,14 +412,13 @@ namespace DinderMVC.Queries
             return appInstallDM;
         }
 
-        public static IQueryable<MealDM> GetMeals(this DinderContext dbContext, Guid? UserGUID, int? MealID, string MealName, string MealDescription, Guid? GlobalLink, bool? MadeItBefore)
+        public static IQueryable<MealDM> GetUserMeals(this DinderContext dbContext, Guid UserGUID, int? MealID, string MealName, string MealDescription, Guid? GlobalLink, bool? MadeItBefore)
         {
             // Get query from DbSet
-            var query = dbContext.Meals.AsNoTracking().AsQueryable();
+            var query = dbContext.UserMeals.AsNoTracking().AsQueryable();
 
             // Filter by: 'UserGUID'
-            if (UserGUID.HasValue)
-                query = query.Where(item => item.UserGUID == UserGUID);
+            query = query.Where(item => item.CookGuid == UserGUID);
 
             // Filter by: 'MealID'
             if (MealID.HasValue)
@@ -440,6 +439,22 @@ namespace DinderMVC.Queries
             // Filter by: 'madeItBefore'
             if (MadeItBefore.HasValue)
                 query = query.Where(item => item.MadeItBefore == MadeItBefore);
+
+            return query.Select(x => x.ReturnDM());
+        }
+
+        public static IQueryable<GlobalMealDM> GetGlobalMeals(this DinderContext dbContext, string MealName, string MealDescription)
+        {
+            // Get query from DbSet
+            var query = dbContext.GlobalMeals.AsNoTracking().AsQueryable();
+
+            // Filter by: 'mealName'
+            if (MealName != null)
+                query = query.Where(item => item.MealName.Contains(MealName));
+
+            // Filter by: 'mealDescription'
+            if (MealDescription != null)
+                query = query.Where(item => item.MealDescription.Contains(MealDescription));
 
             return query.Select(x => x.ReturnDM());
         }
@@ -494,18 +509,24 @@ namespace DinderMVC.Queries
         => dbContext.Parties.Where(item => item.PartyID == entity.PartyID).FirstOrDefault();
         public static async Task<PartyMeal> GetPartyMealEditableAsync(this DinderContext dbContext, int PartyID, int MealID)
           => dbContext.PartyMeals.Where(item => item.PartyID == PartyID && item.MealID == MealID).FirstOrDefault();
+
+        public static async Task<GlobalMeal> GetGlobalMealEditableAsync(this DinderContext dbContext, Guid guid)
+          => dbContext.GlobalMeals.Where(item => item.GlobalMealGUID == guid).FirstOrDefault();
+        public static async Task<GlobalMeal> GetGlobalMealByName(this DinderContext dbContext, string MealName)
+  => dbContext.GlobalMeals.Where(item => item.MealName == MealName).FirstOrDefault();
+
         public static async Task<PartyInvite> GetPartyInviteEditableAsync(this DinderContext dbContext, Party entity, User userentity)
             => dbContext.PartyInvites.Where(item => item.PartyID == entity.PartyID && item.UserGuid == userentity.UserGUID).FirstOrDefault();
 
-        public static async Task<PartyChoice> GetPartyChoiceEditableAsync(this DinderContext dbContext, Party entity, User userentity, Meal meal)
-         => dbContext.PartyChoices.Where(item => item.PartyID == entity.PartyID && item.UserGUID == userentity.UserGUID && item.MealID == meal.MealID).FirstOrDefault();
+        public static async Task<PartyChoice> GetPartyChoiceEditableAsync(this DinderContext dbContext, Party entity, User userentity, UserMeal meal)
+         => dbContext.PartyChoices.Where(item => item.PartyID == entity.PartyID && item.UserGUID == userentity.UserGUID && item.MealID == meal.MealID && item.CookGUID == meal.CookGuid).FirstOrDefault();
 
-        public static async Task<Meal> GetMealByIDEditableAsync(this DinderContext dbContext, Meal entity)
-            => dbContext.Meals.Where(item => item.MealID == entity.MealID).FirstOrDefault();
-        //=> await dbContext.Meals.Select(x => new MealDTO(x)).FirstOrDefaultAsync(item => item.MealID == entity.MealID);
+        public static async Task<UserMeal> GetUserMealByIDEditableAsync(this DinderContext dbContext, UserMeal entity)
+            => dbContext.UserMeals.Where(item => item.MealID == entity.MealID && item.CookGuid == entity.CookGuid).FirstOrDefault();
 
-        public static async Task<Meal> GetUserMealByMealNameAsync(this DinderContext dbContext, Meal entity) //To find any duplicates
-    => await dbContext.Meals.AsNoTracking().FirstOrDefaultAsync(item => item.MealName == entity.MealName && item.UserGUID == entity.UserGUID);
+
+        public static async Task<UserMeal> GetUserMealByMealNameAsync(this DinderContext dbContext, UserMeal entity) //To find any duplicates
+    => await dbContext.UserMeals.AsNoTracking().FirstOrDefaultAsync(item => item.MealName == entity.MealName && item.CookGuid == entity.CookGuid);
 
     }
 

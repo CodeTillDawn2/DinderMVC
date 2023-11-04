@@ -15,7 +15,7 @@ namespace DinderMVC.Controllers
 
         public abstract Task<IActionResult> GetPartyAsync(Guid appInstallID, int PartyID, Guid UserGuid);
 
-        public abstract Task<IActionResult> PostPartyAsync([FromBody] PostPartyRequest request);
+        public abstract Task<IActionResult> PostPartyAsync(Guid UserGuid, [FromBody] PostPartyRequest request);
 
 
         public abstract Task<IActionResult> PutPartyAsync(int PartyID, [FromBody] PutPartyRequest request);

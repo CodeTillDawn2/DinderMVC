@@ -43,7 +43,7 @@ namespace DinderMVC
             // Set up dependency injection for controller's logger
             services.AddScoped<ILogger, Logger<AppInstallsController>>();
             services.AddScoped<ILogger, Logger<UsersController>>();
-            services.AddScoped<ILogger, Logger<MealsController>>();
+            services.AddScoped<ILogger, Logger<GlobalMealsController>>();
             services.AddScoped<ILogger, Logger<PartiesController>>();
             services.AddScoped<ILogger, Logger<RootController>>();
 

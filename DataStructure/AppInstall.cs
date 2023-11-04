@@ -28,7 +28,7 @@ namespace DinderMVC.Models
 
         public AppInstallDM ReturnDTO()
         {
-            return new AppInstallDM(AppInstallGUID, InstallDate, IPAddress);
+            return new AppInstallDM("", AppInstallGUID, InstallDate, IPAddress);
         }
 
         public class AppInstallConfiguration : IEntityTypeConfiguration<AppInstall>
