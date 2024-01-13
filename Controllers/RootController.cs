@@ -36,7 +36,7 @@ namespace DinderMVC.Controllers
         // api/v1/Roots/
 
         /// <summary>
-        /// Retrieves roots
+        /// Retrieves roots --Untested
         /// </summary>
         /// <param name="appInstallID">AppInstallID</param>
         /// <param name="pageSize">Page size</param>

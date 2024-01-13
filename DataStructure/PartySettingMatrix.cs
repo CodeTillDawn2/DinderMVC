@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using DinderDLL.DataModels;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -35,6 +36,13 @@ namespace DinderMVC.Models
             SettingID = settingID;
             ChoiceID = choiceID;
             ChoiceEntry = choiceEntry;
+        }
+
+        public PartySettingsViewCO ReturnCO()
+        {
+            return new PartySettingsViewCO(PartyID, SettingID, ChoiceID, Setting.SettingName, Choice.SettingChoiceValue, Setting.SettingValueDataType, ChoiceEntry );
+            
+
         }
 
         public class PartySettingMatrixConfiguration : IEntityTypeConfiguration<PartySettingMatrix>

@@ -28,7 +28,7 @@ namespace DinderMVC.Models
 
         public GlobalMealDM ReturnDM()
         {
-            return new GlobalMealDM(GlobalMealGUID, MealName, MealDescription);
+            return new GlobalMealDM(GlobalMealGUID, MealName, MealDescription, MealCreator, CreateDate);
         }
 
         public class GlobalMealsConfiguration : IEntityTypeConfiguration<GlobalMeal>
@@ -48,14 +48,13 @@ namespace DinderMVC.Models
                 builder
                     .Property(p => p.GlobalMealGUID)
                     .HasColumnType("uniqueidentifier")
-                    .IsRequired()
-                    .HasDefaultValueSql("(newid())");
+                    .IsRequired();
 
                 // Set configuration for columns
                 builder.Property(p => p.MealName).HasColumnType("varchar(50)").IsRequired();
                 builder.Property(p => p.MealDescription).HasColumnType("varchar(255)");
                 builder.Property(p => p.MealCreator).HasColumnType("uniqueidentifier").IsRequired();
-                builder.Property(p => p.CreateDate).HasColumnType("DateTime").IsRequired().HasDefaultValue("(getdate())");
+                builder.Property(p => p.CreateDate).HasColumnType("DateTime").IsRequired();
             }
         }
 

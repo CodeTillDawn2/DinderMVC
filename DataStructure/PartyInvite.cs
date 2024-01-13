@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace DinderMVC.Models
 {
@@ -9,7 +10,8 @@ namespace DinderMVC.Models
 
     public class PartyInvite
     {
-
+        [NotMapped]
+        public virtual Party Party { get; set; }
         public int PartyID { get; set; }
         public Guid UserGuid { get; set; }
         public DateTime? AcceptDate { get; set; }

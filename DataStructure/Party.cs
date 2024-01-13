@@ -1,4 +1,5 @@
 ﻿using DinderDLL.DataModels;
+using DinderDLL.DTOs;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System;
@@ -20,16 +21,19 @@ namespace DinderMVC.Models
         public int StatusID { get; set; }
 
         [NotMapped]
-        public virtual List<PartySettingMatrix> Settings { get; set; }
+        public virtual List<PartySettingMatrix> Settings { get; set; } = new List<PartySettingMatrix>();
 
         [NotMapped]
-        public virtual List<PartyInvite> PartyInvites { get; set; }
+        public virtual List<PartyInvite> PartyInvites { get; set; } = new List<PartyInvite>();
 
         [NotMapped]
         public virtual User Cook { get; set; }
 
         [NotMapped]
-        public virtual List<PartyMeal> Meals { get; set; }
+        public virtual List<PartyMeal> Meals { get; set; } = new List<PartyMeal>();
+
+        [NotMapped]
+        public virtual List<PartyChoice> PartyChoices { get; set; } = new List<PartyChoice>();
 
         //[NotMapped]
         //public virtual List<PartyInvite> Invites { get; set; }
@@ -54,20 +58,50 @@ namespace DinderMVC.Models
 
         public PartyDM ReturnDM()
         {
-            List<int> MealIDList = new List<int>();
+            List<MealDM> mealList = new List<MealDM>();
 
             if (Meals != null)
             {
                 foreach (PartyMeal pm in Meals)
                 {
-                    MealIDList.Add(pm.MealID);
+                    mealList.Add(pm.Meal.ReturnDM());
+                }
+
+            }
+            List<PartyInviteDM> InvitedGuidList = new List<PartyInviteDM>();
+
+            if (PartyInvites != null)
+            {
+                foreach (PartyInvite pi in PartyInvites)
+                {
+                    InvitedGuidList.Add(pi.ReturnDM());
                 }
 
             }
 
+            List<PartySettingsViewCO> settingsList = new List<PartySettingsViewCO>();
 
+            if (PartyInvites != null)
+            {
+                foreach (PartySettingMatrix set in Settings)
+                {
+                    settingsList.Add(set.ReturnCO());
+                }
 
-            return new PartyDM(PartyID, CookGuid, SessionName, SessionMessage, StatusID, MealIDList);
+            }
+
+            List<PartyChoiceDM> partyChoices = new List<PartyChoiceDM>();
+
+            if (PartyInvites != null)
+            {
+                foreach (PartyChoice pc in PartyChoices)
+                {
+                    partyChoices.Add(pc.ReturnDM());
+                }
+
+            }
+
+            return new PartyDM(PartyID, CookGuid, SessionName, SessionMessage, StatusID, mealList, InvitedGuidList, settingsList, partyChoices);
         }
 
         public class PartyConfiguration : IEntityTypeConfiguration<Party>
@@ -93,52 +127,16 @@ namespace DinderMVC.Models
                 //builder.HasMany(x => x.Friends).WithOne(b => b.User).HasForeignKey(b => b.UserGUID).OnDelete(DeleteBehavior.Restrict);
                 builder.HasMany(x => x.Settings).WithOne(b => b.Party).HasForeignKey(b => b.PartyID).OnDelete(DeleteBehavior.Restrict);
                 builder.HasMany(x => x.Meals).WithOne(b => b.Party).HasForeignKey(b => b.PartyID).OnDelete(DeleteBehavior.Restrict);
+                builder.HasMany(x => x.PartyInvites).WithOne(b => b.Party).HasForeignKey(b => b.PartyID).OnDelete(DeleteBehavior.Restrict);
+                builder.HasMany(x => x.PartyChoices).WithOne(b => b.Party).HasForeignKey(b => b.PartyID).OnDelete(DeleteBehavior.Restrict);
 
                 // Set configuration for columns
                 builder.Property(p => p.PartyID).HasColumnType("int").IsRequired().UseIdentityColumn();
                 builder.Property(p => p.SessionName).HasColumnType("varchar(50)").IsRequired();
                 builder.Property(p => p.SessionMessage).HasColumnType("varchar(255)").IsRequired();
-                builder.Property(p => p.StatusID).HasColumnType("int").HasDefaultValueSql("((1))");
+                builder.Property(p => p.StatusID).HasColumnType("int");
 
 
-                //builder
-                //    .Property(p => p.CreateDate)
-                //    .HasColumnType("datetime")
-                //    .IsRequired()
-                //    .HasDefaultValueSql("(getdate())");
-
-                //builder
-                //    .Property(p => p.LastActiveDate)
-                //    .HasColumnType("datetime")
-                //    .IsRequired()
-                //    .HasDefaultValueSql("(getdate())");
-
-                //// Computed columns
-
-                //builder
-                //    .Property(p => p.Tags)
-                //    .HasColumnType("nvarchar(max)")
-                //    .HasComputedColumnSql("json_query([CustomFields],N'$.Tags')");
-
-                //builder
-                //    .Property(p => p.SearchDetails)
-                //    .HasColumnType("nvarchar(max)")
-                //    .IsRequired()
-                //    .HasComputedColumnSql("concat([StockItemName],N' ',[MarketingComments])");
-
-                // Columns with generated value on add or update
-
-                //builder
-                //    .Property(p => p.ValidFrom)
-                //    .HasColumnType("datetime2")
-                //    .IsRequired()
-                //    .ValueGeneratedOnAddOrUpdate();
-
-                //builder
-                //    .Property(p => p.ValidTo)
-                //    .HasColumnType("datetime2")
-                //    .IsRequired()
-                //    .ValueGeneratedOnAddOrUpdate();
             }
         }
 

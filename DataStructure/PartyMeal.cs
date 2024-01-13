@@ -12,6 +12,8 @@ namespace DinderMVC.Models
     {
         [NotMapped]
         public virtual Party Party { get; set; }
+        [NotMapped]
+        public virtual UserMeal Meal { get; set; }
         public int PartyID { get; set; }
         public Guid CookGuid { get; set; }
 
@@ -65,6 +67,8 @@ namespace DinderMVC.Models
                     .HasColumnType("int")
                     .IsRequired();
 
+                builder.HasOne(x => x.Party).WithMany(x => x.Meals).HasForeignKey(a => a.PartyID).OnDelete(DeleteBehavior.Restrict);
+                builder.HasOne(x => x.Meal).WithOne().HasForeignKey<UserMeal>(a => a.MealID).OnDelete(DeleteBehavior.Restrict);
 
             }
         }

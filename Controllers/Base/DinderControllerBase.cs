@@ -30,6 +30,11 @@ namespace DinderMVC.Controllers
             Logger?.LogDebug("'{0}' has had an invalid install validation attempt using " + AppInstallID.ToString(), NameOfMethod);
         }
         [NonAction]
+        public void LogGatekeeperInfraction(Guid AppInstallID, Guid UserGuid, string NameOfMethod)
+        {
+            Logger?.LogDebug("'{1}' has had a user, {2} attempting to see a party they are not authorized to see using " + AppInstallID.ToString(), UserGuid, NameOfMethod);
+        }
+        [NonAction]
         public void LogCustom(string Message, string NameOfMethod)
         {
             Logger?.LogInformation(Message, NameOfMethod);

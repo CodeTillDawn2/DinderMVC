@@ -1,0 +1,119 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{8D21C7FB-6412-495D-B732-AD9ABE66F738}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>DinderDLL</RootNamespace>
+    <AssemblyName>DinderDLL</AssemblyName>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <Deterministic>true</Deterministic>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>portable</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="COs\ParameterCO.cs" />
+    <Compile Include="DMs\GlobalMealDM.cs" />
+    <Compile Include="DMs\AppInstallDM.cs" />
+    <Compile Include="DMs\Base\DataModel.cs" />
+    <Compile Include="COs\FilterCO.cs" />
+    <Compile Include="COs\FriendViewCO.cs" />
+    <Compile Include="COs\LinkCO.cs" />
+    <Compile Include="DMs\DataTypeDM.cs" />
+    <Compile Include="DMs\UserFriendDM.cs" />
+    <Compile Include="DMs\SwipeChoiceDM.cs" />
+    <Compile Include="DMs\PartyStatusDM.cs" />
+    <Compile Include="DMs\PartySettingValueDM.cs" />
+    <Compile Include="DMs\PartySettingMatrixDM.cs" />
+    <Compile Include="DMs\PartyChoiceDM.cs" />
+    <Compile Include="DMs\PartyMealDM.cs" />
+    <Compile Include="DMs\PartyInviteDM.cs" />
+    <Compile Include="COs\PartyInviteViewCO.cs" />
+    <Compile Include="DMs\MealDM.cs" />
+    <Compile Include="DMs\PartyDM.cs" />
+    <Compile Include="COs\PartySettingsViewCO.cs" />
+    <Compile Include="DMs\RootDM.cs" />
+    <Compile Include="DMs\UserDM.cs" />
+    <Compile Include="DTOs\Base\ChangeObject.cs" />
+    <Compile Include="DTOs\ConnectionLinkDTO.cs" />
+    <Compile Include="DTOs\DuoDTO.cs" />
+    <Compile Include="DTOs\FilterDTO.cs" />
+    <Compile Include="DTOs\FriendDTO.cs" />
+    <Compile Include="DTOs\DataTypeDTO.cs" />
+    <Compile Include="DTOs\UserFriendDTO.cs" />
+    <Compile Include="DTOs\SwipeChoiceDTO.cs" />
+    <Compile Include="DTOs\PartyStatusDTO.cs" />
+    <Compile Include="DTOs\PartySettingValueDTO.cs" />
+    <Compile Include="DTOs\PartySettingTypeDTO.cs" />
+    <Compile Include="DTOs\PartySettingMatrixDTO.cs" />
+    <Compile Include="DTOs\PartyMealDTO.cs" />
+    <Compile Include="DTOs\GlobalMealDTO.cs" />
+    <Compile Include="DTOs\PartyChoiceDTO.cs" />
+    <Compile Include="DTOs\MealDTO.cs" />
+    <Compile Include="DTOs\PartyDTO.cs" />
+    <Compile Include="DTOs\PartyInviteDTO.cs" />
+    <Compile Include="DTOs\PartyInviteViewDTO.cs" />
+    <Compile Include="DTOs\PartySettingsViewDTO.cs" />
+    <Compile Include="DTOs\RootDTO.cs" />
+    <Compile Include="DTOs\UserDTO.cs" />
+    <Compile Include="LinkService.cs" />
+    <Compile Include="PartySettingsService.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Requests\Base\DinderRequest.cs" />
+    <Compile Include="Requests\Base\DeleteRequest.cs" />
+    <Compile Include="Requests\Meals\GetMealsRequest.cs" />
+    <Compile Include="Requests\GetAppInstallRequest.cs" />
+    <Compile Include="Requests\PostUserFriendRequest.cs" />
+    <Compile Include="Requests\PostPartyMealRequest.cs" />
+    <Compile Include="Requests\PostPartyRequest.cs" />
+    <Compile Include="Requests\PostGlobalMealRequest.cs" />
+    <Compile Include="Requests\PutPartyChoiceRequest.cs" />
+    <Compile Include="Requests\PostPartyChoiceRequest.cs" />
+    <Compile Include="Requests\PutPartySettingsRequest.cs" />
+    <Compile Include="Requests\PutPartySettingRequest.cs" />
+    <Compile Include="Requests\PutPartyInviteRequest.cs" />
+    <Compile Include="Requests\PostPartyInviteRequest.cs" />
+    <Compile Include="Requests\PostUserMealRequest.cs" />
+    <Compile Include="Requests\PutGlobalMealRequest.cs" />
+    <Compile Include="Requests\PutUserMealRequest.cs" />
+    <Compile Include="Requests\PutUserFriendRequest.cs" />
+    <Compile Include="Requests\PutPartyRequest.cs" />
+    <Compile Include="Requests\PutUserRequest.cs" />
+    <Compile Include="Requests\PostUserRequest.cs" />
+    <Compile Include="Requests\PostAppInstallRequest.cs" />
+    <Compile Include="Responses.cs" />
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

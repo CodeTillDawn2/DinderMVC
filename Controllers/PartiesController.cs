@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using DinderDLL.DTOs;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace DinderMVC.Controllers
 {
@@ -32,24 +33,24 @@ namespace DinderMVC.Controllers
         // api/v1/Party/
 
         /// <summary>
-        /// Retrieves parties --Untested
+        /// Retrieves parties the user is invited to or hosting
         /// </summary>
-        /// <param name="appInstallID">AppInstallID</param>
+        /// <param name="appInstallID">App Install Guid (required)</param>
+        /// <param name="userID">User Guid (required)</param>
         /// <param name="pageSize">Page size</param>
         /// <param name="pageNumber">Page number</param>
         /// <param name="cookGuid">Cook GUID</param>
-        /// <param name="partyID">Party ID</param>
         /// <param name="sessionName">Session Name</param>
         /// <param name="sessionMessage">Session Message</param>
-        /// <returns>A response with stock items list</returns>
-        /// <response code="200">Returns the stock items list</response>
+        /// <returns>A response with parties the user is invited to or is hosting</returns>
+        /// <response code="200">Returns the parties list</response>
         /// <response code="500">If there was an internal server error</response>
         [HttpGet("")]
         [ProducesResponseType(typeof(PagedResponse<PartyDM>),200)]
         [ProducesResponseType(400)]
         [ProducesResponseType(500)]
-        public async Task<IActionResult> GetPartiesAsync(Guid appInstallID, int pageSize = 10, int pageNumber = 1, Guid? cookGuid = null,
-            int? partyID = null, string sessionName = null, string sessionMessage = null)
+        public async Task<IActionResult> GetPartiesAsync([BindRequired] Guid appInstallID, [BindRequired] Guid userID, int pageSize = 10, int pageNumber = 1, 
+            Guid? cookGuid = null, string sessionName = null, string sessionMessage = null)
         {
             string name = nameof(GetPartiesAsync);
             LogMethodInvoked(name);
@@ -65,8 +66,8 @@ namespace DinderMVC.Controllers
                     return BadRequest();
                 }
 
-                var query = DbContext.GetParties(cookGuid, partyID, sessionName, sessionMessage);
-                //TODO: Make truly detailed
+                var query = DbContext.GetParties(userID, cookGuid, sessionName, sessionMessage);
+
                 response.PageSize = pageSize;
                 response.PageNumber = pageNumber;
 
@@ -94,11 +95,11 @@ namespace DinderMVC.Controllers
         // api/v1/Party/PartyID/Settings
 
         /// <summary>
-        /// Retrieves party settings --Untested
+        /// Retrieves party settings
         /// </summary>
-        /// <param name="appInstallID">AppInstallID</param>
-        /// <param name="PartyID">PartyID</param>
-        /// <param name="UserGuid">UserGuid</param>
+        /// <param name="appInstallID">App Install Guid (required)</param>
+        /// <param name="PartyID">Party ID (required)</param>
+        /// <param name="UserGuid">User Guid (required)</param>
         /// <returns>A response with party settings list</returns>
         /// <response code="200">Returns the stock items list</response>
         /// <response code="500">If there was an internal server error</response>
@@ -106,7 +107,7 @@ namespace DinderMVC.Controllers
         [ProducesResponseType(typeof(PagedResponse<PartySettingsViewCO>),200)]
         [ProducesResponseType(400)]
         [ProducesResponseType(500)]
-        public async Task<IActionResult> GetPartySettingsAsync(Guid appInstallID, int PartyID, Guid UserGuid)
+        public async Task<IActionResult> GetPartySettingsAsync([BindRequired] Guid appInstallID, [BindRequired] int PartyID, [BindRequired] Guid UserGuid)
         {
             string name = nameof(GetPartySettingsAsync);
             var response = new PagedResponse<PartySettingsViewCO>();
@@ -121,12 +122,10 @@ namespace DinderMVC.Controllers
                     return BadRequest();
                 }
 
-                UserDM userDTO = DbContext.Users.Where(x => x.UserGUID == UserGuid).Select(x => x.ReturnDM()).FirstOrDefault();
-                if (userDTO == null)
+                if (!(await DbContext.UserInParty(PartyID,UserGuid)))
                 {
-                    ModelState.AddModelError("UserGuid", "Please provide the cook guid as an additional security feature.");
-                    LogInvalidUser(UserGuid, name);
-                    return Unauthorized();
+                    LogGatekeeperInfraction(appInstallID, UserGuid, name);
+                    return BadRequest();
                 }
 
                 response.Model = await DbContext.GetPartySettingsAsync(PartyID);
@@ -153,16 +152,16 @@ namespace DinderMVC.Controllers
         /// <summary>
         /// Retrieves party invites
         /// </summary>
-        /// <param name="appInstallID">AppInstallID</param>
-        /// <param name="PartyID">PartyID</param>
-        /// <param name="UserGuid">UserGuid</param>
+        /// <param name="appInstallID">App Install Guid (required)</param>
+        /// <param name="PartyID">Party ID (required)</param>
+        /// <param name="UserGuid">User Guid (required)</param>
         /// <returns>A response with party settings list</returns>
         /// <response code="200">Returns the stock items list</response>
         /// <response code="500">If there was an internal server error</response>
         [HttpGet("{PartyID}/Invites")]
         [ProducesResponseType(200)]
         [ProducesResponseType(500)]
-        public async Task<IActionResult> GetPartyInvitesAsync(Guid appInstallID, int PartyID, Guid UserGuid)
+        public async Task<IActionResult> GetPartyInvitesAsync([BindRequired] Guid appInstallID, [BindRequired] int PartyID, [BindRequired] Guid UserGuid)
         {
             string name = nameof(GetPartyInvitesAsync);
             var response = new PagedResponse<PartyInviteViewCO>();
@@ -177,19 +176,14 @@ namespace DinderMVC.Controllers
                     return BadRequest();
                 }
 
-                PartyDM partyDTO = DbContext.Parties.Where(x => x.PartyID == PartyID && x.CookGuid == UserGuid).Select(x => x.ReturnDM()).FirstOrDefault();
-                if (partyDTO == null)
+                if (!(await DbContext.UserInParty(PartyID, UserGuid)))
                 {
-                    ModelState.AddModelError("UserGuid", "Please provide the cook guid as an additional security feature.");
-                    LogInvalidUser(UserGuid, name);
-                    return Unauthorized();
+                    LogGatekeeperInfraction(appInstallID, UserGuid, name);
+                    return BadRequest();
                 }
-
-
 
                 response.Model = await DbContext.GetPartyInvitesAsync(PartyID);
                 response.PageSize = 100;
-
 
                 response.ItemsCount = response.Model.Count();
 
@@ -206,56 +200,7 @@ namespace DinderMVC.Controllers
             return response.ToHttpResponse();
         }
 
-        // GET
-        // api/v1/Party/PartyID/
-
-        /// <summary>
-        /// Retrieves a setting by settingID
-        /// </summary>
-        /// <param name="appInstallID">AppInstallID</param>
-        /// <param name="PartyID">Party ID</param>
-        /// <param name="SettingID">Setting ID</param>
-        /// <param name="UserGuid">UserGuid</param>
-        /// <returns>A response with a party</returns>
-        /// <response code="200">Returns the party list</response>
-        /// <response code="404">If meal is not exists</response>
-        /// <response code="500">If there was an internal server error</response>
-        [HttpGet("{PartyID}/Settings/{SettingID}")]
-        [ProducesResponseType(200)]
-        [ProducesResponseType(404)]
-        [ProducesResponseType(500)]
-        public async Task<IActionResult> GetPartySettingAsync(Guid appInstallID, int PartyID, int SettingID, Guid UserGuid)
-        {
-            string name = nameof(GetPartySettingAsync);
-            var response = new SingleResponse<PartySettingsViewCO>();
-
-            try
-            {
-                LogMethodInvoked(name);
-
-
-                if (!(await DbContext.AppInstallRegistered(appInstallID)))
-                {
-                    LogInvalidInstall(appInstallID, name);
-                    return BadRequest();
-                }
-
-
-                // Get the party by id
-                PartySettingsViewCO setting = await DbContext.GetPartySettingByIDsEditableAsync(PartyID, SettingID);
-                if (setting != null)
-                    response.Model = setting;
-            }
-            catch (Exception ex)
-            {
-                response.DidError = true;
-                response.ErrorMessage = "There was an internal error, please contact to technical support.";
-
-                LogError(ex, name);
-            }
-
-            return response.ToHttpResponse();
-        }
+       
 
 
         // GET
@@ -264,9 +209,9 @@ namespace DinderMVC.Controllers
         /// <summary>
         /// Retrieves a party by PartyID
         /// </summary>
-        /// <param name="appInstallID">AppInstallID</param>
-        /// <param name="PartyID">Party ID</param>
-        /// <param name="UserGuid">UserGuid</param>
+        /// <param name="appInstallID">App Install Guid (required)</param>
+        /// <param name="PartyID">Party ID (required)</param>
+        /// <param name="UserGuid">User Guid (required)</param>
         /// <returns>A response with a party</returns>
         /// <response code="200">Returns the party list</response>
         /// <response code="404">If meal is not exists</response>
@@ -275,7 +220,7 @@ namespace DinderMVC.Controllers
         [ProducesResponseType(200)]
         [ProducesResponseType(404)]
         [ProducesResponseType(500)]
-        public async Task<IActionResult> GetPartyAsync(Guid appInstallID, int PartyID, Guid UserGuid)
+        public async Task<IActionResult> GetPartyAsync([BindRequired] Guid appInstallID, [BindRequired] int PartyID, [BindRequired] Guid UserGuid)
         {
             string name = nameof(GetPartyAsync);
             var response = new SingleResponse<PartyDM>();
@@ -291,6 +236,11 @@ namespace DinderMVC.Controllers
                     return BadRequest();
                 }
 
+                if (!(await DbContext.UserInParty(PartyID, UserGuid)))
+                {
+                    LogGatekeeperInfraction(appInstallID, UserGuid, name);
+                    return BadRequest();
+                }
 
                 // Get the party by id
                 PartyDM party = await DbContext.GetDetailedPartyByIDAsync(new Party(PartyID));
@@ -315,7 +265,7 @@ namespace DinderMVC.Controllers
         /// Creates a new party
         /// </summary>
         /// <param name="request">Request model</param>
-        /// <param name="UserGuid">UserGuid</param>
+        /// <param name="appInstallID">App Install Guid</param>
         /// <returns>A response with new meal</returns>
         /// <response code="200">Returns the meal list</response>
         /// <response code="201">A response as creation of party</response>
@@ -326,7 +276,7 @@ namespace DinderMVC.Controllers
         [ProducesResponseType(201)]
         [ProducesResponseType(400)]
         [ProducesResponseType(500)]
-        public async Task<IActionResult> PostPartyAsync(Guid UserGuid, [FromBody] PostPartyRequest request)
+        public async Task<IActionResult> PostPartyAsync([BindRequired] Guid appInstallID, [FromBody] PostPartyRequest request)
         {
             string name = nameof(PostPartyAsync);
             var response = new SingleResponse<PartyDM>();
@@ -336,9 +286,9 @@ namespace DinderMVC.Controllers
                 LogMethodInvoked(name);
 
 
-                if (!(await DbContext.AppInstallRegistered(request.appInstallID)))
+                if (!(await DbContext.AppInstallRegistered(appInstallID)))
                 {
-                    LogInvalidInstall(request.appInstallID, name);
+                    LogInvalidInstall(appInstallID, name);
                     return BadRequest();
                 }
 
@@ -348,20 +298,15 @@ namespace DinderMVC.Controllers
                 // Create entity from request model
                 var entity = request.ToEntity();
 
-
-                
-
                 // Add entity to repository
                 DbContext.Parties.Add(entity);
 
-                // Save entity in database
-                await DbContext.SaveChangesAsync();
-
                 //Meals
-                List<UserMeal> userMeals = DbContext.Meals.Where(x => x.CookGuid == request.userGUID).ToList();
+                List<UserMeal> userMeals = DbContext.UserMeals
+                    .Where(x => x.CookGuid == request.userGUID).ToList();
                 foreach (UserMeal meal in userMeals)
                 {
-                    PartyMeal partyMeal = new PartyMeal(entity.PartyID, UserGuid, meal.MealID);
+                    PartyMeal partyMeal = new PartyMeal(entity.PartyID, request.userGUID, meal.MealID);
                     entity.Meals.Add(partyMeal);
                 }
 
@@ -382,72 +327,11 @@ namespace DinderMVC.Controllers
         }
 
 
-        //// POST
-        //// api/v1/Party/{PartyID}/Invites
-
-        ///// <summary>
-        ///// Creates a new party invite
-        ///// </summary>
-        ///// <param name="request">Request model</param>
-        ///// <returns>A response with new meal</returns>
-        ///// <response code="200">Returns the meal list</response>
-        ///// <response code="201">A response as creation of party</response>
-        ///// <response code="400">For bad request</response>
-        ///// <response code="500">If there was an internal server error</response>
-        //[HttpPost("")]
-        //[ProducesResponseType(200)]
-        //[ProducesResponseType(201)]
-        //[ProducesResponseType(400)]
-        //[ProducesResponseType(500)]
-        //public async Task<IActionResult> PostPartyInviteAsync([FromBody] PostPartyRequest request)
-        //{
-        //    Logger?.LogDebug("'{0}' has been invoked", nameof(PostPartyInviteAsync));
-
-
-        //    AppInstallDM AI = DbContext.AppInstalls.Where(x => x.AppInstallGUID == request.appInstallID).Select(x => x.ReturnDTO()).FirstOrDefault();
-        //    if (AI == null)
-        //    {
-        //        ModelState.AddModelError("AppInstall", "Your app install cannot be validated. Try reinstalling.");
-        //        Logger?.LogDebug("'{0}' has had an invalid install validation attempt using " + request.appInstallID.ToString(), nameof(PostPartyInviteAsync));
-        //        return BadRequest();
-        //    }
-
-        //    var response = new SingleResponse<PartyDM>();
-
-        //    try
-        //    {
-
-        //        if (!ModelState.IsValid)
-        //            return BadRequest();
-
-        //        // Create entity from request model
-        //        var entity = request.ToEntity();
-
-        //        // Add entity to repository
-        //        DbContext.Parties.Add(entity);
-
-        //        // Save entity in database
-        //        await DbContext.SaveChangesAsync();
-
-        //        // Set the entity to response model
-        //        response.Model = entity.ReturnDM();
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        response.DidError = true;
-        //        response.ErrorMessage = "There was an internal error, please contact to technical support.";
-
-        //        Logger?.LogCritical("There was an error on '{0}' invocation: {1}", nameof(PostPartyInviteAsync), ex);
-        //    }
-
-        //    return response.ToHttpResponse();
-        //}
-
         // PUT
         // api/v1/Parties/PartyID/Settings
 
         /// <summary>
-        /// Updates an existing party settings
+        /// Updates an existing party settings --Untested
         /// </summary>
         /// <param name="PartyID">Party ID</param>
         /// <param name="request">Request model</param>
@@ -521,7 +405,7 @@ namespace DinderMVC.Controllers
         // api/v1/Users/Meals/5
 
         /// <summary>
-        /// Updates an existing party
+        /// Updates an existing party --Untested
         /// </summary>
         /// <param name="PartyID">Party ID</param>
         /// <param name="request">Request model</param>
@@ -590,7 +474,7 @@ namespace DinderMVC.Controllers
         // api/v1/Users/Parties/5
 
         /// <summary>
-        /// Deletes an existing party
+        /// Deletes an existing party --Untested
         /// </summary>
         /// <param name="appInstallID">AppInstallID</param>
         /// <param name="userGuid">userGuid</param>
@@ -650,7 +534,7 @@ namespace DinderMVC.Controllers
         // api/v1/Users/Meals/5
 
         /// <summary>
-        /// Updates an existing party invite
+        /// Updates an existing party invite --Untested
         /// </summary>
         /// <param name="PartyID">Party ID</param>
         /// <param name="userGuid">Party ID</param>
@@ -716,7 +600,7 @@ namespace DinderMVC.Controllers
         // api/v1/Users/Parties/5
 
         /// <summary>
-        /// Deletes an existing Party Invite
+        /// Deletes an existing Party Invite --Untested
         /// </summary>
         /// <param name="appInstallID">AppInstallID</param>
         /// <param name="userGuid">userGuid</param>
@@ -772,7 +656,7 @@ namespace DinderMVC.Controllers
         // api/v1/Users/Meals/5
 
         /// <summary>
-        /// Updates an existing party choice
+        /// Updates an existing party choice --Untested
         /// </summary>
         /// <param name="partyID">Party ID</param>
         /// <param name="userGuid">User GUID</param>
@@ -838,7 +722,7 @@ namespace DinderMVC.Controllers
         // api/v1/Users/Parties/5
 
         /// <summary>
-        /// Deletes an existing Party Choice
+        /// Deletes an existing Party Choice --Untested
         /// </summary>
         /// <param name="appInstallID">AppInstallID</param>
         /// <param name="userGuid">userGuid</param>
@@ -893,7 +777,7 @@ namespace DinderMVC.Controllers
         // api/v1/Party/
 
         /// <summary>
-        /// Creates a new party choice
+        /// Creates a new party choice --Untested
         /// </summary>
         /// <param name="partyID">Request model</param>
         /// <param name="userGuid">Request model</param>
@@ -957,7 +841,7 @@ namespace DinderMVC.Controllers
         // api/v1/Party/PartyID/Invites
 
         /// <summary>
-        /// Retrieves party choices
+        /// Retrieves party choices --Untested
         /// </summary>
         /// <param name="appInstallID">AppInstallID</param>
         /// <param name="PartyID">PartyID</param>
@@ -1009,7 +893,7 @@ namespace DinderMVC.Controllers
         // api/v1/Party/
 
         /// <summary>
-        /// Creates a new party
+        /// Creates a new party --Untested
         /// </summary>
         /// <param name="partyID">Request model</param>
         /// <param name="request">Request model</param>
@@ -1071,7 +955,7 @@ namespace DinderMVC.Controllers
         // api/v1/Party/PartyID/Meals
 
         /// <summary>
-        /// Retrieves party meals
+        /// Retrieves party meals --Untested
         /// </summary>
         /// <param name="appInstallID">AppInstallID</param>
         /// <param name="partyID">PartyID</param>
@@ -1120,7 +1004,7 @@ namespace DinderMVC.Controllers
         // api/v1/Party/
 
         /// <summary>
-        /// Creates a new party meal
+        /// Creates a new party meal --Untested
         /// </summary>
         /// <param name="request">Request model</param>
         /// <returns>A response with new meal</returns>
@@ -1178,7 +1062,7 @@ namespace DinderMVC.Controllers
         // api/v1/Users/Parties/5
 
         /// <summary>
-        /// Deletes an existing Party Meal
+        /// Deletes an existing Party Meal --Untested
         /// </summary>
         /// <param name="appInstallID">AppInstallID</param>
         /// <param name="userGuid">userGuid</param>

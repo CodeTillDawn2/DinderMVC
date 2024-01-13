@@ -54,8 +54,7 @@ namespace DinderMVC.Models
                 builder
                     .Property(p => p.UserGUID)
                     .HasColumnType("uniqueidentifier")
-                    .IsRequired()
-                    .HasDefaultValueSql("(newid())");
+                    .IsRequired();
 
 
 
@@ -71,14 +70,12 @@ namespace DinderMVC.Models
                 builder
                     .Property(p => p.CreateDate)
                     .HasColumnType("datetime")
-                    .IsRequired()
-                    .HasDefaultValueSql("(getdate())");
+                    .IsRequired();
 
                 builder
                     .Property(p => p.LastActiveDate)
                     .HasColumnType("datetime")
-                    .IsRequired()
-                    .HasDefaultValueSql("(getdate())");
+                    .IsRequired();
 
             }
         }

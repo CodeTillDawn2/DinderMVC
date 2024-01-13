@@ -1,9 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.30907.101
+# Visual Studio Version 17
+VisualStudioVersion = 17.7.34031.279
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DinderMVC", "DinderMVC.csproj", "{12285169-2AEC-4D06-A7D0-FE381F8133CC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DinderDLL", "..\DinderDLL\DinderDLL.csproj", "{8D21C7FB-6412-495D-B732-AD9ABE66F738}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DinderTesting", "..\DinderTesting\DinderTesting.csproj", "{E301C5DE-7AD9-4BD9-B51B-B4C32C68113E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +19,14 @@ Global
 		{12285169-2AEC-4D06-A7D0-FE381F8133CC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{12285169-2AEC-4D06-A7D0-FE381F8133CC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{12285169-2AEC-4D06-A7D0-FE381F8133CC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8D21C7FB-6412-495D-B732-AD9ABE66F738}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8D21C7FB-6412-495D-B732-AD9ABE66F738}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8D21C7FB-6412-495D-B732-AD9ABE66F738}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8D21C7FB-6412-495D-B732-AD9ABE66F738}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E301C5DE-7AD9-4BD9-B51B-B4C32C68113E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E301C5DE-7AD9-4BD9-B51B-B4C32C68113E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E301C5DE-7AD9-4BD9-B51B-B4C32C68113E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E301C5DE-7AD9-4BD9-B51B-B4C32C68113E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -9,8 +9,8 @@ namespace DinderMVC.Controllers
     public interface PartiesInterface
     {
 
-        public abstract Task<IActionResult> GetPartiesAsync(Guid appInstallID, int pageSize = 10, int pageNumber = 1, Guid? cookGuid = null,
-            int? partyID = null, string sessionName = null, string sessionMessage = null);
+        public abstract Task<IActionResult> GetPartiesAsync(Guid appInstallID, Guid UserGuid, int pageSize = 10, int pageNumber = 1, Guid? cookGuid = null,
+             string sessionName = null, string sessionMessage = null);
 
 
         public abstract Task<IActionResult> GetPartyAsync(Guid appInstallID, int PartyID, Guid UserGuid);
@@ -22,7 +22,7 @@ namespace DinderMVC.Controllers
 
         public abstract Task<IActionResult> DeletePartyAsync(Guid appInstallID, Guid userGuid, int PartyID);
 
-        public abstract Task<IActionResult> GetPartySettingAsync(Guid appInstallID, int PartyID, int SettingID, Guid UserGuid);
+
         public abstract Task<IActionResult> GetPartySettingsAsync(Guid appInstallID, int PartyID, Guid UserGuid);
         public abstract Task<IActionResult> PutPartySettingsAsync(int PartyID, [FromBody] PutPartySettingsRequest request);
 

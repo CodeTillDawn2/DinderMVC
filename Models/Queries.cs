@@ -38,6 +38,16 @@ namespace DinderMVC.Queries
             return true;
         }
 
+        public static async Task<bool> UserInParty(this DinderContext dbContext, int PartyID, Guid UserGuid)
+        {
+            Party party = dbContext.Parties.Where(x => x.PartyID == PartyID).Include(x => x.PartyInvites).FirstOrDefault();
+            if (party == null)
+                return false;
+            if (party.CookGuid != UserGuid && !party.PartyInvites.Select(x => x.UserGuid).ToList().Contains(UserGuid)) 
+                return false;
+            return true;
+        }
+
         /// <summary>
         /// Gets all users according to filters
         /// </summary>
@@ -182,15 +192,13 @@ namespace DinderMVC.Queries
             };
 
 
-
-            // Get query from DbSet
-            //var query = dbContext.UserFriends.AsNoTracking().Include(c => c.Friend).Where(x => x.UserGUID == userGuid).Select(x => new FriendDTO(x)).AsQueryable();
-
-            //return query;
         }
 
         public static async Task<List<PartyInviteViewCO>> GetPartyInvitesAsync(this DinderContext dbContext, int partyID)
         {
+
+
+
 
             //Build where clause
 
@@ -459,18 +467,26 @@ namespace DinderMVC.Queries
             return query.Select(x => x.ReturnDM());
         }
 
-        public static IQueryable<PartyDM> GetParties(this DinderContext dbContext, Guid? Cookguid, int? PartyID, string SessionName, string SessionMessage)
+        public static IQueryable<PartyDM> GetParties(this DinderContext dbContext, Guid UserGuid, Guid? Cookguid, string SessionName, string SessionMessage)
         {
             // Get query from DbSet
-            var query = dbContext.Parties.Include(b => b.Meals).AsQueryable();
+            var query = DetailedPartyQuery(dbContext.Parties)
+                .AsQueryable();
 
             // Filter by: 'Cookguid'
             if (Cookguid.HasValue)
                 query = query.Where(item => item.CookGuid == Cookguid);
 
-            // Filter by: 'PartyID'
-            if (PartyID.HasValue)
-                query = query.Where(item => item.PartyID == PartyID);
+            List<int> combinedPartyIds = dbContext.PartyInvites
+                .Where(x => x.UserGuid == UserGuid)
+                .Select(x => x.PartyID)
+                .Union(dbContext.Parties
+                    .Where(x => x.CookGuid == UserGuid)
+                    .Select(x => x.PartyID))
+                .ToList();
+
+            // Ensure that any record returned in the query has a party ID that matches the members of the invites list
+            query = query.Where(item => combinedPartyIds.Contains(item.PartyID));
 
             // Filter by: 'SessionName'
             if (SessionName != null)
@@ -493,12 +509,25 @@ namespace DinderMVC.Queries
 
             List<PartyInviteViewCO> invites = await dbContext.GetPartyInvitesAsync(entity.PartyID);
             List<PartySettingsViewCO> Settings = await dbContext.GetPartySettingsAsync(entity.PartyID);
-            PartyDM party = dbContext.Parties.Include(x => x.Meals).AsSplitQuery().Where(item => item.PartyID == entity.PartyID).FirstOrDefault().ReturnDM();
-            party.InviteList = invites;
+            PartyDM party = DetailedPartyQuery(dbContext.Parties).Where(item => item.PartyID == entity.PartyID).FirstOrDefault().ReturnDM();
+                
+            party.InviteList = invites.ConvertAll(x => x.ReturnDM());
             party.SettingList = Settings;
             return party;
 
         }
+
+        // Define a delegate type for your lambda expression
+        public delegate IQueryable<Party> DetailedPartyDelegate(IQueryable<Party> query);
+
+        // Create a method that returns the lambda expression
+        public static DetailedPartyDelegate DetailedPartyQuery = query =>
+            query.Include(b => b.Meals).ThenInclude(b => b.Meal)
+                .Include(b => b.PartyInvites)
+                .Include(b => b.Settings).ThenInclude(c => c.Setting)
+                .Include(b => b.Settings).ThenInclude(c => c.Choice)
+                .Include(b => b.PartyChoices);
+
 
 
         public static async Task<PartySettingsViewCO> GetPartySettingByIDsEditableAsync(this DinderContext dbContext, int PartyID, int SettingID)
@@ -519,7 +548,7 @@ namespace DinderMVC.Queries
             => dbContext.PartyInvites.Where(item => item.PartyID == entity.PartyID && item.UserGuid == userentity.UserGUID).FirstOrDefault();
 
         public static async Task<PartyChoice> GetPartyChoiceEditableAsync(this DinderContext dbContext, Party entity, User userentity, UserMeal meal)
-         => dbContext.PartyChoices.Where(item => item.PartyID == entity.PartyID && item.UserGUID == userentity.UserGUID && item.MealID == meal.MealID && item.CookGUID == meal.CookGuid).FirstOrDefault();
+         => dbContext.PartyChoices.Where(item => item.PartyID == entity.PartyID && item.UserGUID == userentity.UserGUID && item.MealID == meal.MealID).FirstOrDefault();
 
         public static async Task<UserMeal> GetUserMealByIDEditableAsync(this DinderContext dbContext, UserMeal entity)
             => dbContext.UserMeals.Where(item => item.MealID == entity.MealID && item.CookGuid == entity.CookGuid).FirstOrDefault();

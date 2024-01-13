@@ -14,7 +14,7 @@ namespace DinderMVC.Models
                 DisplayName = request.displayName,
 
             };
-        public static UserMeal ToEntity(this PostMealRequest request)
+        public static UserMeal ToEntity(this PostUserMealRequest request)
             => new UserMeal
             {
 
@@ -43,7 +43,9 @@ namespace DinderMVC.Models
 
             CookGuid = request.userGUID,
             SessionName = request.sessionName,
-            SessionMessage = request.sessionMessage
+            SessionMessage = request.sessionMessage,
+            StatusID = 1
+            
 
 
         };

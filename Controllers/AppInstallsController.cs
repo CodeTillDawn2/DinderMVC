@@ -29,7 +29,7 @@ namespace DinderMVC.Controllers
         // api/v1/AppInstalls/{LookupGUID}
 
         /// <summary>
-        /// Retrieves a App Install by GUID
+        /// Retrieves a App Install by GUID --Untested
         /// </summary>
         /// <param name="request">Request model</param>
         /// <returns>A response with an App Install</returns>
@@ -85,7 +85,7 @@ namespace DinderMVC.Controllers
         //    // api/v1/AppInstall/
 
         //    /// <summary>
-        //    /// Creates a new App Install
+        //    /// Creates a new App Install --Untested
         //    /// </summary>
         //    /// <param name="request">Request model</param>
         //    /// <returns>A response with new App Install</returns>

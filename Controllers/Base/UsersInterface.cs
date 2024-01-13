@@ -34,9 +34,9 @@ namespace DinderMVC.Controllers
 
         public abstract Task<IActionResult> GetUserMealAsync(Guid appInstallID, Guid UserGuid, int mealID);
 
-        public abstract Task<IActionResult> PostUserMealAsync([FromBody] PostMealRequest request);
+        public abstract Task<IActionResult> PostUserMealAsync([FromBody] PostUserMealRequest request);
 
-        public abstract Task<IActionResult> PutUserMealsAsync(Guid userGuid, int MealID, [FromBody] PutMealRequest request);
+        public abstract Task<IActionResult> PutUserMealsAsync(Guid userGuid, int MealID, [FromBody] PostUserMealRequest request);
 
         public abstract Task<IActionResult> DeleteUserMealAsync(Guid appInstallID, Guid userGuid, int mealID);
 #pragma warning restore CS1591

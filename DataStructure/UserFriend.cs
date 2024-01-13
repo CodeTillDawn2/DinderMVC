@@ -65,14 +65,12 @@ namespace DinderMVC.Models
                 builder
                     .Property(p => p.FriendSinceDate)
                     .HasColumnType("datetime")
-                    .IsRequired()
-                    .HasDefaultValueSql("(getdate())");
+                    .IsRequired();
 
                 builder
                     .Property(p => p.IsBlocked)
                     .HasColumnType("bit")
-                    .IsRequired()
-                    .HasDefaultValueSql("((0))");
+                    .IsRequired();
 
                 builder.HasOne(x => x.Friend).WithOne().HasForeignKey<User>(a => a.UserGUID).OnDelete(DeleteBehavior.Restrict);
                 //builder.HasOne(x => x.Friend).WithMany(b => b.)

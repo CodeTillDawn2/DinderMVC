@@ -48,14 +48,12 @@ namespace DinderMVC.Models
                 builder
                     .Property(p => p.AppInstallGUID)
                     .HasColumnType("uniqueidentifier")
-                    .IsRequired()
-                    .HasDefaultValueSql("(newid())");
+                    .IsRequired();
 
                 builder
                     .Property(p => p.InstallDate)
                     .HasColumnType("datetime")
-                    .IsRequired()
-                    .HasDefaultValueSql("(getdate())");
+                    .IsRequired();
 
                 // Set configuration for columns
                 builder.Property(p => p.IPAddress).HasColumnType("varchar(255)").IsRequired();

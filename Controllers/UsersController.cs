@@ -29,7 +29,7 @@ namespace DinderMVC.Controllers
         // api/v1/Users/
 
         /// <summary>
-        /// Retrieves users
+        /// Retrieves users --Untested
         /// </summary>
         /// <param name="appInstallID">AppInstallID</param>
         /// <param name="pageSize">Page size</param>
@@ -86,7 +86,7 @@ namespace DinderMVC.Controllers
         // api/v1/Users/
 
         /// <summary>
-        /// Retrieves user friends
+        /// Retrieves user friends --Untested
         /// </summary>
         /// <param name="appInstallID">AppInstallID</param>
         /// <param name="userGuid">User Guid</param>
@@ -136,7 +136,7 @@ namespace DinderMVC.Controllers
         // api/v1/Parties/
 
         /// <summary>
-        /// Retrieves user Parties
+        /// Retrieves user Parties --Untested
         /// </summary>
         /// <param name="appInstallID">AppInstallID</param>
         /// <param name="userGuid">User Guid</param>
@@ -185,7 +185,7 @@ namespace DinderMVC.Controllers
         // api/v1/Users/{UserGuid}/Meals
 
         /// <summary>
-        /// Retrieves user meals
+        /// Retrieves user meals --Untested
         /// </summary>
         /// <param name="appInstallID">AppInstallID</param>
         /// <param name="pageSize">Page size</param>
@@ -236,7 +236,7 @@ namespace DinderMVC.Controllers
         // api/v1/Users/
 
         /// <summary>
-        /// Retrieves a user by GUID
+        /// Retrieves a user by GUID --Untested
         /// </summary>
         /// <param name="appInstallID">AppInstallID</param>
         /// <param name="UserGuid">User GUID</param>
@@ -280,7 +280,7 @@ namespace DinderMVC.Controllers
         // api/v1/Users/
 
         /// <summary>
-        /// Creates a new user
+        /// Creates a new user --Untested
         /// </summary>
         /// <param name="request">Request model</param>
         /// <returns>A response with new user</returns>
@@ -348,7 +348,7 @@ namespace DinderMVC.Controllers
         // api/v1/Users/5
 
         /// <summary>
-        /// Updates an existing user
+        /// Updates an existing user --Untested
         /// </summary>
         /// <param name="appInstallID">AppInstallID</param>
         /// <param name="userGuid">User GUID</param>
@@ -404,7 +404,7 @@ namespace DinderMVC.Controllers
         // api/v1/Users/Users/5
 
         /// <summary>
-        /// Deletes an existing user
+        /// Deletes an existing user --Untested
         /// </summary>
         /// <param name="appInstallID">AppInstallID</param>
         /// <param name="userGuid">User GUID</param>
@@ -454,7 +454,7 @@ namespace DinderMVC.Controllers
         // api/v1/Users/{UserGUID}/Friends
 
         /// <summary>
-        /// Creates a user friend
+        /// Creates a user friend --Untested
         /// </summary>
         /// <param name="userGuid">User GUID</param>
         /// <param name="request">Request</param>
@@ -522,7 +522,7 @@ namespace DinderMVC.Controllers
         // api/v1/Users/5
 
         /// <summary>
-        /// Updates an existing user friend
+        /// Updates an existing user friend --Untested
         /// </summary>
         /// <param name="userGuid">AppInstallID</param>
         /// <param name="friendGuid">AppInstallID</param>
@@ -578,7 +578,7 @@ namespace DinderMVC.Controllers
         // api/v1/Users/{UserGUID}/Friends
 
         /// <summary>
-        /// Deletes an existing user friend
+        /// Deletes an existing user friend --Untested
         /// </summary>
         /// <param name="appInstallID">AppInstallID</param>
         /// <param name="userGuid">User GUID</param>
@@ -630,7 +630,7 @@ namespace DinderMVC.Controllers
         // api/v1/Users/{UserGUID}/Meals
 
         /// <summary>
-        /// Retrieves meals
+        /// Retrieves meals --Untested
         /// </summary>
         /// <param name="appInstallID">AppInstallID</param>
         /// <param name="pageSize">Page size</param>
@@ -698,7 +698,7 @@ namespace DinderMVC.Controllers
         // api/v1/Users/{UserGUID}/Meals/{MealID}
 
         /// <summary>
-        /// Retrieves a meal by MealID
+        /// Retrieves a meal by MealID --Untested
         /// </summary>
         /// <param name="appInstallID">AppInstallID</param>
         /// <param name="UserGuid">UserGuid</param>
@@ -752,7 +752,7 @@ namespace DinderMVC.Controllers
         // api/v1/Users/{UserGUID}/Meals
 
         /// <summary>
-        /// Creates a new meal
+        /// Creates a new meal --Untested
         /// </summary>
         /// <param name="request">Request model</param>
         /// <returns>A response with new meal</returns>
@@ -765,7 +765,7 @@ namespace DinderMVC.Controllers
         [ProducesResponseType(201)]
         [ProducesResponseType(400)]
         [ProducesResponseType(500)]
-        public async Task<IActionResult> PostUserMealAsync([FromBody] PostMealRequest request)
+        public async Task<IActionResult> PostUserMealAsync([FromBody] PostUserMealRequest request)
         {
 
             string name = nameof(PostUserMealAsync);
@@ -801,7 +801,7 @@ namespace DinderMVC.Controllers
                 var entity = request.ToEntity();
 
 
-                DbContext.Meals.Add(entity);
+                DbContext.UserMeals.Add(entity);
 
                 // Save entity in database
                 await DbContext.SaveChangesAsync();
@@ -826,7 +826,7 @@ namespace DinderMVC.Controllers
         // api/v1/Users/{UserGUID}/Meals/{mealID}
 
         /// <summary>
-        /// Deletes an existing meal
+        /// Deletes an existing meal --Untested
         /// </summary>
         /// <param name="appInstallID">AppInstallID</param>
         /// <param name="userGuid">UserGuid</param>
@@ -884,7 +884,7 @@ namespace DinderMVC.Controllers
         // api/v1/Users/Meals/5
 
         /// <summary>
-        /// Updates an existing meal
+        /// Updates an existing meal --Untested
         /// </summary>
         /// <param name="MealID">Meal ID</param>
         /// <param name="userGuid">userGuid</param>
@@ -897,7 +897,7 @@ namespace DinderMVC.Controllers
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]
         [ProducesResponseType(500)]
-        public async Task<IActionResult> PutUserMealsAsync(Guid userGuid, int MealID, [FromBody] PutMealRequest request)
+        public async Task<IActionResult> PutUserMealsAsync(Guid userGuid, int MealID, [FromBody] PostUserMealRequest request)
         {
             string name = nameof(PutUserMealsAsync);
             var response = new SingleResponse<MealDM>();
