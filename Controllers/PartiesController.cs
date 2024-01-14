@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 using DinderDLL.DTOs;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Authorization;
+using DinderMVC.Services;
 
 namespace DinderMVC.Controllers
 {
@@ -36,8 +37,6 @@ namespace DinderMVC.Controllers
         /// <summary>
         /// Retrieves parties the user is invited to or hosting
         /// </summary>
-        /// <param name="appInstallID">App Install Guid (required)</param>
-        /// <param name="userID">User Guid (required)</param>
         /// <param name="pageSize">Page size</param>
         /// <param name="pageNumber">Page number</param>
         /// <param name="cookGuid">Cook GUID</param>
@@ -51,24 +50,20 @@ namespace DinderMVC.Controllers
         [ProducesResponseType(400)]
         [ProducesResponseType(500)]
         [Authorize(AuthenticationSchemes = "Bearer")]
-        public async Task<IActionResult> GetPartiesAsync([BindRequired] Guid appInstallID, [BindRequired] Guid userID, int pageSize = 10, int pageNumber = 1, 
+        public async Task<IActionResult> GetPartiesAsync(int pageSize = 10, int pageNumber = 1, 
             Guid? cookGuid = null, string sessionName = null, string sessionMessage = null)
         {
             string name = nameof(GetPartiesAsync);
             LogMethodInvoked(name);
+
+            UserIdentity id = APIServices.GetUserID(HttpContext.User.Claims);
 
             var response = new PagedResponse<PartyDM>();
 
             try
             {
 
-                if (!(await DbContext.AppInstallRegistered(appInstallID)))
-                {
-                    LogInvalidInstall(appInstallID, name);
-                    return BadRequest();
-                }
-
-                var query = DbContext.GetParties(userID, cookGuid, sessionName, sessionMessage);
+                var query = DbContext.GetParties(id.UserGuid, cookGuid, sessionName, sessionMessage);
 
                 response.PageSize = pageSize;
                 response.PageNumber = pageNumber;
@@ -99,34 +94,30 @@ namespace DinderMVC.Controllers
         /// <summary>
         /// Retrieves party settings
         /// </summary>
-        /// <param name="appInstallID">App Install Guid (required)</param>
         /// <param name="PartyID">Party ID (required)</param>
-        /// <param name="UserGuid">User Guid (required)</param>
         /// <returns>A response with party settings list</returns>
-        /// <response code="200">Returns the stock items list</response>
+        /// <response code="200">Returns the party settings list</response>
         /// <response code="500">If there was an internal server error</response>
         [HttpGet("{PartyID}/Settings")]
         [ProducesResponseType(typeof(PagedResponse<PartySettingsViewCO>),200)]
         [ProducesResponseType(400)]
         [ProducesResponseType(500)]
-        public async Task<IActionResult> GetPartySettingsAsync([BindRequired] Guid appInstallID, [BindRequired] int PartyID, [BindRequired] Guid UserGuid)
+        [Authorize(AuthenticationSchemes = "Bearer")]
+        public async Task<IActionResult> GetPartySettingsAsync([BindRequired] int PartyID)
         {
             string name = nameof(GetPartySettingsAsync);
+
+            UserIdentity id = APIServices.GetUserID(HttpContext.User.Claims);
+
             var response = new PagedResponse<PartySettingsViewCO>();
 
             try
             {
                 LogMethodInvoked(name);
 
-                if (!(await DbContext.AppInstallRegistered(appInstallID)))
+                if (!(await DbContext.UserInParty(PartyID,id.UserGuid)))
                 {
-                    LogInvalidInstall(appInstallID, name);
-                    return BadRequest();
-                }
-
-                if (!(await DbContext.UserInParty(PartyID,UserGuid)))
-                {
-                    LogGatekeeperInfraction_NotInvited(appInstallID, UserGuid, name);
+                    LogGatekeeperInfraction_NotInvited(id.AppInstallGuid, id.UserGuid, name);
                     return BadRequest();
                 }
 
@@ -154,33 +145,29 @@ namespace DinderMVC.Controllers
         /// <summary>
         /// Retrieves party invites
         /// </summary>
-        /// <param name="appInstallID">App Install Guid (required)</param>
         /// <param name="PartyID">Party ID (required)</param>
-        /// <param name="UserGuid">User Guid (required)</param>
         /// <returns>A response with party settings list</returns>
         /// <response code="200">Returns the stock items list</response>
         /// <response code="500">If there was an internal server error</response>
         [HttpGet("{PartyID}/Invites")]
-        [ProducesResponseType(200)]
+        [ProducesResponseType(typeof(PagedResponse<PartyInviteViewCO>), 200)]
         [ProducesResponseType(500)]
-        public async Task<IActionResult> GetPartyInvitesAsync([BindRequired] Guid appInstallID, [BindRequired] int PartyID, [BindRequired] Guid UserGuid)
+        [Authorize(AuthenticationSchemes = "Bearer")]
+        public async Task<IActionResult> GetPartyInvitesAsync([BindRequired] int PartyID)
         {
             string name = nameof(GetPartyInvitesAsync);
+
+            UserIdentity id = APIServices.GetUserID(HttpContext.User.Claims);
+
             var response = new PagedResponse<PartyInviteViewCO>();
 
             try
             {
                 LogMethodInvoked(name);
 
-                if (!(await DbContext.AppInstallRegistered(appInstallID)))
+                if (!(await DbContext.UserInParty(PartyID, id.UserGuid)))
                 {
-                    LogInvalidInstall(appInstallID, name);
-                    return BadRequest();
-                }
-
-                if (!(await DbContext.UserInParty(PartyID, UserGuid)))
-                {
-                    LogGatekeeperInfraction_NotInvited(appInstallID, UserGuid, name);
+                    LogGatekeeperInfraction_NotInvited(id.AppInstallGuid, id.UserGuid, name);
                     return BadRequest();
                 }
 
@@ -211,20 +198,22 @@ namespace DinderMVC.Controllers
         /// <summary>
         /// Retrieves a party by PartyID
         /// </summary>
-        /// <param name="appInstallID">App Install Guid (required)</param>
         /// <param name="PartyID">Party ID (required)</param>
-        /// <param name="UserGuid">User Guid (required)</param>
         /// <returns>A response with a party</returns>
-        /// <response code="200">Returns the party list</response>
+        /// <response code="200">Returns the party</response>
         /// <response code="404">If meal is not exists</response>
         /// <response code="500">If there was an internal server error</response>
         [HttpGet("{PartyID}")]
-        [ProducesResponseType(200)]
+        [ProducesResponseType(typeof(SingleResponse<PartyDM>), 200)]
         [ProducesResponseType(404)]
         [ProducesResponseType(500)]
-        public async Task<IActionResult> GetPartyAsync([BindRequired] Guid appInstallID, [BindRequired] int PartyID, [BindRequired] Guid UserGuid)
+        [Authorize(AuthenticationSchemes = "Bearer")]
+        public async Task<IActionResult> GetPartyAsync([BindRequired] int PartyID)
         {
             string name = nameof(GetPartyAsync);
+
+            UserIdentity id = APIServices.GetUserID(HttpContext.User.Claims);
+
             var response = new SingleResponse<PartyDM>();
 
             try
@@ -232,15 +221,9 @@ namespace DinderMVC.Controllers
                 LogMethodInvoked(name);
 
 
-                if (!(await DbContext.AppInstallRegistered(appInstallID)))
+                if (!(await DbContext.UserInParty(PartyID, id.UserGuid)))
                 {
-                    LogInvalidInstall(appInstallID, name);
-                    return BadRequest();
-                }
-
-                if (!(await DbContext.UserInParty(PartyID, UserGuid)))
-                {
-                    LogGatekeeperInfraction_NotInvited(appInstallID, UserGuid, name);
+                    LogGatekeeperInfraction_NotInvited(id.AppInstallGuid, id.UserGuid, name);
                     return BadRequest();
                 }
 
@@ -267,45 +250,40 @@ namespace DinderMVC.Controllers
         /// Creates a new party
         /// </summary>
         /// <param name="request">Request model</param>
-        /// <param name="appInstallID">App Install Guid</param>
         /// <returns>A response with new meal</returns>
-        /// <response code="200">Returns the meal list</response>
         /// <response code="201">A response as creation of party</response>
         /// <response code="400">For bad request</response>
         /// <response code="500">If there was an internal server error</response>
         [HttpPost("")]
-        [ProducesResponseType(200)]
-        [ProducesResponseType(201)]
+        [ProducesResponseType(typeof(SingleResponse<PartyDM>), 201)]
         [ProducesResponseType(400)]
         [ProducesResponseType(500)]
-        public async Task<IActionResult> PostPartyAsync([BindRequired] Guid appInstallID, [FromBody] PostPartyRequest request)
+        [Authorize(AuthenticationSchemes = "Bearer")]
+        public async Task<IActionResult> PostPartyAsync([FromBody] PostPartyRequest request)
         {
             string name = nameof(PostPartyAsync);
+
+            UserIdentity id = APIServices.GetUserID(HttpContext.User.Claims);
+
             var response = new SingleResponse<PartyDM>();
 
             try
             {
                 LogMethodInvoked(name);
 
-
-                if (!(await DbContext.AppInstallRegistered(appInstallID)))
-                {
-                    LogInvalidInstall(appInstallID, name);
-                    return BadRequest();
-                }
-
                 if (!ModelState.IsValid)
                     return BadRequest();
 
                 // Create entity from request model
-                var entity = request.ToEntity();
+                var entity = request.ToEntity(id.UserGuid);
+
 
                 // Add entity to repository
                 DbContext.Parties.Add(entity);
 
                 //Meals
                 List<UserMeal> userMeals = DbContext.UserMeals
-                    .Where(x => x.CookGuid == request.userGUID).ToList();
+                    .Where(x => x.CookGuid == id.UserGuid).ToList();
                 foreach (UserMeal meal in userMeals)
                 {
                     PartyMeal partyMeal = new PartyMeal(entity.PartyID,  meal.MealID);
@@ -335,8 +313,6 @@ namespace DinderMVC.Controllers
         /// <summary>
         /// Updates an existing party setting --Untested
         /// </summary>
-        /// <param name="AppInstallID">App Install Guid (required)</param>
-        /// <param name="UserGuid">User Guid (required)</param>
         /// <param name="PartyID">Party ID (required)</param>
         /// <param name="SettingID">Setting ID to update (required)</param>
         /// <param name="ChoiceID">Choice ID (required)</param>
@@ -346,27 +322,26 @@ namespace DinderMVC.Controllers
         /// <response code="400">For bad request</response>
         /// <response code="500">If there was an internal server error</response>
         [HttpPut("{PartyID}/Settings/{SettingID}")]
-        [ProducesResponseType(200)]
+        [ProducesResponseType(typeof(PagedResponse<PartySettingsViewCO>), 200)]
         [ProducesResponseType(400)]
         [ProducesResponseType(500)]
-        public async Task<IActionResult> PutPartySettingAsync([BindRequired] Guid AppInstallID, [BindRequired] Guid UserGuid, [BindRequired] int PartyID,
+        [Authorize(AuthenticationSchemes = "Bearer")]
+        public async Task<IActionResult> PutPartySettingAsync([BindRequired] int PartyID,
             [BindRequired] int SettingID, [BindRequired] int ChoiceID, string ChoiceEntry)
         {
             string name = nameof(PutPartySettingAsync);
+
+            UserIdentity id = APIServices.GetUserID(HttpContext.User.Claims);
+
             var response = new PagedResponse<PartySettingsViewCO>();
 
             try
             {
                 LogMethodInvoked(name);
 
-                if (!(await DbContext.AppInstallRegistered(AppInstallID)))
+                if (!(await DbContext.UserIsHost(PartyID, id.UserGuid)))
                 {
-                    LogInvalidInstall(AppInstallID, name);
-                    return BadRequest();
-                }
-                if (!(await DbContext.UserIsHost(PartyID, UserGuid)))
-                {
-                    LogGatekeeperInfraction_NotHost(AppInstallID, UserGuid, name);
+                    LogGatekeeperInfraction_NotHost(id.AppInstallGuid, id.UserGuid, name);
                     return BadRequest();
                 }
                 List<PartySettingsViewCO> model = new List<PartySettingsViewCO>();
@@ -412,19 +387,23 @@ namespace DinderMVC.Controllers
         /// <summary>
         /// Updates an existing party --Untested
         /// </summary>
-        /// <param name="PartyID">Party ID</param>
+        /// <param name="PartyID">Party ID (required)</param>
         /// <param name="request">Request model</param>
         /// <returns>A response as update party result</returns>
         /// <response code="200">If meal was updated successfully</response>
         /// <response code="400">For bad request</response>
         /// <response code="500">If there was an internal server error</response>
         [HttpPut("{PartyID}")]
-        [ProducesResponseType(200)]
+        [ProducesResponseType(typeof(SingleResponse<PartyDM>), 200)]
         [ProducesResponseType(400)]
         [ProducesResponseType(500)]
-        public async Task<IActionResult> PutPartyAsync(int PartyID, [FromBody] PutPartyRequest request)
+        [Authorize(AuthenticationSchemes = "Bearer")]
+        public async Task<IActionResult> PutPartyAsync([BindRequired] int PartyID, [FromBody] PutPartyRequest request)
         {
             string name = nameof(PutPartyAsync);
+
+            UserIdentity id = APIServices.GetUserID(HttpContext.User.Claims);
+
             var response = new SingleResponse<PartyDM>();
 
 
@@ -433,13 +412,7 @@ namespace DinderMVC.Controllers
             {
                 LogMethodInvoked(name);
 
-                if (!(await DbContext.AppInstallRegistered(request.appInstallID)))
-                {
-                    LogInvalidInstall(request.appInstallID, name);
-                    return BadRequest();
-                }
-
-
+   
                 // Get stock item by id
                 var entity = await DbContext.GetPartyByIDEditableAsync(new Party(PartyID));
 
@@ -447,7 +420,7 @@ namespace DinderMVC.Controllers
                 if (entity == null)
                     return NotFound();
 
-                if (entity.CookGuid != request.userGUID)
+                if (entity.CookGuid != id.UserGuid)
                     return Forbid();
 
                 // Set changes to entity
@@ -481,30 +454,25 @@ namespace DinderMVC.Controllers
         /// <summary>
         /// Deletes an existing party --Untested
         /// </summary>
-        /// <param name="appInstallID">AppInstallID</param>
-        /// <param name="userGuid">userGuid</param>
-        /// <param name="PartyID">Party ID</param>
+        /// <param name="PartyID">Party ID (required)</param>
         /// <returns>A response as delete party result</returns>
         /// <response code="200">If meal was deleted successfully</response>
         /// <response code="500">If there was an internal server error</response>
         [HttpDelete("{PartyID}")]
         [ProducesResponseType(200)]
         [ProducesResponseType(500)]
-        public async Task<IActionResult> DeletePartyAsync(Guid appInstallID, Guid userGuid, int PartyID)
+        [Authorize(AuthenticationSchemes = "Bearer")]
+        public async Task<IActionResult> DeletePartyAsync([BindRequired] int PartyID)
         {
             string name = nameof(DeletePartyAsync);
+
+            UserIdentity id = APIServices.GetUserID(HttpContext.User.Claims);
+
             var response = new Response();
 
             try
             {
                 LogMethodInvoked(name);
-
-                if (!(await DbContext.AppInstallRegistered(appInstallID)))
-                {
-                    LogInvalidInstall(appInstallID, name);
-                    return BadRequest();
-                }
-
 
                 // Get stock item by id
                 var entity = await DbContext.GetPartyByIDEditableAsync(new Party(PartyID));
@@ -513,7 +481,7 @@ namespace DinderMVC.Controllers
                 if (entity == null)
                     return NotFound();
 
-                if (entity.CookGuid != userGuid)
+                if (entity.CookGuid != id.UserGuid)
                     return Forbid();
 
                 // Remove entity from repository
@@ -541,8 +509,7 @@ namespace DinderMVC.Controllers
         /// <summary>
         /// Updates an existing party invite --Untested
         /// </summary>
-        /// <param name="PartyID">Party ID</param>
-        /// <param name="userGuid">Party ID</param>
+        /// <param name="PartyID">Party ID (required)</param>
         /// <param name="request">Request model</param>
         /// <returns>A response as update party result</returns>
         /// <response code="200">If meal was updated successfully</response>
@@ -550,12 +517,16 @@ namespace DinderMVC.Controllers
         /// <response code="500">If there was an internal server error</response>
         /// <response code="200">Returns an instance of ResponseObject</response>
         [HttpPut("{PartyID}/Invites/{userGuid}/")]
-        [ProducesResponseType(typeof(PartyInviteDM), 200)]
+        [ProducesResponseType(typeof(SingleResponse<PartyInviteDM>), 200)]
         [ProducesResponseType(400)]
         [ProducesResponseType(500)]
-        public async Task<IActionResult> PutPartyInviteAsync(int PartyID, Guid userGuid, PutPartyInviteRequest request)
+        [Authorize(AuthenticationSchemes = "Bearer")]
+        public async Task<IActionResult> PutPartyInviteAsync([BindRequired] int PartyID, [FromBody] PutPartyInviteRequest request)
         {
             string name = nameof(PutPartyInviteAsync);
+
+            UserIdentity id = APIServices.GetUserID(HttpContext.User.Claims);
+
             var response = new SingleResponse<PartyInviteDM>();
 
 
@@ -564,15 +535,8 @@ namespace DinderMVC.Controllers
             {
                 LogMethodInvoked(name);
 
-                if (!(await DbContext.AppInstallRegistered(request.appInstallID)))
-                {
-                    LogInvalidInstall(request.appInstallID, name);
-                    return BadRequest();
-                }
-
-
                 // Get stock item by id
-                var entity = await DbContext.GetPartyInviteEditableAsync(new Party(PartyID), new User(userGuid));
+                var entity = await DbContext.GetPartyInviteEditableAsync(PartyID, id.UserGuid);
 
                 // Validate if entity exists
                 if (entity == null)
@@ -607,33 +571,29 @@ namespace DinderMVC.Controllers
         /// <summary>
         /// Deletes an existing Party Invite --Untested
         /// </summary>
-        /// <param name="appInstallID">AppInstallID</param>
-        /// <param name="userGuid">userGuid</param>
-        /// <param name="partyID">Party ID</param>
+        /// <param name="partyID">Party ID (required)</param>
         /// <returns>A response as delete party result</returns>
-        /// <response code="200">If meal was deleted successfully</response>
+        /// <response code="200">If party invite was deleted successfully</response>
         /// <response code="500">If there was an internal server error</response>
         [HttpDelete("{partyID}/Invites/{userGuid}/")]
         [ProducesResponseType(200)]
         [ProducesResponseType(500)]
-        public async Task<IActionResult> DeletePartyInviteAsync(Guid appInstallID, int partyID, Guid userGuid)
+        [Authorize(AuthenticationSchemes = "Bearer")]
+        public async Task<IActionResult> DeletePartyInviteAsync([BindRequired] int partyID)
         {
             string name = nameof(DeletePartyInviteAsync);
+
+            UserIdentity id = APIServices.GetUserID(HttpContext.User.Claims);
+
             var response = new Response();
 
             try
             {
                 LogMethodInvoked(name);
 
-                if (!(await DbContext.AppInstallRegistered(appInstallID)))
-                {
-                    LogInvalidInstall(appInstallID, name);
-                    return BadRequest();
-                }
-
 
                 // Get stock item by id
-                var entity = await DbContext.GetPartyInviteEditableAsync(new Party(partyID), new User(userGuid));
+                var entity = await DbContext.GetPartyInviteEditableAsync(partyID, id.UserGuid);
 
                 // Validate if entity exists
                 if (entity == null)
@@ -672,12 +632,16 @@ namespace DinderMVC.Controllers
         /// <response code="400">For bad request</response>
         /// <response code="500">If there was an internal server error</response>
         [HttpPut("{PartyID}/Choices/{userGuid}/{mealID}")]
-        [ProducesResponseType(200)]
+        [ProducesResponseType(typeof(SingleResponse<PartyChoiceDM>), 200)]
         [ProducesResponseType(400)]
         [ProducesResponseType(500)]
-        public async Task<IActionResult> PutPartyChoiceAsync(int partyID, Guid userGuid, int mealID, PutPartyChoiceRequest request)
+        [Authorize(AuthenticationSchemes = "Bearer")]
+        public async Task<IActionResult> PutPartyChoiceAsync([BindRequired] int partyID, [BindRequired] Guid userGuid, [BindRequired] int mealID, [FromBody] PutPartyChoiceRequest request)
         {
             string name = nameof(PutPartyChoiceAsync);
+
+            UserIdentity id = APIServices.GetUserID(HttpContext.User.Claims);
+
             var response = new SingleResponse<PartyChoiceDM>();
 
 
@@ -686,12 +650,7 @@ namespace DinderMVC.Controllers
             {
                 LogMethodInvoked(name);
 
-                if (!(await DbContext.AppInstallRegistered(request.appInstallID)))
-                {
-                    LogInvalidInstall(request.appInstallID, name);
-                    return BadRequest();
-                }
-
+    
 
                 // Get stock item by id
                 var entity = await DbContext.GetPartyChoiceEditableAsync(new Party(partyID), new User(userGuid), new UserMeal(userGuid,mealID));
@@ -739,24 +698,22 @@ namespace DinderMVC.Controllers
         [HttpDelete("{partyID}/Choices/{userGuid}/{mealID}")]
         [ProducesResponseType(200)]
         [ProducesResponseType(500)]
-        public async Task<IActionResult> DeletePartyChoiceAsync(Guid appInstallID, int partyID, Guid userGuid, int mealID)
+        [Authorize(AuthenticationSchemes = "Bearer")]
+        public async Task<IActionResult> DeletePartyChoiceAsync([BindRequired] int partyID, [BindRequired] Guid userGuid, [BindRequired] int mealID)
         {
             string name = nameof(DeletePartyChoiceAsync);
+
+            UserIdentity id = APIServices.GetUserID(HttpContext.User.Claims);
+
             var response = new Response();
 
             try
             {
                 LogMethodInvoked(name);
 
-                if (!(await DbContext.AppInstallRegistered(appInstallID)))
-                {
-                    LogInvalidInstall(appInstallID, name);
-                    return BadRequest();
-                }
-
 
                 // Get stock item by id
-                var entity = await DbContext.GetPartyInviteEditableAsync(new Party(partyID), new User(userGuid));
+                var entity = await DbContext.GetPartyInviteEditableAsync(partyID, id.UserGuid);
 
                 // Validate if entity exists
                 if (entity == null)
@@ -793,27 +750,22 @@ namespace DinderMVC.Controllers
         /// <response code="400">For bad request</response>
         /// <response code="500">If there was an internal server error</response>
         [HttpPost("{partyID}/Choices/{userGuid}/")]
-        [ProducesResponseType(200)]
+        [ProducesResponseType(typeof(SingleResponse<PartyChoiceDM>), 200)]
         [ProducesResponseType(201)]
         [ProducesResponseType(400)]
         [ProducesResponseType(500)]
-        public async Task<IActionResult> PostPartyChoiceAsync(int partyID, Guid userGuid, PostPartyChoiceRequest request)
+        [Authorize(AuthenticationSchemes = "Bearer")]
+        public async Task<IActionResult> PostPartyChoiceAsync([BindRequired] int partyID, [BindRequired] Guid userGuid, [FromBody] PostPartyChoiceRequest request)
         {
             string name = nameof(PostPartyChoiceAsync);
+
+            UserIdentity id = APIServices.GetUserID(HttpContext.User.Claims);
+
             var response = new SingleResponse<PartyChoiceDM>();
 
             try
             {
                 LogMethodInvoked(name);
-
-
-                if (!(await DbContext.AppInstallRegistered(request.appInstallID)))
-                {
-                    LogInvalidInstall(request.appInstallID, name);
-                    return BadRequest();
-                }
-
-
 
                 if (!ModelState.IsValid)
                     return BadRequest();
@@ -848,32 +800,28 @@ namespace DinderMVC.Controllers
         /// <summary>
         /// Retrieves party choices --Untested
         /// </summary>
-        /// <param name="appInstallID">AppInstallID</param>
         /// <param name="PartyID">PartyID</param>
-        /// <param name="UserGuid">UserGuid</param>
         /// <returns>A response with party settings list</returns>
         /// <response code="200">Returns the stock items list</response>
         /// <response code="500">If there was an internal server error</response>
         [HttpGet("{PartyID}/Choices")]
-        [ProducesResponseType(200)]
+        [ProducesResponseType(typeof(PagedResponse<PartyChoiceDM>), 200)]
         [ProducesResponseType(500)]
-        public async Task<IActionResult> GetPartyChoicesAsync(Guid appInstallID, int PartyID, Guid UserGuid)
+        [Authorize(AuthenticationSchemes = "Bearer")]
+        public async Task<IActionResult> GetPartyChoicesAsync([BindRequired] int PartyID)
         {
             string name = nameof(GetPartyChoicesAsync);
+
+            UserIdentity id = APIServices.GetUserID(HttpContext.User.Claims);
+
             var response = new PagedResponse<PartyChoiceDM>();
 
             try
             {
                 LogMethodInvoked(name);
 
-                if (!(await DbContext.AppInstallRegistered(appInstallID)))
-                {
-                    LogInvalidInstall(appInstallID, name);
-                    return BadRequest();
-                }
 
-
-                response.Model = await DbContext.GetPartyChoicesAsync(PartyID, UserGuid);
+                response.Model = await DbContext.GetPartyChoicesAsync(PartyID, id.UserGuid);
                 response.PageSize = 100;
 
 
@@ -903,18 +851,20 @@ namespace DinderMVC.Controllers
         /// <param name="partyID">Request model</param>
         /// <param name="request">Request model</param>
         /// <returns>A response with new meal</returns>
-        /// <response code="200">Returns the meal list</response>
         /// <response code="201">A response as creation of party</response>
         /// <response code="400">For bad request</response>
         /// <response code="500">If there was an internal server error</response>
         [HttpPost("{partyID}/Invites/")]
-        [ProducesResponseType(200)]
-        [ProducesResponseType(201)]
+        [ProducesResponseType(typeof(SingleResponse<PartyInviteDM>), 201)]
         [ProducesResponseType(400)]
         [ProducesResponseType(500)]
-        public async Task<IActionResult> PostPartyInviteAsync(int partyID, PostPartyInviteRequest request)
+        [Authorize(AuthenticationSchemes = "Bearer")]
+        public async Task<IActionResult> PostPartyInviteAsync([BindRequired] int partyID, [FromBody] PostPartyInviteRequest request)
         {
             string name = nameof(PostPartyChoiceAsync);
+
+            UserIdentity id = APIServices.GetUserID(HttpContext.User.Claims);
+
             var response = new SingleResponse<PartyInviteDM>();
 
             try
@@ -922,19 +872,12 @@ namespace DinderMVC.Controllers
                 LogMethodInvoked(name);
 
 
-                if (!(await DbContext.AppInstallRegistered(request.appInstallID)))
-                {
-                    LogInvalidInstall(request.appInstallID, name);
-                    return BadRequest();
-                }
-
-
-
                 if (!ModelState.IsValid)
                     return BadRequest();
 
                 // Create entity from request model
                 var entity = request.ToEntity(partyID);
+                entity.UserGuid = request.UserGuid;
 
                 // Add entity to repository
                 DbContext.PartyInvites.Add(entity);
@@ -968,23 +911,20 @@ namespace DinderMVC.Controllers
         /// <response code="200">Returns the stock items list</response>
         /// <response code="500">If there was an internal server error</response>
         [HttpGet("{PartyID}/Meals")]
-        [ProducesResponseType(200)]
+        [ProducesResponseType(typeof(PagedResponse<MealDM>), 200)]
         [ProducesResponseType(500)]
-        public async Task<IActionResult> GetPartyMealsAsync(Guid appInstallID, int partyID)
+        [Authorize(AuthenticationSchemes = "Bearer")]
+        public async Task<IActionResult> GetPartyMealsAsync([BindRequired] int partyID)
         {
             string name = nameof(GetPartyMealsAsync);
+
+            UserIdentity id = APIServices.GetUserID(HttpContext.User.Claims);
+
             var response = new PagedResponse<MealDM>();
 
             try
             {
                 LogMethodInvoked(name);
-
-                if (!(await DbContext.AppInstallRegistered(appInstallID)))
-                {
-                    LogInvalidInstall(appInstallID, name);
-                    return BadRequest();
-                }
-
 
                 response.Model = await DbContext.GetPartyMealsAsync(partyID);
                 response.PageSize = 100;
@@ -1013,30 +953,25 @@ namespace DinderMVC.Controllers
         /// </summary>
         /// <param name="request">Request model</param>
         /// <returns>A response with new meal</returns>
-        /// <response code="200">Returns the meal list</response>
         /// <response code="201">A response as creation of party</response>
         /// <response code="400">For bad request</response>
         /// <response code="500">If there was an internal server error</response>
         [HttpPost("{PartyID}/Meals/")]
-        [ProducesResponseType(200)]
-        [ProducesResponseType(201)]
+        [ProducesResponseType(typeof(SingleResponse<PartyMealDM>), 201)]
         [ProducesResponseType(400)]
         [ProducesResponseType(500)]
-        public async Task<IActionResult> PostPartyMealAsync(PostPartyMealRequest request)
+        [Authorize(AuthenticationSchemes = "Bearer")]
+        public async Task<IActionResult> PostPartyMealAsync([FromBody] PostPartyMealRequest request)
         {
             string name = nameof(PostPartyMealAsync);
+
+            UserIdentity id = APIServices.GetUserID(HttpContext.User.Claims);
+
             var response = new SingleResponse<PartyMealDM>();
 
             try
             {
                 LogMethodInvoked(name);
-
-
-                if (!(await DbContext.AppInstallRegistered(request.appInstallID)))
-                {
-                    LogInvalidInstall(request.appInstallID, name);
-                    return BadRequest();
-                }
 
                 if (!ModelState.IsValid)
                     return BadRequest();
@@ -1069,8 +1004,6 @@ namespace DinderMVC.Controllers
         /// <summary>
         /// Deletes an existing Party Meal --Untested
         /// </summary>
-        /// <param name="appInstallID">AppInstallID</param>
-        /// <param name="userGuid">userGuid</param>
         /// <param name="partyID">Party ID</param>
         /// <param name="MealID">Party ID</param>
         /// <returns>A response as delete party result</returns>
@@ -1079,20 +1012,18 @@ namespace DinderMVC.Controllers
         [HttpDelete("{PartyID}/Meals/{MealID}")]
         [ProducesResponseType(200)]
         [ProducesResponseType(500)]
-        public async Task<IActionResult> DeletePartyMealAsync(Guid appInstallID, int partyID, int MealID, Guid userGuid)
+        [Authorize(AuthenticationSchemes = "Bearer")]
+        public async Task<IActionResult> DeletePartyMealAsync([BindRequired] int partyID, [BindRequired] int MealID)
         {
             string name = nameof(DeletePartyMealAsync);
+
+            UserIdentity id = APIServices.GetUserID(HttpContext.User.Claims);
+
             var response = new Response();
 
             try
             {
                 LogMethodInvoked(name);
-
-                if (!(await DbContext.AppInstallRegistered(appInstallID)))
-                {
-                    LogInvalidInstall(appInstallID, name);
-                    return BadRequest();
-                }
 
 
                 // Get stock item by id
@@ -1104,7 +1035,7 @@ namespace DinderMVC.Controllers
                 if (entity == null)
                     return NotFound();
 
-                if (party.CookGuid != userGuid)
+                if (party.CookGuid != id.UserGuid)
                     return Forbid();
 
                 // Remove entity from repository

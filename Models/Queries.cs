@@ -580,8 +580,8 @@ namespace DinderMVC.Queries
         public static async Task<GlobalMeal> GetGlobalMealByName(this DinderContext dbContext, string MealName)
   => dbContext.GlobalMeals.Where(item => item.MealName == MealName).FirstOrDefault();
 
-        public static async Task<PartyInvite> GetPartyInviteEditableAsync(this DinderContext dbContext, Party entity, User userentity)
-            => dbContext.PartyInvites.Where(item => item.PartyID == entity.PartyID && item.UserGuid == userentity.UserGUID).FirstOrDefault();
+        public static async Task<PartyInvite> GetPartyInviteEditableAsync(this DinderContext dbContext, int partyID, Guid userGuid)
+            => dbContext.PartyInvites.Where(item => item.PartyID == partyID && item.UserGuid == userGuid).FirstOrDefault();
 
         public static async Task<PartyChoice> GetPartyChoiceEditableAsync(this DinderContext dbContext, Party entity, User userentity, UserMeal meal)
          => dbContext.PartyChoices.Where(item => item.PartyID == entity.PartyID && item.UserGUID == userentity.UserGUID && item.MealID == meal.MealID).FirstOrDefault();

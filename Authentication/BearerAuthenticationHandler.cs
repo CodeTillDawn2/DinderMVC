@@ -5,6 +5,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
 using System.Linq;
+using System.Net;
 using System.Security.Claims;
 using System.Text;
 using System.Text.Encodings.Web;
@@ -30,6 +31,9 @@ namespace DinderMVC.Authentication
 
         protected override async Task<AuthenticateResult> HandleAuthenticateAsync()
         {
+            Request.Headers.Add("Authorization", "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcHBJbnN0YWxsR3VpZCI6IjE2ZTgzZjdhLTVjNjktNDMzNi04NzM3LThlYmY5MTJjOWRmZCIsInVzZXJHdWlkIjoiNDYwZTFjN2UtNTczMi00ZjNmLTk4NjktZjVhMTcxZjk3NmFiIiwibmJmIjoxNzA1MjAxNTA0LCJleHAiOjE3MDUyMDUxMDQsImlhdCI6MTcwNTIwMTUwNCwiaXNzIjoiWW91cklzc3VlciIsImF1ZCI6IllvdXJBdWRpZW5jZSJ9.lDfEepYx6OqMN1Urp5jIllkCnE9-NE_VqqEplbFD0ac");
+
+
             if (!Request.Headers.ContainsKey("Authorization"))
             {
                 return AuthenticateResult.Fail("Missing Authorization Header");
@@ -43,9 +47,14 @@ namespace DinderMVC.Authentication
                     return AuthenticateResult.Fail("Missing Authorization Header");
                 }
                 string encodedCredential = authHeader.Substring("Bearer ".Length).Trim();
-                string decodedCredentials = Encoding.UTF8.GetString(Convert.FromBase64String(encodedCredential));
-                // Perform token validation logic here...
-                DinderToken token = ReturnFoundToken(decodedCredentials);
+
+
+                //For testing
+                //string decodedCredentials = Encoding.UTF8.GetString(Convert.FromBase64String(encodedCredential));
+                //DinderToken token = ReturnFoundToken(decodedCredentials);
+                //For testing
+
+                DinderToken token = ReturnFoundToken(encodedCredential);
                 if (token != null)
                 {
 

@@ -9,6 +9,8 @@ using DinderMVC.Queries;
 using DinderMVC.Models;
 using DinderDLL.Requests;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.AspNetCore.Authorization;
+using DinderMVC.Services;
 
 namespace DinderMVC.Controllers
 {
@@ -45,12 +47,14 @@ namespace DinderMVC.Controllers
         [ProducesResponseType(typeof(PagedResponse<GlobalMealDM>),200)]
         [ProducesResponseType(400)]
         [ProducesResponseType(500)]
+        [Authorize(AuthenticationSchemes = "Bearer")]
         public async Task<IActionResult> GetGlobalMealsAsync([BindRequired] Guid appInstallID, int pageSize = 10, int pageNumber = 1, 
             string mealName = null, string mealDescription = null)
         {
 
             string name = nameof(GetGlobalMealsAsync);
 
+            UserIdentity id = APIServices.GetUserID(HttpContext.User.Claims);
 
             var response = new PagedResponse<GlobalMealDM>();
 
@@ -107,10 +111,13 @@ namespace DinderMVC.Controllers
         [ProducesResponseType(typeof(GlobalMealDM),200)]
         [ProducesResponseType(404)]
         [ProducesResponseType(500)]
+        [Authorize(AuthenticationSchemes = "Bearer")]
         public async Task<IActionResult> GetGlobalMealAsync([BindRequired] Guid appInstallID, [BindRequired] Guid globalMealGuid)
         {
 
             string name = nameof(GetGlobalMealAsync);
+
+            UserIdentity id = APIServices.GetUserID(HttpContext.User.Claims);
             var response = new SingleResponse<GlobalMealDM>();
 
             try

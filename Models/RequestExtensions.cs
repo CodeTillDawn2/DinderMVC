@@ -37,17 +37,15 @@ namespace DinderMVC.Models
 
             };
 
-        public static Party ToEntity(this PostPartyRequest request)
+        public static Party ToEntity(this PostPartyRequest request, Guid cookGuid)
         => new Party
         {
 
-            CookGuid = request.userGUID,
             SessionName = request.sessionName,
             SessionMessage = request.sessionMessage,
-            StatusID = 1
-            
-
-
+            StatusID = 1,
+            CookGuid = cookGuid
+  
         };
 
         public static PartyMeal ToEntity(this PostPartyMealRequest request)
