@@ -12,6 +12,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using DinderDLL.DTOs;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.AspNetCore.Authorization;
 
 namespace DinderMVC.Controllers
 {
@@ -49,6 +50,7 @@ namespace DinderMVC.Controllers
         [ProducesResponseType(typeof(PagedResponse<PartyDM>),200)]
         [ProducesResponseType(400)]
         [ProducesResponseType(500)]
+        [Authorize(AuthenticationSchemes = "Bearer")]
         public async Task<IActionResult> GetPartiesAsync([BindRequired] Guid appInstallID, [BindRequired] Guid userID, int pageSize = 10, int pageNumber = 1, 
             Guid? cookGuid = null, string sessionName = null, string sessionMessage = null)
         {

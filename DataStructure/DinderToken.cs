@@ -11,11 +11,8 @@ namespace DinderMVC.Models
     public class DinderToken
     {
         public String BearerToken { get; set; }
-        [JsonIgnore]
         public Guid UserGuid { get; set; }
-        [JsonIgnore]
         public Guid AppInstallGuid { get; set; }
-        [JsonIgnore]
         public DateTime IssueDate { get; set; }
         public DateTime ExpirationDate { get; set; }
 
