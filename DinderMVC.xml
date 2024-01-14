@@ -14,10 +14,11 @@
             <response code="404">If App Install is not exists</response>
             <response code="500">If there was an internal server error</response>
         </member>
-        <member name="M:DinderMVC.Controllers.GlobalMealsController.GetGlobalMealsAsync(System.Int32,System.Int32,System.String,System.String)">
+        <member name="M:DinderMVC.Controllers.GlobalMealsController.GetGlobalMealsAsync(System.Guid,System.Int32,System.Int32,System.String,System.String)">
             <summary>
             Retrieves global meals by name or description
             </summary>
+            <param name="appInstallID">App Install Guid (required)</param>
             <param name="pageSize">Page size</param>
             <param name="pageNumber">Page number</param>
             <param name="mealName">Meal Name</param>
@@ -26,20 +27,23 @@
             <response code="200">Returns the global meals list</response>
             <response code="500">If there was an internal server error</response>
         </member>
-        <member name="M:DinderMVC.Controllers.GlobalMealsController.GetGlobalMealAsync(System.Guid)">
+        <member name="M:DinderMVC.Controllers.GlobalMealsController.GetGlobalMealAsync(System.Guid,System.Guid)">
             <summary>
             Retrieves a Global Meal by Global Meal GUID
             </summary>
+            <param name="appInstallID">AppInstallID (required)</param>
             <param name="globalMealGuid">Global Meal Guid (required)</param>
             <returns>A response with a global meal</returns>
             <response code="200">Returns the global meal list</response>
             <response code="404">If meal is not exists</response>
             <response code="500">If there was an internal server error</response>
         </member>
-        <member name="M:DinderMVC.Controllers.PartiesController.GetPartiesAsync(System.Int32,System.Int32,System.Nullable{System.Guid},System.String,System.String)">
+        <member name="M:DinderMVC.Controllers.PartiesController.GetPartiesAsync(System.Guid,System.Guid,System.Int32,System.Int32,System.Nullable{System.Guid},System.String,System.String)">
             <summary>
-            Retrieves parties the user is invited to or hosting.
+            Retrieves parties the user is invited to or hosting
             </summary>
+            <param name="appInstallID">App Install Guid (required)</param>
+            <param name="userID">User Guid (required)</param>
             <param name="pageSize">Page size</param>
             <param name="pageNumber">Page number</param>
             <param name="cookGuid">Cook GUID</param>
@@ -51,7 +55,7 @@
         </member>
         <member name="M:DinderMVC.Controllers.PartiesController.GetPartySettingsAsync(System.Guid,System.Int32,System.Guid)">
             <summary>
-            Retrieves party settings. Only invited users and the host can do this.
+            Retrieves party settings
             </summary>
             <param name="appInstallID">App Install Guid (required)</param>
             <param name="PartyID">Party ID (required)</param>
@@ -62,7 +66,7 @@
         </member>
         <member name="M:DinderMVC.Controllers.PartiesController.GetPartyInvitesAsync(System.Guid,System.Int32,System.Guid)">
             <summary>
-            Retrieves party invites. Only invited users and the host can do this.
+            Retrieves party invites
             </summary>
             <param name="appInstallID">App Install Guid (required)</param>
             <param name="PartyID">Party ID (required)</param>
@@ -73,7 +77,7 @@
         </member>
         <member name="M:DinderMVC.Controllers.PartiesController.GetPartyAsync(System.Guid,System.Int32,System.Guid)">
             <summary>
-            Retrieves a party by PartyID. Only invited users or the host can do this.
+            Retrieves a party by PartyID
             </summary>
             <param name="appInstallID">App Install Guid (required)</param>
             <param name="PartyID">Party ID (required)</param>
@@ -85,18 +89,19 @@
         </member>
         <member name="M:DinderMVC.Controllers.PartiesController.PostPartyAsync(System.Guid,DinderDLL.Requests.PostPartyRequest)">
             <summary>
-            Creates a new party.
+            Creates a new party
             </summary>
             <param name="request">Request model</param>
             <param name="appInstallID">App Install Guid</param>
             <returns>A response with new meal</returns>
+            <response code="200">Returns the meal list</response>
             <response code="201">A response as creation of party</response>
             <response code="400">For bad request</response>
             <response code="500">If there was an internal server error</response>
         </member>
         <member name="M:DinderMVC.Controllers.PartiesController.PutPartySettingAsync(System.Guid,System.Guid,System.Int32,System.Int32,System.Int32,System.String)">
             <summary>
-            Updates an existing party setting. Only the host can do this.
+            Updates an existing party setting --Untested
             </summary>
             <param name="AppInstallID">App Install Guid (required)</param>
             <param name="UserGuid">User Guid (required)</param>
@@ -111,7 +116,7 @@
         </member>
         <member name="M:DinderMVC.Controllers.PartiesController.PutPartyAsync(System.Int32,DinderDLL.Requests.PutPartyRequest)">
             <summary>
-            Updates an existing party. Only the host can do this.
+            Updates an existing party --Untested
             </summary>
             <param name="PartyID">Party ID</param>
             <param name="request">Request model</param>
@@ -122,10 +127,10 @@
         </member>
         <member name="M:DinderMVC.Controllers.PartiesController.DeletePartyAsync(System.Guid,System.Guid,System.Int32)">
             <summary>
-            Deletes an existing party. Only the host can do this.
+            Deletes an existing party --Untested
             </summary>
-            <param name="appInstallID">App Install Guid</param>
-            <param name="userGuid">user Guid</param>
+            <param name="appInstallID">AppInstallID</param>
+            <param name="userGuid">userGuid</param>
             <param name="PartyID">Party ID</param>
             <returns>A response as delete party result</returns>
             <response code="200">If meal was deleted successfully</response>
@@ -133,7 +138,7 @@
         </member>
         <member name="M:DinderMVC.Controllers.PartiesController.PutPartyInviteAsync(System.Int32,System.Guid,DinderDLL.Requests.PutPartyInviteRequest)">
             <summary>
-            RSVP or un-RSVP from a party. Only the invitee can do this.
+            Updates an existing party invite --Untested
             </summary>
             <param name="PartyID">Party ID</param>
             <param name="userGuid">Party ID</param>
@@ -144,21 +149,20 @@
             <response code="500">If there was an internal server error</response>
             <response code="200">Returns an instance of ResponseObject</response>
         </member>
-        <member name="M:DinderMVC.Controllers.PartiesController.DeletePartyInviteAsync(System.Guid,System.Guid,System.Int32,System.Guid)">
+        <member name="M:DinderMVC.Controllers.PartiesController.DeletePartyInviteAsync(System.Guid,System.Int32,System.Guid)">
             <summary>
-            Deletes an existing Party Invite. Only the host can do this.
+            Deletes an existing Party Invite --Untested
             </summary>
-            <param name="appInstallID">App Install Guid</param>
-            <param name="userGuid">User Guid</param>
+            <param name="appInstallID">AppInstallID</param>
+            <param name="userGuid">userGuid</param>
             <param name="partyID">Party ID</param>
-            <param name="InviteGuid">User whose invite to delete</param>
             <returns>A response as delete party result</returns>
             <response code="200">If meal was deleted successfully</response>
             <response code="500">If there was an internal server error</response>
         </member>
         <member name="M:DinderMVC.Controllers.PartiesController.PutPartyChoiceAsync(System.Int32,System.Guid,System.Int32,DinderDLL.Requests.PutPartyChoiceRequest)">
             <summary>
-            Updates an existing party choice --retest
+            Updates an existing party choice --Untested
             </summary>
             <param name="partyID">Party ID</param>
             <param name="userGuid">User GUID</param>

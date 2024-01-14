@@ -322,6 +322,32 @@ namespace DinderMVC.Queries
 
         }
 
+        public static async Task<Guid?> AuthenticateUser(this DinderContext dbContext, string username, string password)
+        {
+
+            try
+            {
+                string sql = $"exec spAuthenticate '{username}','{password}'";
+
+                // Run query using Dapper
+                using (IDbConnection db = new SqlConnection(Startup.Configuration["AppSettings:ConnectionString"]))
+                {
+                    Guid userGuid = (await db.QueryAsync<Guid>(sql)).FirstOrDefault();
+                    if (userGuid != null)
+                    {
+                        return userGuid;
+                    }
+                    
+                };
+
+            }
+            catch (Exception ex)
+            {
+                ex = ex;
+            }
+            return null;
+        }
+
         public static async Task<List<MealDM>> GetPartyMealsAsync(this DinderContext dbContext, int partyID, int pageSize = 100, int pageNumber = 1)
         {
 

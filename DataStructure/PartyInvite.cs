@@ -37,7 +37,7 @@ namespace DinderMVC.Models
 
         public PartyInviteDM ReturnDM()
         {
-            return new PartyInviteDM(PartyID, AcceptDate, RSVP);
+            return new PartyInviteDM(PartyID, UserGuid, AcceptDate, RSVP);
         }
 
         public class PartyInviteConfiguration : IEntityTypeConfiguration<PartyInvite>

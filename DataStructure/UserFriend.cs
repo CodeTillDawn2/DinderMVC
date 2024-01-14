@@ -70,8 +70,8 @@ namespace DinderMVC.Models
                     .Property(p => p.IsBlocked)
                     .HasColumnType("bit")
                     .IsRequired();
-
-                builder.HasOne(x => x.Friend).WithOne().HasForeignKey<User>(a => a.UserGUID).OnDelete(DeleteBehavior.Restrict);
+                builder.HasOne(x => x.Friend).WithMany().HasForeignKey(a => a.UserGUID).OnDelete(DeleteBehavior.Restrict);
+                //builder.HasOne(x => x.Friend).WithOne().HasForeignKey<User>(a => a.UserGUID).OnDelete(DeleteBehavior.Restrict);
                 //builder.HasOne(x => x.Friend).WithMany(b => b.)
 
                 //builder.HasMany(x => x.Meals).WithOne(b => b.User).HasForeignKey(b => b.UserGUID).OnDelete(DeleteBehavior.Restrict);

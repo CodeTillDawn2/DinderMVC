@@ -13,6 +13,8 @@ using static DinderMVC.Models.User;
 using static DinderMVC.Models.UserFriend;
 using System.Threading.Tasks;
 using System;
+using Microsoft.Data.SqlClient;
+using System.Linq;
 
 namespace DinderMVC.Models
 {
@@ -56,10 +58,8 @@ namespace DinderMVC.Models
             base.OnModelCreating(modelBuilder);
         }
 
-        internal Task<Guid> AuthenticateUser(this DinderContext context, string username, string password)
-        {
-            
-        }
+ 
+
 
         public DbSet<AppInstall> AppInstalls { get; set; }
         public DbSet<GlobalMeal> GlobalMeals { get; set; }
@@ -93,12 +93,7 @@ namespace DinderMVC.Models
 
         public static string APIVersion = "v1";
 
-        //public Microsoft.EntityFrameworkCore.DbSet<PartyChoices> PartyChoices { get; set; }
-        //public Microsoft.EntityFrameworkCore.DbSet<Party> Parties { get; set; }
-        //public Microsoft.EntityFrameworkCore.DbSet<Meal> Meals { get; set; }
-        //public Microsoft.EntityFrameworkCore.DbSet<GlobalMeal> GlobalMeals { get; set; }
 
-        //public Microsoft.EntityFrameworkCore.DbSet<AppInstalls> AppInstalls { get; set; }
     }
 #pragma warning restore CS1591
 }
