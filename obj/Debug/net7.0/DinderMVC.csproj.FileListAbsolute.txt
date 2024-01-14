@@ -74,3 +74,4 @@ C:\DinderStuff\DinderMVC\bin\Debug\net7.0\runtimes\win\lib\net6.0\System.Runtime
 C:\DinderStuff\DinderMVC\bin\Debug\net7.0\runtimes\win\lib\net6.0\System.Security.Cryptography.ProtectedData.dll
 C:\DinderStuff\DinderMVC\bin\Debug\net7.0\runtimes\win\lib\net6.0\System.Windows.Extensions.dll
 C:\DinderStuff\DinderMVC\bin\Debug\net7.0\DinderDLL.pdb
+C:\DinderStuff\DinderMVC\bin\Debug\net7.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll

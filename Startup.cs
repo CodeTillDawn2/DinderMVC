@@ -1,5 +1,7 @@
+using DinderMVC.Authentication;
 using DinderMVC.Controllers;
 using DinderMVC.Models;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -8,10 +10,15 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System;
+using System.IdentityModel.Tokens.Jwt;
 using System.IO;
+using System.Linq;
 using System.Reflection;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace DinderMVC
 {
@@ -30,6 +37,8 @@ namespace DinderMVC
         public void ConfigureServices(IServiceCollection services)
         {
 
+
+
             services.AddMvc(option => option.EnableEndpointRouting = false).SetCompatibilityVersion(CompatibilityVersion.Latest);
 
 
@@ -46,6 +55,11 @@ namespace DinderMVC
             services.AddScoped<ILogger, Logger<GlobalMealsController>>();
             services.AddScoped<ILogger, Logger<PartiesController>>();
             services.AddScoped<ILogger, Logger<RootController>>();
+            services.AddScoped<ILogger, Logger<TokenController>>();
+            services.AddScoped<TokenValidationService>();
+
+            services.AddAuthentication("BasicAuthentication").AddScheme<BasicAuthenticationOptions, BasicAuthenticationHandler>("BasicAuthentication", null);
+            services.AddAuthentication("Bearer").AddScheme<BearerAuthenticationOptions, BearerAuthenticationHandler>("Bearer", null);
 
             // Register the Swagger generator, defining 1 or more Swagger documents
             services.AddSwaggerGen(options =>
@@ -59,6 +73,7 @@ namespace DinderMVC
                 // Set xml path
                 options.IncludeXmlComments(xmlPath);
             });
+
 
         }
 
@@ -79,9 +94,11 @@ namespace DinderMVC
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "Dinder API V1.1");
             });
 
+            app.UseAuthentication();
+            app.UseAuthorization();
+
 
             app.UseMvc();
-
 
         }
     }

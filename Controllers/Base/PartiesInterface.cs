@@ -1,5 +1,6 @@
 ﻿using DinderDLL.Requests;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using System;
 using System.Threading.Tasks;
 
@@ -24,7 +25,8 @@ namespace DinderMVC.Controllers
 
 
         public abstract Task<IActionResult> GetPartySettingsAsync(Guid appInstallID, int PartyID, Guid UserGuid);
-        public abstract Task<IActionResult> PutPartySettingsAsync(int PartyID, [FromBody] PutPartySettingsRequest request);
+        public abstract Task<IActionResult> PutPartySettingAsync(Guid AppInstallID, Guid UserGuid, int PartyID,
+            int SettingID, int ChoiceID, string ChoiceEntry);
 
         public abstract Task<IActionResult> GetPartyInvitesAsync(Guid appInstallID, int PartyID, Guid UserGuid);
         public abstract Task<IActionResult> PutPartyInviteAsync(int PartyID, Guid userGuid, PutPartyInviteRequest request);

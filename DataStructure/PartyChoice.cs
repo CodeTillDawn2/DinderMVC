@@ -49,9 +49,8 @@ namespace DinderMVC.Models
                 builder.ToTable("PartyChoices", "dbo");
 
                 // Set key for entity
-                builder.HasKey(p => p.PartyID);
-                builder.HasKey(p => p.UserGUID);
-                builder.HasKey(p => p.MealID);
+                builder.HasKey(p => new { p.PartyID, p.UserGUID, p.MealID });
+
 
                 // Columns with default value
 

@@ -15,6 +15,7 @@ namespace DinderMVC.Models
         public int PartyID { get; set; }
         public Guid UserGuid { get; set; }
         public DateTime? AcceptDate { get; set; }
+        public Boolean? RSVP { get; set; }
 
 
         public PartyInvite()
@@ -26,16 +27,17 @@ namespace DinderMVC.Models
             PartyID = partyid;
         }
 
-        public PartyInvite(int partyID, Guid userGuid, DateTime? acceptDate)
+        public PartyInvite(int partyID, Guid userGuid, DateTime? acceptDate, bool? rSVP)
         {
             PartyID = partyID;
             UserGuid = userGuid;
             AcceptDate = acceptDate;
+            RSVP = rSVP;
         }
 
         public PartyInviteDM ReturnDM()
         {
-            return new PartyInviteDM(PartyID, UserGuid, AcceptDate);
+            return new PartyInviteDM(PartyID, AcceptDate, RSVP);
         }
 
         public class PartyInviteConfiguration : IEntityTypeConfiguration<PartyInvite>
@@ -48,8 +50,7 @@ namespace DinderMVC.Models
                 builder.ToTable("PartyInvites", "dbo");
 
                 // Set key for entity
-                builder.HasKey(p => p.PartyID);
-                builder.HasKey(p => p.UserGuid);
+                builder.HasKey(p => new { p.PartyID, p.UserGuid });
 
                 // Columns with default value
 
@@ -66,7 +67,9 @@ namespace DinderMVC.Models
                 // Set configuration for columns
                 builder.Property(p => p.AcceptDate).HasColumnType("datetime");
 
-
+                builder
+                    .Property(p => p.RSVP)
+                    .HasColumnType("bit");
 
             }
         }

@@ -47,8 +47,7 @@ namespace DinderMVC.Models
                 builder.ToTable("UserFriends", "dbo");
 
                 // Set key for entity
-                builder.HasKey(p => p.UserGUID);
-                builder.HasKey(p => p.FriendGUID);
+                builder.HasKey(p => new { p.UserGUID, p.FriendGUID });
 
                 // Columns with default value
 

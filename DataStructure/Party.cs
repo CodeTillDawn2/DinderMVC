@@ -124,8 +124,7 @@ namespace DinderMVC.Models
                     .IsRequired();
 
 
-                //builder.HasMany(x => x.Friends).WithOne(b => b.User).HasForeignKey(b => b.UserGUID).OnDelete(DeleteBehavior.Restrict);
-                builder.HasMany(x => x.Settings).WithOne(b => b.Party).HasForeignKey(b => b.PartyID).OnDelete(DeleteBehavior.Restrict);
+                builder.HasMany(x => x.Settings).WithOne().HasForeignKey(b => b.PartyID).OnDelete(DeleteBehavior.Restrict);
                 builder.HasMany(x => x.Meals).WithOne(b => b.Party).HasForeignKey(b => b.PartyID).OnDelete(DeleteBehavior.Restrict);
                 builder.HasMany(x => x.PartyInvites).WithOne(b => b.Party).HasForeignKey(b => b.PartyID).OnDelete(DeleteBehavior.Restrict);
                 builder.HasMany(x => x.PartyChoices).WithOne(b => b.Party).HasForeignKey(b => b.PartyID).OnDelete(DeleteBehavior.Restrict);

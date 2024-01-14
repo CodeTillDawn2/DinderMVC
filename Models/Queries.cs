@@ -48,6 +48,16 @@ namespace DinderMVC.Queries
             return true;
         }
 
+        public static async Task<bool> UserIsHost(this DinderContext dbContext, int PartyID, Guid UserGuid)
+        {
+            Party party = dbContext.Parties.Where(x => x.PartyID == PartyID).Include(x => x.PartyInvites).FirstOrDefault();
+            if (party == null)
+                return false;
+            if (party.CookGuid != UserGuid)
+                return false;
+            return true;
+        }
+
         /// <summary>
         /// Gets all users according to filters
         /// </summary>

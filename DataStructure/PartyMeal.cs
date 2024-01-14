@@ -15,7 +15,6 @@ namespace DinderMVC.Models
         [NotMapped]
         public virtual UserMeal Meal { get; set; }
         public int PartyID { get; set; }
-        public Guid CookGuid { get; set; }
 
         public int MealID { get; set; }
 
@@ -24,16 +23,15 @@ namespace DinderMVC.Models
         {
         }
 
-        public PartyMeal(int partyid, Guid cookGuid, int mealid)
+        public PartyMeal(int partyid,  int mealid)
         {
             PartyID = partyid;
-            CookGuid = cookGuid;
             MealID = mealid;
         }
 
         public PartyMealDM ReturnDM()
         {
-            return new PartyMealDM(PartyID, CookGuid, MealID);
+            return new PartyMealDM(PartyID, MealID);
         }
 
         public class PartyMealConfiguration : IEntityTypeConfiguration<PartyMeal>
@@ -46,9 +44,7 @@ namespace DinderMVC.Models
                 builder.ToTable("PartyMeals", "dbo");
 
                 // Set key for entity
-                builder.HasKey(p => p.PartyID);
-                builder.HasKey(p => p.CookGuid);
-                builder.HasKey(p => p.MealID);
+                builder.HasKey(p => new { p.PartyID, p.MealID });
 
                 // Columns with default value
 
@@ -58,18 +54,12 @@ namespace DinderMVC.Models
                     .IsRequired();
 
                 builder
-                    .Property(p => p.CookGuid)
-                    .HasColumnType("uniqueidentifier")
-                    .IsRequired();
-
-                builder
                     .Property(p => p.MealID)
                     .HasColumnType("int")
                     .IsRequired();
 
                 builder.HasOne(x => x.Party).WithMany(x => x.Meals).HasForeignKey(a => a.PartyID).OnDelete(DeleteBehavior.Restrict);
                 builder.HasOne(x => x.Meal).WithOne().HasForeignKey<UserMeal>(a => a.MealID).OnDelete(DeleteBehavior.Restrict);
-
             }
         }
 

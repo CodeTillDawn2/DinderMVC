@@ -51,8 +51,7 @@ namespace DinderMVC.Models
                 builder.ToTable("UserMeals", "dbo");
 
                 // Set key for entity
-                builder.HasKey(p => p.MealID);
-                builder.HasKey(p => p.CookGuid);
+                builder.HasKey(p => new { p.MealID, p.CookGuid });
 
                 // Columns with default value
 

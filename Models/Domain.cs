@@ -11,6 +11,8 @@ using static DinderMVC.Models.PartySettingValue;
 using static DinderMVC.Models.SwipeChoice;
 using static DinderMVC.Models.User;
 using static DinderMVC.Models.UserFriend;
+using System.Threading.Tasks;
+using System;
 
 namespace DinderMVC.Models
 {
@@ -54,6 +56,10 @@ namespace DinderMVC.Models
             base.OnModelCreating(modelBuilder);
         }
 
+        internal Task<Guid> AuthenticateUser(this DinderContext context, string username, string password)
+        {
+            
+        }
 
         public DbSet<AppInstall> AppInstalls { get; set; }
         public DbSet<GlobalMeal> GlobalMeals { get; set; }
@@ -76,6 +82,7 @@ namespace DinderMVC.Models
         public DbSet<User> Users { get; set; }
 
         public DbSet<UserFriend> UserFriends { get; set; }
+        public DbSet<DinderToken> DinderTokens { get; set; }
 
 
 

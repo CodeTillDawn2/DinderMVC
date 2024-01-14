@@ -124,7 +124,7 @@ namespace DinderMVC.Controllers
 
                 if (!(await DbContext.UserInParty(PartyID,UserGuid)))
                 {
-                    LogGatekeeperInfraction(appInstallID, UserGuid, name);
+                    LogGatekeeperInfraction_NotInvited(appInstallID, UserGuid, name);
                     return BadRequest();
                 }
 
@@ -178,7 +178,7 @@ namespace DinderMVC.Controllers
 
                 if (!(await DbContext.UserInParty(PartyID, UserGuid)))
                 {
-                    LogGatekeeperInfraction(appInstallID, UserGuid, name);
+                    LogGatekeeperInfraction_NotInvited(appInstallID, UserGuid, name);
                     return BadRequest();
                 }
 
@@ -238,7 +238,7 @@ namespace DinderMVC.Controllers
 
                 if (!(await DbContext.UserInParty(PartyID, UserGuid)))
                 {
-                    LogGatekeeperInfraction(appInstallID, UserGuid, name);
+                    LogGatekeeperInfraction_NotInvited(appInstallID, UserGuid, name);
                     return BadRequest();
                 }
 
@@ -306,7 +306,7 @@ namespace DinderMVC.Controllers
                     .Where(x => x.CookGuid == request.userGUID).ToList();
                 foreach (UserMeal meal in userMeals)
                 {
-                    PartyMeal partyMeal = new PartyMeal(entity.PartyID, request.userGUID, meal.MealID);
+                    PartyMeal partyMeal = new PartyMeal(entity.PartyID,  meal.MealID);
                     entity.Meals.Add(partyMeal);
                 }
 
@@ -328,59 +328,62 @@ namespace DinderMVC.Controllers
 
 
         // PUT
-        // api/v1/Parties/PartyID/Settings
+        // api/v1/Parties/PartyID/Settings/SettingID
 
         /// <summary>
-        /// Updates an existing party settings --Untested
+        /// Updates an existing party setting --Untested
         /// </summary>
-        /// <param name="PartyID">Party ID</param>
-        /// <param name="request">Request model</param>
-        /// <returns>A response as update party result</returns>
+        /// <param name="AppInstallID">App Install Guid (required)</param>
+        /// <param name="UserGuid">User Guid (required)</param>
+        /// <param name="PartyID">Party ID (required)</param>
+        /// <param name="SettingID">Setting ID to update (required)</param>
+        /// <param name="ChoiceID">Choice ID (required)</param>
+        /// <param name="ChoiceEntry">Choice Entry (optional)</param>
+        /// <returns>A response as update party setting result</returns>
         /// <response code="200">If meal was updated successfully</response>
         /// <response code="400">For bad request</response>
         /// <response code="500">If there was an internal server error</response>
-        [HttpPut("{PartyID}/Settings")]
+        [HttpPut("{PartyID}/Settings/{SettingID}")]
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]
         [ProducesResponseType(500)]
-        public async Task<IActionResult> PutPartySettingsAsync(int PartyID, [FromBody] PutPartySettingsRequest request)
+        public async Task<IActionResult> PutPartySettingAsync([BindRequired] Guid AppInstallID, [BindRequired] Guid UserGuid, [BindRequired] int PartyID,
+            [BindRequired] int SettingID, [BindRequired] int ChoiceID, string ChoiceEntry)
         {
-            string name = nameof(PutPartySettingsAsync);
+            string name = nameof(PutPartySettingAsync);
             var response = new PagedResponse<PartySettingsViewCO>();
 
             try
             {
                 LogMethodInvoked(name);
 
-                if (!(await DbContext.AppInstallRegistered(request.appInstallID)))
+                if (!(await DbContext.AppInstallRegistered(AppInstallID)))
                 {
-                    LogInvalidInstall(request.appInstallID, name);
+                    LogInvalidInstall(AppInstallID, name);
                     return BadRequest();
                 }
-
+                if (!(await DbContext.UserIsHost(PartyID, UserGuid)))
+                {
+                    LogGatekeeperInfraction_NotHost(AppInstallID, UserGuid, name);
+                    return BadRequest();
+                }
                 List<PartySettingsViewCO> model = new List<PartySettingsViewCO>();
 
-                foreach (PartySettingsViewDTO partySettingsDTO in request.Settings)
-                {
-                    PartySettingMatrix partySettingMatrix = DbContext.PartySettingMatrices.Where(x => x.PartyID == PartyID && x.SettingID == partySettingsDTO.SettingID).FirstOrDefault();
+         
+                    PartySettingMatrix partySettingMatrix = DbContext.PartySettingMatrices.Where(x => x.PartyID == PartyID && x.SettingID == SettingID).FirstOrDefault();
 
                     if (partySettingMatrix != null)
                     {
-                        if (partySettingMatrix.ChoiceID != partySettingsDTO.SettingChoiceID)
-                            partySettingMatrix.ChoiceID = partySettingsDTO.SettingChoiceID;
-
-                        if (partySettingMatrix.ChoiceEntry != partySettingsDTO.SettingChoiceValue)
-                            partySettingMatrix.ChoiceEntry = partySettingsDTO.ChoiceEntry;
+                            partySettingMatrix.ChoiceID = ChoiceID;
+                            partySettingMatrix.ChoiceEntry = ChoiceEntry;
                     }
                     else
                     {
-                        partySettingMatrix = new PartySettingMatrix(PartyID, partySettingsDTO.SettingID, partySettingsDTO.SettingChoiceID, partySettingsDTO.ChoiceEntry);
+                        partySettingMatrix = new PartySettingMatrix(PartyID, SettingID, ChoiceID, ChoiceEntry);
                         DbContext.PartySettingMatrices.Add(partySettingMatrix);
 
                     }
 
-
-                }
 
                 // Save entity in database
                 await DbContext.SaveChangesAsync();
