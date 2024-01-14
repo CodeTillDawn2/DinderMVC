@@ -1,6 +1,5 @@
 ﻿using DinderMVC.Models;
 using Microsoft.AspNetCore.Authentication;
-using Microsoft.EntityFrameworkCore;
 
 namespace DinderMVC.Authentication
 {

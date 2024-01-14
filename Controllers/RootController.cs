@@ -1,13 +1,13 @@
 ﻿
 using DinderDLL.DataModels;
+using DinderDLL.Responses;
+using DinderMVC.Models;
 using DinderMVC.Queries;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using DinderDLL.Responses;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
-using DinderMVC.Models;
 
 namespace DinderMVC.Controllers
 {

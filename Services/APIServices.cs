@@ -1,7 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Security.Claims;
 
 namespace DinderMVC.Services
@@ -13,7 +11,7 @@ namespace DinderMVC.Services
             UserIdentity id = new UserIdentity();
             foreach (Claim claim in claims)
             {
-                switch(claim.Type)
+                switch (claim.Type)
                 {
                     case ClaimTypes.Name:
                         id.DisplayName = claim.Value;
@@ -27,7 +25,7 @@ namespace DinderMVC.Services
                         break;
 
                     case ClaimTypes.Thumbprint:
-                        
+
                         id.UserGuid = new Guid(claim.Value);
                         break;
 
@@ -45,7 +43,7 @@ namespace DinderMVC.Services
                 }
             }
 
-                return id;
+            return id;
         }
 
 

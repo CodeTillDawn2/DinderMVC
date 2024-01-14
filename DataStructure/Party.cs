@@ -1,5 +1,4 @@
 ﻿using DinderDLL.DataModels;
-using DinderDLL.DTOs;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System;
@@ -124,10 +123,7 @@ namespace DinderMVC.Models
                     .IsRequired();
 
 
-                builder.HasMany(x => x.Settings).WithOne().HasForeignKey(b => b.PartyID).OnDelete(DeleteBehavior.Restrict);
-                builder.HasMany(x => x.Meals).WithOne(b => b.Party).HasForeignKey(b => b.PartyID).OnDelete(DeleteBehavior.Restrict);
-                builder.HasMany(x => x.PartyInvites).WithOne(b => b.Party).HasForeignKey(b => b.PartyID).OnDelete(DeleteBehavior.Restrict);
-                builder.HasMany(x => x.PartyChoices).WithOne(b => b.Party).HasForeignKey(b => b.PartyID).OnDelete(DeleteBehavior.Restrict);
+
 
                 // Set configuration for columns
                 builder.Property(p => p.PartyID).HasColumnType("int").IsRequired().UseIdentityColumn();
@@ -135,7 +131,10 @@ namespace DinderMVC.Models
                 builder.Property(p => p.SessionMessage).HasColumnType("varchar(255)").IsRequired();
                 builder.Property(p => p.StatusID).HasColumnType("int");
 
-
+                builder.HasMany(x => x.Settings).WithOne().HasForeignKey(b => b.PartyID).OnDelete(DeleteBehavior.Cascade);
+                builder.HasMany(x => x.Meals).WithOne(b => b.Party).HasForeignKey(b => b.PartyID).OnDelete(DeleteBehavior.Cascade);
+                builder.HasMany(x => x.PartyInvites).WithOne(b => b.Party).HasForeignKey(b => b.PartyID).OnDelete(DeleteBehavior.Cascade);
+                builder.HasMany(x => x.PartyChoices).WithOne(b => b.Party).HasForeignKey(b => b.PartyID).OnDelete(DeleteBehavior.Cascade);
             }
         }
 

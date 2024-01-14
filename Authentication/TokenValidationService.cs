@@ -12,32 +12,32 @@ namespace DinderMVC.Authentication
     {
         public (string Bearer, DateTime Expiration) IssueToken(string appInstallGuid, string userGuid)
         {
-          
-                var tokenHandler = new JwtSecurityTokenHandler();
-                var key = Encoding.UTF8.GetBytes("9A7194787ADCB8FC4DCDA94DA11E9ASDVA"); // Replace with a secure key
 
-                DateTime expirationDate = DateTime.UtcNow.AddHours(1);
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var key = Encoding.UTF8.GetBytes("9A7194787ADCB8FC4DCDA94DA11E9ASDVA"); // Replace with a secure key
 
-                var tokenDescriptor = new SecurityTokenDescriptor
+            DateTime expirationDate = DateTime.UtcNow.AddHours(1);
+
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject = new ClaimsIdentity(new Claim[]
                 {
-                    Subject = new ClaimsIdentity(new Claim[]
-                    {
                 new Claim("appInstallGuid", appInstallGuid),
                 new Claim("userGuid", userGuid),
-                    }),
-                    Expires = expirationDate,
-                    SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature),
-                    Issuer = "YourIssuer",
-                    Audience = "YourAudience"
-                };
+                }),
+                Expires = expirationDate,
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature),
+                Issuer = "YourIssuer",
+                Audience = "YourAudience"
+            };
 
-                var token = tokenHandler.CreateToken(tokenDescriptor);
-
-                
+            var token = tokenHandler.CreateToken(tokenDescriptor);
 
 
-                return (Bearer: tokenHandler.WriteToken(token), Expiration: expirationDate);
-            
+
+
+            return (Bearer: tokenHandler.WriteToken(token), Expiration: expirationDate);
+
 
         }
     }

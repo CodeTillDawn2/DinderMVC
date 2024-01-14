@@ -45,18 +45,10 @@ namespace DinderMVC.Models
             SessionMessage = request.sessionMessage,
             StatusID = 1,
             CookGuid = cookGuid
-  
+
         };
 
-        public static PartyMeal ToEntity(this PostPartyMealRequest request)
-            => new PartyMeal
-            {
 
-                PartyID = request.partyID,
-                MealID = request.mealID
-
-
-            };
 
 
         public static UserFriend ToEntity(this PostUserFriendRequest request, Guid userGUID)

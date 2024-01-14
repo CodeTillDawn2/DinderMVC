@@ -1,6 +1,7 @@
 ﻿using DinderDLL.DataModels;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using System;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace DinderMVC.Models
@@ -15,7 +16,7 @@ namespace DinderMVC.Models
 
         public int ChoiceID { get; set; }
 
-        public string ChoiceEntry { get; set; }
+        public String ChoiceEntry { get; set; }
 
         [NotMapped]
         public virtual Party Party { get; set; }
@@ -30,7 +31,7 @@ namespace DinderMVC.Models
         {
         }
 
-        public PartySettingMatrix(int partyID, int settingID, int choiceID, string choiceEntry)
+        public PartySettingMatrix(int partyID, int settingID, int choiceID, String choiceEntry = null)
         {
             PartyID = partyID;
             SettingID = settingID;
@@ -40,8 +41,8 @@ namespace DinderMVC.Models
 
         public PartySettingsViewCO ReturnCO()
         {
-            return new PartySettingsViewCO(PartyID, SettingID, ChoiceID, Setting.SettingName, Choice.SettingChoiceValue, Setting.SettingValueDataType, ChoiceEntry );
-            
+            return new PartySettingsViewCO(PartyID, SettingID, ChoiceID, Setting.DataType.DataTypeDescription, Setting.SettingName, Choice.SettingChoiceName, Choice.SettingChoiceValue, Setting.SettingValueDataType, ChoiceEntry);
+
 
         }
 
@@ -55,8 +56,7 @@ namespace DinderMVC.Models
                 builder.ToTable("PartySettingMatrix", "dbo");
 
                 // Set key for entity
-                builder.HasKey(p => p.PartyID);
-                builder.HasKey(p => p.SettingID);
+                builder.HasKey(p => new { p.PartyID, p.SettingID });
 
                 // Columns with default value
 
@@ -79,12 +79,11 @@ namespace DinderMVC.Models
 
                 builder
                    .Property(p => p.ChoiceEntry)
-                   .HasColumnType("varchar(255)")
-                   .IsRequired();
+                   .HasColumnType("varchar(255)");
 
+                builder.HasOne(x => x.Setting).WithMany().HasForeignKey(a => a.SettingID).OnDelete(DeleteBehavior.Restrict);
                 builder.HasOne(x => x.Party).WithMany(b => b.Settings).HasForeignKey(a => a.PartyID).OnDelete(DeleteBehavior.Restrict);
-                builder.HasOne(x => x.Setting).WithOne().HasForeignKey<PartySettingType>(a => a.PartySettingID).OnDelete(DeleteBehavior.Restrict);
-                builder.HasOne(x => x.Choice).WithOne().HasForeignKey<PartySettingValue>(a => a.SettingChoiceID).OnDelete(DeleteBehavior.Restrict);
+                builder.HasOne(x => x.Choice).WithMany().HasForeignKey(a => new { a.SettingID, a.ChoiceID }).OnDelete(DeleteBehavior.Restrict);
                 //builder.HasOne(x => x.Friend).WithMany(b => b.)
 
                 //builder.HasMany(x => x.Meals).WithOne(b => b.User).HasForeignKey(b => b.UserGUID).OnDelete(DeleteBehavior.Restrict);

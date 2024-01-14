@@ -1,16 +1,15 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using DinderDLL.DataModels;
+using DinderDLL.Responses;
+using DinderMVC.Models;
+using DinderMVC.Queries;
+using DinderMVC.Services;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Threading.Tasks;
-using DinderDLL.Responses;
-using DinderDLL.DataModels;
-using DinderMVC.Queries;
-using DinderMVC.Models;
-using DinderDLL.Requests;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
-using Microsoft.AspNetCore.Authorization;
-using DinderMVC.Services;
 
 namespace DinderMVC.Controllers
 {
@@ -44,11 +43,11 @@ namespace DinderMVC.Controllers
         /// <response code="200">Returns the global meals list</response>
         /// <response code="500">If there was an internal server error</response>
         [HttpGet("")]
-        [ProducesResponseType(typeof(PagedResponse<GlobalMealDM>),200)]
+        [ProducesResponseType(typeof(PagedResponse<GlobalMealDM>), 200)]
         [ProducesResponseType(400)]
         [ProducesResponseType(500)]
         [Authorize(AuthenticationSchemes = "Bearer")]
-        public async Task<IActionResult> GetGlobalMealsAsync([BindRequired] Guid appInstallID, int pageSize = 10, int pageNumber = 1, 
+        public async Task<IActionResult> GetGlobalMealsAsync([BindRequired] Guid appInstallID, int pageSize = 10, int pageNumber = 1,
             string mealName = null, string mealDescription = null)
         {
 
@@ -108,7 +107,7 @@ namespace DinderMVC.Controllers
         /// <response code="404">If meal is not exists</response>
         /// <response code="500">If there was an internal server error</response>
         [HttpGet("{globalMealGuid}")]
-        [ProducesResponseType(typeof(GlobalMealDM),200)]
+        [ProducesResponseType(typeof(GlobalMealDM), 200)]
         [ProducesResponseType(404)]
         [ProducesResponseType(500)]
         [Authorize(AuthenticationSchemes = "Bearer")]
@@ -143,7 +142,7 @@ namespace DinderMVC.Controllers
             catch (Exception ex)
             {
                 response.DidError = true;
-                response.ErrorMessage = "There was an internal error, please contact to technical support.";
+                response.ErrorMessage = "There was an internal error, please contact technical support.";
 
                 LogError(ex, name);
             }
@@ -151,7 +150,7 @@ namespace DinderMVC.Controllers
             return response.ToHttpResponse();
         }
 
-    
+
 
     }
 }

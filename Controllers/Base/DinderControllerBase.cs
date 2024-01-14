@@ -1,5 +1,4 @@
-﻿using DinderDLL.Models;
-using DinderMVC.Models;
+﻿using DinderMVC.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
@@ -38,6 +37,11 @@ namespace DinderMVC.Controllers
         public void LogGatekeeperInfraction_NotHost(Guid AppInstallID, Guid UserGuid, string NameOfMethod)
         {
             Logger?.LogDebug("'{1}' has had a user, {2} attempting to make changes on a party they are not hosting using " + AppInstallID.ToString(), UserGuid, NameOfMethod);
+        }
+        [NonAction]
+        public void LogGatekeeperInfraction_NotSameUser(Guid AppInstallID, Guid UserGuid, string NameOfMethod)
+        {
+            Logger?.LogDebug("'{1}' has had a user, {2} attempting to make changes on a party invite for someone else using " + AppInstallID.ToString(), UserGuid, NameOfMethod);
         }
         [NonAction]
         public void LogCustom(string Message, string NameOfMethod)

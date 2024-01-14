@@ -1,8 +1,5 @@
-﻿using Dapper;
-using DinderMVC;
-using DinderDLL.DataModels;
+﻿using DinderDLL.DataModels;
 using DinderMVC.Models;
-using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -16,7 +13,6 @@ namespace DinderMVC.Queries
     public static class DbContextQueries
     {
 
-        public static string PaginationInsert = " OFFSET (@pageNumber - 1) * @pageSize ROWS FETCH NEXT @pageSize ROWS ONLY";
 
         public static IQueryable<RootDM> GetRoots(this DinderContext dbContext)
         {
@@ -43,7 +39,7 @@ namespace DinderMVC.Queries
             Party party = dbContext.Parties.Where(x => x.PartyID == PartyID).Include(x => x.PartyInvites).FirstOrDefault();
             if (party == null)
                 return false;
-            if (party.CookGuid != UserGuid && !party.PartyInvites.Select(x => x.UserGuid).ToList().Contains(UserGuid)) 
+            if (party.CookGuid != UserGuid && !party.PartyInvites.Select(x => x.UserGuid).ToList().Contains(UserGuid))
                 return false;
             return true;
         }
@@ -58,381 +54,7 @@ namespace DinderMVC.Queries
             return true;
         }
 
-        /// <summary>
-        /// Gets all users according to filters
-        /// </summary>
-        /// <param name="dbContext"></param>
-        /// <param name="pageSize">Page size</param>
-        /// <param name="pageNumber">Page number</param>
-        /// <param name="DisplayName">Filter by display name</param>
-        /// <returns></returns>
-        public static async Task<List<UserDM>> GetUsersAsync(this DinderContext dbContext, int pageSize = 10, int pageNumber = 1, string DisplayName = null)
-        {
 
-            //Build where clause
-            string whereclause = "";
-            if (DisplayName != null)
-                whereclause += " DisplayName like '%' + @DisplayName + '%'";
-
-            if (whereclause != "")
-                whereclause = " Where " + whereclause;
-
-
-            //Build ordered by clause (required)
-            string orderedbyclause = " UserName";
-
-            string sql = @"Select UserGUID, UserName, DisplayName, CreateDate, LastActiveDate FROM dbo.Users " +
-                whereclause +
-                " Order by " + orderedbyclause +
-                PaginationInsert;
-
-            // Run query using Dapper
-            using (IDbConnection db = new SqlConnection(Startup.Configuration["AppSettings:ConnectionString"]))
-            {
-                List<UserDM> data = (await db.QueryAsync<UserDM>
-                    (sql, new { @DisplayName = DisplayName, @pageNumber = pageNumber, @pageSize = pageSize }
-                    )).ToList();
-
-                //Add links after the fact
-                foreach (UserDM dto in data)
-                    dto.AddLinks();
-
-                return data;
-            };
-
-
-        }
-
-        //public static async Task<List<DataModel<T>>> GetDataItems<T>(this DinderContext dbContext, DapperQuery dapperQuery)
-        //{
-        //    // Run query using Dapper
-        //    using (IDbConnection db = new SqlConnection(Startup.Configuration["AppSettings:ConnectionString"]))
-        //    {
-        //        IEnumerable<DataModel<T>> data = (await db.QueryAsync<DataModel<T>>
-        //            (dapperQuery.sql));
-
-        //        List<DataModel<T>> result = data.ToList();
-
-        //        //Add links after the fact
-        //        foreach (DataModel<T> dm in result)
-        //        {
-        //            dm.AddLinks();
-        //        }
-
-
-        //        return result;
-        //    };
-        //}
-
-
-
-        public static async Task<List<MealDM>> GetUserMealsAsync(this DinderContext dbContext, Guid userGuid, int pageSize = 10, int pageNumber = 1)
-        {
-
-
-
-            //Build where clause
-
-            string whereclause = "";
-            whereclause += " userGuid = @userGuid";
-            whereclause = " Where " + whereclause;
-
-
-            //Build ordered by clause (required)
-            string orderedbyclause = " userGuid";
-
-            string sql = @"Select UserGUID, MealID, MealName, MealDescription, GlobalLink,MadeItBefore,PrivateNotes FROM dbo.Meals " +
-                whereclause +
-                " Order by " + orderedbyclause +
-                PaginationInsert;
-
-            // Run query using Dapper
-            using (IDbConnection db = new SqlConnection(Startup.Configuration["AppSettings:ConnectionString"]))
-            {
-                List<MealDM> data = (await db.QueryAsync<MealDM>
-                    (sql, new { @userGuid = userGuid, @pageNumber = pageNumber, @pageSize = pageSize }
-                    )).ToList();
-
-                //Add links after the fact
-                foreach (MealDM dto in data)
-                {
-                    dto.AddLinks();
-                }
-
-
-                return data;
-            };
-
-
-
-
-            //// Get query from DbSet
-            //var query = dbContext.Meals.AsNoTracking().Where(x => x.UserGUID == userGuid).Select(x => new MealDTO(x)).AsQueryable();
-
-            //return query;
-        }
-
-        public static async Task<List<PartySettingsViewCO>> GetPartySettingsAsync(this DinderContext dbContext, int partyID)
-        {
-
-            //Build where clause
-
-            string whereclause = "";
-            whereclause += " PartyID = @partyID";
-            whereclause = " Where " + whereclause;
-
-            string sql = @"Select * from dbo.PartySettingsView " +
-                whereclause;
-
-            // Run query using Dapper
-            using (IDbConnection db = new SqlConnection(Startup.Configuration["AppSettings:ConnectionString"]))
-            {
-                List<PartySettingsViewCO> data = (await db.QueryAsync<PartySettingsViewCO>
-                    (sql, new { @partyID = partyID }
-                    )).ToList();
-
-                //Add links after the fact
-                foreach (PartySettingsViewCO dto in data)
-                {
-                    dto.AddLinks();
-                }
-
-
-                return data;
-            };
-
-
-        }
-
-        public static async Task<List<PartyInviteViewCO>> GetPartyInvitesAsync(this DinderContext dbContext, int partyID)
-        {
-
-
-
-
-            //Build where clause
-
-            string whereclause = "";
-            whereclause += " PartyID = @partyID";
-            whereclause = " Where " + whereclause;
-
-            string sql = @"SELECT * from dbo.PartyInviteView " +
-                whereclause;
-
-            // Run query using Dapper
-            using (IDbConnection db = new SqlConnection(Startup.Configuration["AppSettings:ConnectionString"]))
-            {
-                List<PartyInviteViewCO> data = (await db.QueryAsync<PartyInviteViewCO>
-                    (sql, new { @partyID = partyID }
-                    )).ToList();
-
-                //Add links after the fact
-                foreach (PartyInviteViewCO dto in data)
-                {
-                    dto.AddLinks();
-                }
-
-
-                return data;
-            };
-        }
-
-        public static async Task<List<PartyChoiceDM>> GetPartyChoicesAsync(this DinderContext dbContext, int partyID, Guid userGuid)
-        {
-
-            //Build where clause
-
-            string whereclause = "";
-            whereclause += " PartyID = @partyID and UserGuid = @userGuid";
-            whereclause = " Where " + whereclause;
-
-            string sql = @"SELECT * from dbo.PartyChoices " +
-                whereclause;
-
-            // Run query using Dapper
-            using (IDbConnection db = new SqlConnection(Startup.Configuration["AppSettings:ConnectionString"]))
-            {
-                List<PartyChoiceDM> data = (await db.QueryAsync<PartyChoiceDM>
-                    (sql, new { @partyID = partyID, @userGuid = userGuid }
-                    )).ToList();
-
-                //Add links after the fact
-                foreach (PartyChoiceDM dto in data)
-                {
-                    dto.AddLinks();
-                }
-
-
-                return data;
-            };
-
-
-            // Get query from DbSet
-            //var query = dbContext.UserFriends.AsNoTracking().Include(c => c.Friend).Where(x => x.UserGUID == userGuid).Select(x => new FriendDTO(x)).AsQueryable();
-
-            //return query;
-        }
-
-        public static async Task<List<FriendViewCO>> GetUserFriendsAsync(this DinderContext dbContext, Guid userGuid, int pageSize = 100, int pageNumber = 1)
-        {
-
-            //Build where clause
-
-            string whereclause = "";
-            whereclause += " userGuid = @userGuid";
-            whereclause = " Where " + whereclause;
-
-
-            //Build ordered by clause (required)
-            string orderedbyclause = " FriendGUID";
-
-            string sql = @"Select * from dbo.FriendView " +
-                whereclause +
-                " Order by " + orderedbyclause +
-                PaginationInsert;
-
-            // Run query using Dapper
-            using (IDbConnection db = new SqlConnection(Startup.Configuration["AppSettings:ConnectionString"]))
-            {
-                try
-                {
-                    List<FriendViewCO> data = (await db.QueryAsync<FriendViewCO>
-                   (sql, new { @userGuid = userGuid, @pageNumber = pageNumber, @pageSize = pageSize }
-                   )).ToList();
-                    //Add links after the fact
-                    foreach (FriendViewCO dto in data)
-                    {
-                        dto.AddLinks();
-                    }
-
-                    return data;
-
-                }
-                catch (Exception ex)
-                {
-                    ex = ex;
-                    throw ex;
-                }
-
-
-
-
-            };
-
-
-        }
-
-        public static async Task<Guid?> AuthenticateUser(this DinderContext dbContext, string username, string password)
-        {
-
-            try
-            {
-                string sql = $"exec spAuthenticate '{username}','{password}'";
-
-                // Run query using Dapper
-                using (IDbConnection db = new SqlConnection(Startup.Configuration["AppSettings:ConnectionString"]))
-                {
-                    Guid userGuid = (await db.QueryAsync<Guid>(sql)).FirstOrDefault();
-                    if (userGuid != null)
-                    {
-                        return userGuid;
-                    }
-                    
-                };
-
-            }
-            catch (Exception ex)
-            {
-                ex = ex;
-            }
-            return null;
-        }
-
-        public static async Task<List<MealDM>> GetPartyMealsAsync(this DinderContext dbContext, int partyID, int pageSize = 100, int pageNumber = 1)
-        {
-
-            //Build where clause
-
-            string whereclause = "";
-            whereclause += " dbo.PartyMeals.PartyID = @partyID";
-            whereclause = " Where " + whereclause;
-
-
-            //Build ordered by clause (required)
-            string orderedbyclause = " dbo.Meals.MealID";
-
-            string sql = @"Select dbo.Meals.UserGUID, dbo.Meals.MealID, dbo.Meals.MealName, dbo.Meals.MealDescription, dbo.Meals.GlobalLink, dbo.Meals.MadeItBefore, dbo.Meals.PrivateNotes
-                 FROM dbo.Parties " +
-                " INNER JOIN dbo.PartyMeals ON dbo.Parties.PartyID = dbo.PartyMeals.PartyID " +
-                " INNER JOIN dbo.Meals ON dbo.PartyMeals.MealID = dbo.Meals.MealID" +
-                whereclause +
-                " Order by " + orderedbyclause +
-                PaginationInsert;
-
-            // Run query using Dapper
-            using (IDbConnection db = new SqlConnection(Startup.Configuration["AppSettings:ConnectionString"]))
-            {
-                List<MealDM> data = (await db.QueryAsync<MealDM>
-                    (sql, new { @partyID = partyID, @pageNumber = pageNumber, @pageSize = pageSize }
-                    )).ToList();
-
-                //Add links after the fact
-                foreach (MealDM dto in data)
-                {
-                    dto.AddLinks();
-                }
-
-
-                return data;
-            };
-
-
-        }
-
-
-        public static async Task<List<PartyDM>> GetUserPartiesAsync(this DinderContext dbContext, Guid userGuid, int pageSize = 100, int pageNumber = 1)
-        {
-
-            //Build where clause
-
-            string whereclause = "";
-            whereclause += " CookGuid = @userGuid";
-            whereclause = " Where " + whereclause;
-
-
-            //Build ordered by clause (required)
-            string orderedbyclause = " PartyID desc";
-
-            string sql = @"Select * from dbo.Parties  " +
-                whereclause +
-                " Order by " + orderedbyclause +
-                PaginationInsert;
-
-            // Run query using Dapper
-            using (IDbConnection db = new SqlConnection(Startup.Configuration["AppSettings:ConnectionString"]))
-            {
-                List<PartyDM> data = (await db.QueryAsync<PartyDM>
-                    (sql, new { @userGuid = userGuid, @pageNumber = pageNumber, @pageSize = pageSize }
-                    )).ToList();
-
-                //Add links after the fact
-                foreach (PartyDM dto in data)
-                {
-                    dto.AddLinks();
-                }
-
-
-                return data;
-            };
-
-
-
-
-            // Get query from DbSet
-            //var query = dbContext.UserFriends.AsNoTracking().Include(c => c.Friend).Where(x => x.UserGUID == userGuid).Select(x => new FriendDTO(x)).AsQueryable();
-
-            //return query;
-        }
         public static async Task<UserDM> GetUsersByUsernameAsync(this DinderContext dbContext, User entity)
         {
             User user = (await dbContext.Users.AsNoTracking().FirstOrDefaultAsync(item => item.UserName == entity.UserName));
@@ -444,7 +66,7 @@ namespace DinderMVC.Queries
         public static async Task<UserDM> GetDetailedUserByGuidAsync(this DinderContext dbContext, User entity)
         {
             UserDM userDM = (await dbContext.Users.Include(x => x.Meals).Include(x => x.Parties).AsSplitQuery().FirstOrDefaultAsync(item => item.UserGUID == entity.UserGUID)).ReturnDM();
-            userDM.FriendsList = await dbContext.GetUserFriendsAsync(userDM.UserGUID);
+            userDM.FriendsList = await DapperQueries.GetUserFriendsAsync(userDM.UserGUID);
             //userDM.PartyList = await dbContext.GetUserPartiesAsync(userDM.UserGUID);
             return userDM;
         }
@@ -503,11 +125,21 @@ namespace DinderMVC.Queries
             return query.Select(x => x.ReturnDM());
         }
 
-        public static IQueryable<PartyDM> GetParties(this DinderContext dbContext, Guid UserGuid, Guid? Cookguid, string SessionName, string SessionMessage)
+        public static IQueryable<PartyDM> GetParties(this DinderContext dbContext, bool IsDetailed, Guid UserGuid, Guid? Cookguid, string SessionName, string SessionMessage)
         {
             // Get query from DbSet
-            var query = DetailedPartyQuery(dbContext.Parties)
+            IQueryable<Party> query;
+
+            if (IsDetailed)
+            {
+                query = DetailedPartyQuery(dbContext.Parties)
                 .AsQueryable();
+            }
+            else
+            {
+                query = NotDetailedPartyQuery(dbContext.Parties)
+                .AsQueryable();
+            }
 
             // Filter by: 'Cookguid'
             if (Cookguid.HasValue)
@@ -540,13 +172,23 @@ namespace DinderMVC.Queries
             return (dbContext.UserFriends.Where(x => x.UserGUID == entity.UserGUID && x.FriendGUID == entity.FriendGUID)).FirstOrDefault();
         }
 
-        public static async Task<PartyDM> GetDetailedPartyByIDAsync(this DinderContext dbContext, Party entity)
+        public static async Task<PartyDM> GetDetailedPartyByIDAsync(this DinderContext dbContext, int PartyID, bool IsDetailed)
         {
 
-            List<PartyInviteViewCO> invites = await dbContext.GetPartyInvitesAsync(entity.PartyID);
-            List<PartySettingsViewCO> Settings = await dbContext.GetPartySettingsAsync(entity.PartyID);
-            PartyDM party = DetailedPartyQuery(dbContext.Parties).Where(item => item.PartyID == entity.PartyID).FirstOrDefault().ReturnDM();
-                
+            List<PartyInviteViewCO> invites = await DapperQueries.GetPartyInvitesAsync(PartyID);
+            List<PartySettingsViewCO> Settings = await DapperQueries.GetPartySettingsAsync(PartyID);
+
+
+            PartyDM party;
+            if (IsDetailed)
+            {
+                party = DetailedPartyQuery(dbContext.Parties).Where(item => item.PartyID == PartyID).FirstOrDefault().ReturnDM();
+            }
+            else
+            {
+                party = NotDetailedPartyQuery(dbContext.Parties).Where(item => item.PartyID == PartyID).FirstOrDefault().ReturnDM();
+            }
+
             party.InviteList = invites.ConvertAll(x => x.ReturnDM());
             party.SettingList = Settings;
             return party;
@@ -560,18 +202,34 @@ namespace DinderMVC.Queries
         public static DetailedPartyDelegate DetailedPartyQuery = query =>
             query.Include(b => b.Meals).ThenInclude(b => b.Meal)
                 .Include(b => b.PartyInvites)
-                .Include(b => b.Settings).ThenInclude(c => c.Setting)
+                .Include(b => b.Settings).ThenInclude(c => c.Setting).ThenInclude(d => d.DataType)
                 .Include(b => b.Settings).ThenInclude(c => c.Choice)
                 .Include(b => b.PartyChoices);
+        public static DetailedPartyDelegate NotDetailedPartyQuery = query =>
+            query.Include(b => b.Meals).ThenInclude(b => b.Meal);
 
 
 
         public static async Task<PartySettingsViewCO> GetPartySettingByIDsEditableAsync(this DinderContext dbContext, int PartyID, int SettingID)
         {
-            return (await dbContext.GetPartySettingsAsync(PartyID)).Where(x => x.PartyID == PartyID && x.SettingID == SettingID).FirstOrDefault();
+            return (await DapperQueries.GetPartySettingsAsync(PartyID)).Where(x => x.PartyID == PartyID && x.SettingID == SettingID).FirstOrDefault();
         }
-        public static async Task<Party> GetPartyByIDEditableAsync(this DinderContext dbContext, Party entity)
-        => dbContext.Parties.Where(item => item.PartyID == entity.PartyID).FirstOrDefault();
+        public static async Task<Party> GetPartyByIDEditableAsync(this DinderContext dbContext, int PartyID, bool IsDetailed = false)
+        {
+            Party returnParty;
+
+            if (IsDetailed)
+            {
+                returnParty = DetailedPartyQuery(dbContext.Parties).Where(item => item.PartyID == PartyID).FirstOrDefault();
+            }
+            else
+            {
+                returnParty = NotDetailedPartyQuery(dbContext.Parties).Where(item => item.PartyID == PartyID).FirstOrDefault();
+            }
+
+            return returnParty;
+            
+        }
         public static async Task<PartyMeal> GetPartyMealEditableAsync(this DinderContext dbContext, int PartyID, int MealID)
           => dbContext.PartyMeals.Where(item => item.PartyID == PartyID && item.MealID == MealID).FirstOrDefault();
 
@@ -583,8 +241,8 @@ namespace DinderMVC.Queries
         public static async Task<PartyInvite> GetPartyInviteEditableAsync(this DinderContext dbContext, int partyID, Guid userGuid)
             => dbContext.PartyInvites.Where(item => item.PartyID == partyID && item.UserGuid == userGuid).FirstOrDefault();
 
-        public static async Task<PartyChoice> GetPartyChoiceEditableAsync(this DinderContext dbContext, Party entity, User userentity, UserMeal meal)
-         => dbContext.PartyChoices.Where(item => item.PartyID == entity.PartyID && item.UserGUID == userentity.UserGUID && item.MealID == meal.MealID).FirstOrDefault();
+        public static async Task<PartyChoice> GetPartyChoiceEditableAsync(this DinderContext dbContext, int PartyID, Guid userGuid, int MealID)
+         => dbContext.PartyChoices.Where(item => item.PartyID == PartyID && item.UserGUID == userGuid && item.MealID == MealID).FirstOrDefault();
 
         public static async Task<UserMeal> GetUserMealByIDEditableAsync(this DinderContext dbContext, UserMeal entity)
             => dbContext.UserMeals.Where(item => item.MealID == entity.MealID && item.CookGuid == entity.CookGuid).FirstOrDefault();

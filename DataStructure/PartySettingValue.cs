@@ -37,7 +37,7 @@ namespace DinderMVC.Models
                 builder.ToTable("PartySettingValue", "dbo");
 
                 // Set key for entity
-                builder.HasKey(p => p.SettingChoiceID);
+                builder.HasKey(p => new { p.SettingID, p.SettingChoiceID });
 
                 // Columns with default value
 
@@ -62,10 +62,6 @@ namespace DinderMVC.Models
                     .IsRequired();
 
 
-                //builder.HasOne(x => x.Friend).WithOne().HasForeignKey<User>(a => a.UserGUID).OnDelete(DeleteBehavior.Restrict);
-                //builder.HasOne(x => x.Friend).WithMany(b => b.)
-
-                //builder.HasMany(x => x.Meals).WithOne(b => b.User).HasForeignKey(b => b.UserGUID).OnDelete(DeleteBehavior.Restrict);
 
             }
         }

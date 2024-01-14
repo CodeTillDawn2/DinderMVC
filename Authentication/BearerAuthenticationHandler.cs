@@ -1,13 +1,10 @@
 ﻿using DinderMVC.Models;
 using Microsoft.AspNetCore.Authentication;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
 using System.Linq;
-using System.Net;
 using System.Security.Claims;
-using System.Text;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 
@@ -87,8 +84,11 @@ namespace DinderMVC.Authentication
         // Example method for token validation - replace with your actual logic
         private DinderToken ReturnFoundToken(string bearerToken)
         {
+
             DinderToken tokenFound = _dbContext.DinderTokens.Where(x => x.BearerToken == bearerToken).FirstOrDefault();
             return tokenFound;
+
+
         }
     }
 }

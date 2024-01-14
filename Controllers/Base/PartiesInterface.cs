@@ -1,6 +1,5 @@
 ﻿using DinderDLL.Requests;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
 using System;
 using System.Threading.Tasks;
 
@@ -10,16 +9,16 @@ namespace DinderMVC.Controllers
     public interface PartiesInterface
     {
 
-        public abstract Task<IActionResult> GetPartiesAsync(int pageSize = 10, int pageNumber = 1, Guid? cookGuid = null,
+        public abstract Task<IActionResult> GetPartiesAsync(bool IsDetailed, int pageSize = 10, int pageNumber = 1, Guid? cookGuid = null,
              string sessionName = null, string sessionMessage = null);
 
 
-        public abstract Task<IActionResult> GetPartyAsync(int PartyID);
+        public abstract Task<IActionResult> GetPartyAsync(int PartyID, bool IsDetailed);
 
         public abstract Task<IActionResult> PostPartyAsync([FromBody] PostPartyRequest request);
 
 
-        public abstract Task<IActionResult> PutPartyAsync(int PartyID, [FromBody] PutPartyRequest request);
+        public abstract Task<IActionResult> PutPartyAsync(int PartyID, [FromBody] PutPartyRequest request, bool IsDetailed);
 
         public abstract Task<IActionResult> DeletePartyAsync(int PartyID);
 
@@ -29,11 +28,11 @@ namespace DinderMVC.Controllers
             int SettingID, int ChoiceID, string ChoiceEntry);
 
         public abstract Task<IActionResult> GetPartyInvitesAsync(int PartyID);
-        public abstract Task<IActionResult> PutPartyInviteAsync(int PartyID, PutPartyInviteRequest request);
+        public abstract Task<IActionResult> PutPartyInviteAsync(int PartyID, Guid userGuid, bool RSVP);
 
         public abstract Task<IActionResult> PostPartyInviteAsync(int PartyID, PostPartyInviteRequest request);
 
-        public abstract Task<IActionResult> DeletePartyInviteAsync(int PartyID);
+        public abstract Task<IActionResult> DeletePartyInviteAsync(int PartyID, Guid userGuid);
 
 
 
@@ -45,7 +44,7 @@ namespace DinderMVC.Controllers
 
         public abstract Task<IActionResult> GetPartyMealsAsync(int partyID);
 
-        public abstract Task<IActionResult> PostPartyMealAsync(PostPartyMealRequest request);
+        public abstract Task<IActionResult> PostPartyMealAsync(int PartyID, int MealID);
         public abstract Task<IActionResult> DeletePartyMealAsync(int partyID, int MealID);
 
 #pragma warning restore CS1591

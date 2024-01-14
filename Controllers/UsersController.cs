@@ -1,14 +1,14 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using DinderDLL.DataModels;
+using DinderDLL.Requests;
+using DinderDLL.Responses;
+using DinderMVC.Models;
+using DinderMVC.Queries;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
-using DinderDLL.Responses;
-using DinderDLL.DataModels;
-using DinderMVC.Models;
-using DinderMVC.Queries;
-using DinderDLL.Requests;
-using Microsoft.EntityFrameworkCore;
 
 namespace DinderMVC.Controllers
 {
@@ -60,7 +60,7 @@ namespace DinderMVC.Controllers
                     return BadRequest();
                 }
 
-                response.Model = await DbContext.GetUsersAsync(pageSize, pageNumber, displayName);
+                response.Model = await DapperQueries.GetUsersAsync(pageSize, pageNumber, displayName);
 
                 response.PageSize = pageSize;
                 response.PageNumber = pageNumber;
@@ -112,7 +112,7 @@ namespace DinderMVC.Controllers
                     return BadRequest();
                 }
 
-                response.Model = await DbContext.GetUserFriendsAsync(userGuid);
+                response.Model = await DapperQueries.GetUserFriendsAsync(userGuid);
                 response.PageSize = 100;
 
 
@@ -164,7 +164,7 @@ namespace DinderMVC.Controllers
 
 
 
-                response.Model = await DbContext.GetUserPartiesAsync(userGuid);
+                response.Model = await DapperQueries.GetUserPartiesAsync(userGuid);
                 response.PageSize = 100;
                 response.ItemsCount = response.Model.Count();
 
@@ -213,7 +213,7 @@ namespace DinderMVC.Controllers
                     return BadRequest();
                 }
 
-                response.Model = await DbContext.GetUserMealsAsync(userGuid);
+                response.Model = await DapperQueries.GetUserMealsAsync(userGuid);
 
                 response.ItemsCount = response.Model.Count();
                 response.PageSize = pageSize;
@@ -268,7 +268,7 @@ namespace DinderMVC.Controllers
             catch (Exception ex)
             {
                 response.DidError = true;
-                response.ErrorMessage = "There was an internal error, please contact to technical support.";
+                response.ErrorMessage = "There was an internal error, please contact technical support.";
 
                 LogError(ex, name);
             }
@@ -336,7 +336,7 @@ namespace DinderMVC.Controllers
             catch (Exception ex)
             {
                 response.DidError = true;
-                response.ErrorMessage = "There was an internal error, please contact to technical support.";
+                response.ErrorMessage = "There was an internal error, please contact technical support.";
 
                 LogError(ex, name);
             }
@@ -392,7 +392,7 @@ namespace DinderMVC.Controllers
             catch (Exception ex)
             {
                 response.DidError = true;
-                response.ErrorMessage = "There was an internal error, please contact to technical support.";
+                response.ErrorMessage = "There was an internal error, please contact technical support.";
 
                 LogError(ex, name);
             }
@@ -442,7 +442,7 @@ namespace DinderMVC.Controllers
             catch (Exception ex)
             {
                 response.DidError = true;
-                response.ErrorMessage = "There was an internal error, please contact to technical support.";
+                response.ErrorMessage = "There was an internal error, please contact technical support.";
 
                 LogError(ex, name);
             }
@@ -510,7 +510,7 @@ namespace DinderMVC.Controllers
             catch (Exception ex)
             {
                 response.DidError = true;
-                response.ErrorMessage = "There was an internal error, please contact to technical support.";
+                response.ErrorMessage = "There was an internal error, please contact technical support.";
 
                 LogError(ex, name);
             }
@@ -566,7 +566,7 @@ namespace DinderMVC.Controllers
             catch (Exception ex)
             {
                 response.DidError = true;
-                response.ErrorMessage = "There was an internal error, please contact to technical support.";
+                response.ErrorMessage = "There was an internal error, please contact technical support.";
 
                 LogError(ex, name);
             }
@@ -616,7 +616,7 @@ namespace DinderMVC.Controllers
             catch (Exception ex)
             {
                 response.DidError = true;
-                response.ErrorMessage = "There was an internal error, please contact to technical support.";
+                response.ErrorMessage = "There was an internal error, please contact technical support.";
 
                 LogError(ex, name);
             }
@@ -647,7 +647,7 @@ namespace DinderMVC.Controllers
         [HttpGet("Users/{UserGuid}/Meals")]
         [ProducesResponseType(200)]
         [ProducesResponseType(500)]
-        public async Task<IActionResult> GetUserMealsAsync(Guid appInstallID, Guid userGUID, int pageSize = 10, int pageNumber = 1, 
+        public async Task<IActionResult> GetUserMealsAsync(Guid appInstallID, Guid userGUID, int pageSize = 10, int pageNumber = 1,
             int? mealID = null, string mealName = null, string mealDescription = null, Guid? globalLink = null, bool? madeItBefore = null)
         {
 
@@ -740,7 +740,7 @@ namespace DinderMVC.Controllers
             catch (Exception ex)
             {
                 response.DidError = true;
-                response.ErrorMessage = "There was an internal error, please contact to technical support.";
+                response.ErrorMessage = "There was an internal error, please contact technical support.";
 
                 LogError(ex, name);
             }
@@ -813,7 +813,7 @@ namespace DinderMVC.Controllers
             catch (Exception ex)
             {
                 response.DidError = true;
-                response.ErrorMessage = "There was an internal error, please contact to technical support.";
+                response.ErrorMessage = "There was an internal error, please contact technical support.";
 
                 LogError(ex, name);
             }
@@ -872,7 +872,7 @@ namespace DinderMVC.Controllers
             catch (Exception ex)
             {
                 response.DidError = true;
-                response.ErrorMessage = "There was an internal error, please contact to technical support.";
+                response.ErrorMessage = "There was an internal error, please contact technical support.";
 
                 LogError(ex, name);
             }
@@ -950,7 +950,7 @@ namespace DinderMVC.Controllers
             catch (Exception ex)
             {
                 response.DidError = true;
-                response.ErrorMessage = "There was an internal error, please contact to technical support.";
+                response.ErrorMessage = "There was an internal error, please contact technical support.";
                 LogError(ex, name);
             }
 

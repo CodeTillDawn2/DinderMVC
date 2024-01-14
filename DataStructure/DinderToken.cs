@@ -1,8 +1,6 @@
-﻿using DinderDLL.DataModels;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System;
-using System.Text.Json.Serialization;
 
 namespace DinderMVC.Models
 {

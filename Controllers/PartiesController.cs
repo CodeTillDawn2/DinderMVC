@@ -1,19 +1,20 @@
 ﻿using DinderDLL.DataModels;
 using DinderDLL.Requests;
+using DinderDLL.Responses;
 using DinderMVC.Models;
 using DinderMVC.Queries;
+using DinderMVC.Services;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using DinderDLL.Responses;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
-using DinderDLL.DTOs;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
-using Microsoft.AspNetCore.Authorization;
-using DinderMVC.Services;
 
 namespace DinderMVC.Controllers
 {
@@ -37,6 +38,7 @@ namespace DinderMVC.Controllers
         /// <summary>
         /// Retrieves parties the user is invited to or hosting
         /// </summary>
+        /// <param name="IsDetailed">Whether or not to include: Party invites, settings, or choices</param>
         /// <param name="pageSize">Page size</param>
         /// <param name="pageNumber">Page number</param>
         /// <param name="cookGuid">Cook GUID</param>
@@ -46,11 +48,11 @@ namespace DinderMVC.Controllers
         /// <response code="200">Returns the parties list</response>
         /// <response code="500">If there was an internal server error</response>
         [HttpGet("")]
-        [ProducesResponseType(typeof(PagedResponse<PartyDM>),200)]
+        [ProducesResponseType(typeof(PagedResponse<PartyDM>), 200)]
         [ProducesResponseType(400)]
         [ProducesResponseType(500)]
         [Authorize(AuthenticationSchemes = "Bearer")]
-        public async Task<IActionResult> GetPartiesAsync(int pageSize = 10, int pageNumber = 1, 
+        public async Task<IActionResult> GetPartiesAsync(bool IsDetailed = false, int pageSize = 10, int pageNumber = 1,
             Guid? cookGuid = null, string sessionName = null, string sessionMessage = null)
         {
             string name = nameof(GetPartiesAsync);
@@ -63,7 +65,7 @@ namespace DinderMVC.Controllers
             try
             {
 
-                var query = DbContext.GetParties(id.UserGuid, cookGuid, sessionName, sessionMessage);
+                var query = DbContext.GetParties(IsDetailed, id.UserGuid, cookGuid, sessionName, sessionMessage);
 
                 response.PageSize = pageSize;
                 response.PageNumber = pageNumber;
@@ -73,7 +75,7 @@ namespace DinderMVC.Controllers
                 response.Model = await query.Paging(pageSize, pageNumber).ToListAsync();
 
                 response.Message = string.Format("Page {0} of {1}, Total of parties: {2}.", pageNumber, response.PageCount, response.ItemsCount);
-                response.detailed = true;
+                response.detailed = IsDetailed;
                 LogCustom("The parties have been retrieved successfully.", name);
             }
             catch (Exception ex)
@@ -95,11 +97,12 @@ namespace DinderMVC.Controllers
         /// Retrieves party settings
         /// </summary>
         /// <param name="PartyID">Party ID (required)</param>
+        /// <param name="IsDetailed">Whether or not to include detailed information</param>
         /// <returns>A response with party settings list</returns>
         /// <response code="200">Returns the party settings list</response>
         /// <response code="500">If there was an internal server error</response>
         [HttpGet("{PartyID}/Settings")]
-        [ProducesResponseType(typeof(PagedResponse<PartySettingsViewCO>),200)]
+        [ProducesResponseType(typeof(PagedResponse<PartySettingsViewCO>), 200)]
         [ProducesResponseType(400)]
         [ProducesResponseType(500)]
         [Authorize(AuthenticationSchemes = "Bearer")]
@@ -115,17 +118,17 @@ namespace DinderMVC.Controllers
             {
                 LogMethodInvoked(name);
 
-                if (!(await DbContext.UserInParty(PartyID,id.UserGuid)))
+                if (!(await DbContext.UserInParty(PartyID, id.UserGuid)))
                 {
                     LogGatekeeperInfraction_NotInvited(id.AppInstallGuid, id.UserGuid, name);
                     return BadRequest();
                 }
 
-                response.Model = await DbContext.GetPartySettingsAsync(PartyID);
-                response.PageSize = 100;
-
-                response.ItemsCount = response.Model.Count();
-
+                response.Model = await DapperQueries.GetPartySettingsAsync(PartyID);
+                response.ItemsCount = response.Model.Count;
+                response.PageNumber = 1;
+                response.PageSize = response.Model.Count;
+                response.detailed = false;
                 LogCustom("The party settings have been retrieved successfully.", name);
             }
             catch (Exception ex)
@@ -171,10 +174,11 @@ namespace DinderMVC.Controllers
                     return BadRequest();
                 }
 
-                response.Model = await DbContext.GetPartyInvitesAsync(PartyID);
-                response.PageSize = 100;
-
-                response.ItemsCount = response.Model.Count();
+                response.Model = await DapperQueries.GetPartyInvitesAsync(PartyID);
+                response.ItemsCount = response.Model.Count;
+                response.PageNumber = 1;
+                response.PageSize = response.Model.Count;
+                response.detailed = false;
 
                 LogCustom("The party settings have been retrieved successfully.", name);
             }
@@ -189,7 +193,7 @@ namespace DinderMVC.Controllers
             return response.ToHttpResponse();
         }
 
-       
+
 
 
         // GET
@@ -199,6 +203,7 @@ namespace DinderMVC.Controllers
         /// Retrieves a party by PartyID
         /// </summary>
         /// <param name="PartyID">Party ID (required)</param>
+        /// <param name="IsDetailed">Whether or not to include: Party invites, settings, or choices</param>
         /// <returns>A response with a party</returns>
         /// <response code="200">Returns the party</response>
         /// <response code="404">If meal is not exists</response>
@@ -208,7 +213,7 @@ namespace DinderMVC.Controllers
         [ProducesResponseType(404)]
         [ProducesResponseType(500)]
         [Authorize(AuthenticationSchemes = "Bearer")]
-        public async Task<IActionResult> GetPartyAsync([BindRequired] int PartyID)
+        public async Task<IActionResult> GetPartyAsync([BindRequired] int PartyID, [BindRequired] bool IsDetailed = false)
         {
             string name = nameof(GetPartyAsync);
 
@@ -228,14 +233,16 @@ namespace DinderMVC.Controllers
                 }
 
                 // Get the party by id
-                PartyDM party = await DbContext.GetDetailedPartyByIDAsync(new Party(PartyID));
+                PartyDM party = await DbContext.GetDetailedPartyByIDAsync(PartyID, IsDetailed);
                 if (party != null)
                     response.Model = party;
+
+                response.detailed = IsDetailed;
             }
             catch (Exception ex)
             {
                 response.DidError = true;
-                response.ErrorMessage = "There was an internal error, please contact to technical support.";
+                response.ErrorMessage = "There was an internal error, please contact technical support.";
 
                 LogError(ex, name);
             }
@@ -286,7 +293,7 @@ namespace DinderMVC.Controllers
                     .Where(x => x.CookGuid == id.UserGuid).ToList();
                 foreach (UserMeal meal in userMeals)
                 {
-                    PartyMeal partyMeal = new PartyMeal(entity.PartyID,  meal.MealID);
+                    PartyMeal partyMeal = new PartyMeal(entity.PartyID, meal.MealID);
                     entity.Meals.Add(partyMeal);
                 }
 
@@ -294,11 +301,13 @@ namespace DinderMVC.Controllers
 
                 // Set the entity to response model
                 response.Model = entity.ReturnDM();
+                response.detailed = true;
+                
             }
             catch (Exception ex)
             {
                 response.DidError = true;
-                response.ErrorMessage = "There was an internal error, please contact to technical support.";
+                response.ErrorMessage = "There was an internal error, please contact technical support.";
 
                 LogError(ex, name);
             }
@@ -311,7 +320,7 @@ namespace DinderMVC.Controllers
         // api/v1/Parties/PartyID/Settings/SettingID
 
         /// <summary>
-        /// Updates an existing party setting --Untested
+        /// Updates an existing party setting
         /// </summary>
         /// <param name="PartyID">Party ID (required)</param>
         /// <param name="SettingID">Setting ID to update (required)</param>
@@ -327,7 +336,7 @@ namespace DinderMVC.Controllers
         [ProducesResponseType(500)]
         [Authorize(AuthenticationSchemes = "Bearer")]
         public async Task<IActionResult> PutPartySettingAsync([BindRequired] int PartyID,
-            [BindRequired] int SettingID, [BindRequired] int ChoiceID, string ChoiceEntry)
+            [BindRequired] int SettingID, [BindRequired] int ChoiceID, String ChoiceEntry = null)
         {
             string name = nameof(PutPartySettingAsync);
 
@@ -344,36 +353,38 @@ namespace DinderMVC.Controllers
                     LogGatekeeperInfraction_NotHost(id.AppInstallGuid, id.UserGuid, name);
                     return BadRequest();
                 }
-                List<PartySettingsViewCO> model = new List<PartySettingsViewCO>();
 
-         
-                    PartySettingMatrix partySettingMatrix = DbContext.PartySettingMatrices.Where(x => x.PartyID == PartyID && x.SettingID == SettingID).FirstOrDefault();
 
-                    if (partySettingMatrix != null)
-                    {
-                            partySettingMatrix.ChoiceID = ChoiceID;
-                            partySettingMatrix.ChoiceEntry = ChoiceEntry;
-                    }
-                    else
-                    {
-                        partySettingMatrix = new PartySettingMatrix(PartyID, SettingID, ChoiceID, ChoiceEntry);
-                        DbContext.PartySettingMatrices.Add(partySettingMatrix);
+                PartySettingMatrix partySettingMatrix = DbContext.PartySettingMatrices.Where(x => x.PartyID == PartyID && x.SettingID == SettingID).FirstOrDefault();
 
-                    }
+                if (partySettingMatrix != null)
+                {
+                    partySettingMatrix.ChoiceID = ChoiceID;
+                    partySettingMatrix.ChoiceEntry = ChoiceEntry;
+                }
+                else
+                {
+                    partySettingMatrix = new PartySettingMatrix(PartyID, SettingID, ChoiceID, ChoiceEntry);
+                    DbContext.PartySettingMatrices.Add(partySettingMatrix);
+
+                }
 
 
                 // Save entity in database
                 await DbContext.SaveChangesAsync();
 
-                response.Model = await DbContext.GetPartySettingsAsync(PartyID);
-
+                response.Model = await DapperQueries.GetPartySettingsAsync(PartyID);
+                response.ItemsCount = response.Model.Count;
+                response.PageNumber = 1;
+                response.PageSize = response.Model.Count;
+                response.detailed = false;
 
 
             }
             catch (Exception ex)
             {
                 response.DidError = true;
-                response.ErrorMessage = "There was an internal error, please contact to technical support.";
+                response.ErrorMessage = "There was an internal error, please contact technical support.";
 
                 LogError(ex, name);
             }
@@ -385,9 +396,10 @@ namespace DinderMVC.Controllers
         // api/v1/Users/Meals/5
 
         /// <summary>
-        /// Updates an existing party --Untested
+        /// Updates an existing party
         /// </summary>
         /// <param name="PartyID">Party ID (required)</param>
+        /// <param name="IsDetailed">Whether or not to include: Party invites, settings, or choices</param>
         /// <param name="request">Request model</param>
         /// <returns>A response as update party result</returns>
         /// <response code="200">If meal was updated successfully</response>
@@ -398,7 +410,7 @@ namespace DinderMVC.Controllers
         [ProducesResponseType(400)]
         [ProducesResponseType(500)]
         [Authorize(AuthenticationSchemes = "Bearer")]
-        public async Task<IActionResult> PutPartyAsync([BindRequired] int PartyID, [FromBody] PutPartyRequest request)
+        public async Task<IActionResult> PutPartyAsync([BindRequired] int PartyID, [FromBody] PutPartyRequest request, [BindRequired] bool IsDetailed = false)
         {
             string name = nameof(PutPartyAsync);
 
@@ -412,9 +424,9 @@ namespace DinderMVC.Controllers
             {
                 LogMethodInvoked(name);
 
-   
+
                 // Get stock item by id
-                var entity = await DbContext.GetPartyByIDEditableAsync(new Party(PartyID));
+                var entity = await DbContext.GetPartyByIDEditableAsync(PartyID, IsDetailed);
 
                 // Validate if entity exists
                 if (entity == null)
@@ -436,11 +448,12 @@ namespace DinderMVC.Controllers
                 await DbContext.SaveChangesAsync();
 
                 response.Model = entity.ReturnDM();
+                response.detailed = IsDetailed;
             }
             catch (Exception ex)
             {
                 response.DidError = true;
-                response.ErrorMessage = "There was an internal error, please contact to technical support.";
+                response.ErrorMessage = "There was an internal error, please contact technical support.";
 
                 LogError(ex, name);
             }
@@ -475,7 +488,7 @@ namespace DinderMVC.Controllers
                 LogMethodInvoked(name);
 
                 // Get stock item by id
-                var entity = await DbContext.GetPartyByIDEditableAsync(new Party(PartyID));
+                var entity = await DbContext.GetPartyByIDEditableAsync(PartyID);
 
                 // Validate if entity exists
                 if (entity == null)
@@ -493,7 +506,7 @@ namespace DinderMVC.Controllers
             catch (Exception ex)
             {
                 response.DidError = true;
-                response.ErrorMessage = "There was an internal error, please contact to technical support.";
+                response.ErrorMessage = "There was an internal error, please contact technical support.";
 
                 LogError(ex, name);
             }
@@ -507,10 +520,11 @@ namespace DinderMVC.Controllers
         // api/v1/Users/Meals/5
 
         /// <summary>
-        /// Updates an existing party invite --Untested
+        /// Updates an existing party invite. You can only update your own party invites.
         /// </summary>
         /// <param name="PartyID">Party ID (required)</param>
-        /// <param name="request">Request model</param>
+        /// <param name="userGuid">User Guid (required)</param>
+        /// <param name="RSVP">Whether you are RSVPing (required)</param>
         /// <returns>A response as update party result</returns>
         /// <response code="200">If meal was updated successfully</response>
         /// <response code="400">For bad request</response>
@@ -521,7 +535,7 @@ namespace DinderMVC.Controllers
         [ProducesResponseType(400)]
         [ProducesResponseType(500)]
         [Authorize(AuthenticationSchemes = "Bearer")]
-        public async Task<IActionResult> PutPartyInviteAsync([BindRequired] int PartyID, [FromBody] PutPartyInviteRequest request)
+        public async Task<IActionResult> PutPartyInviteAsync([BindRequired] int PartyID, [BindRequired] Guid userGuid, [BindRequired] bool RSVP)
         {
             string name = nameof(PutPartyInviteAsync);
 
@@ -529,11 +543,16 @@ namespace DinderMVC.Controllers
 
             var response = new SingleResponse<PartyInviteDM>();
 
-
-
             try
             {
                 LogMethodInvoked(name);
+
+
+                if (!(userGuid != id.UserGuid))
+                {
+                    LogGatekeeperInfraction_NotSameUser(id.AppInstallGuid, id.UserGuid, name);
+                    return BadRequest();
+                }
 
                 // Get stock item by id
                 var entity = await DbContext.GetPartyInviteEditableAsync(PartyID, id.UserGuid);
@@ -543,7 +562,8 @@ namespace DinderMVC.Controllers
                     return NotFound();
 
                 // Set changes to entity
-                entity.AcceptDate = request.AcceptDate;
+                entity.AcceptDate = DateTime.Now;
+                entity.RSVP = RSVP;
 
                 // Update entity in repository
                 DbContext.Update(entity);
@@ -552,11 +572,12 @@ namespace DinderMVC.Controllers
                 await DbContext.SaveChangesAsync();
 
                 response.Model = entity.ReturnDM();
+                response.detailed = false;
             }
             catch (Exception ex)
             {
                 response.DidError = true;
-                response.ErrorMessage = "There was an internal error, please contact to technical support.";
+                response.ErrorMessage = "There was an internal error, please contact technical support.";
 
                 LogError(ex, name);
             }
@@ -569,9 +590,10 @@ namespace DinderMVC.Controllers
         // api/v1/Users/Parties/5
 
         /// <summary>
-        /// Deletes an existing Party Invite --Untested
+        /// Deletes an existing Party Invite
         /// </summary>
         /// <param name="partyID">Party ID (required)</param>
+        /// <param name="userGuid">User Guid (required)</param>
         /// <returns>A response as delete party result</returns>
         /// <response code="200">If party invite was deleted successfully</response>
         /// <response code="500">If there was an internal server error</response>
@@ -579,7 +601,7 @@ namespace DinderMVC.Controllers
         [ProducesResponseType(200)]
         [ProducesResponseType(500)]
         [Authorize(AuthenticationSchemes = "Bearer")]
-        public async Task<IActionResult> DeletePartyInviteAsync([BindRequired] int partyID)
+        public async Task<IActionResult> DeletePartyInviteAsync([BindRequired] int partyID, [BindRequired] Guid userGuid)
         {
             string name = nameof(DeletePartyInviteAsync);
 
@@ -593,7 +615,7 @@ namespace DinderMVC.Controllers
 
 
                 // Get stock item by id
-                var entity = await DbContext.GetPartyInviteEditableAsync(partyID, id.UserGuid);
+                var entity = await DbContext.GetPartyInviteEditableAsync(partyID, userGuid);
 
                 // Validate if entity exists
                 if (entity == null)
@@ -608,7 +630,7 @@ namespace DinderMVC.Controllers
             catch (Exception ex)
             {
                 response.DidError = true;
-                response.ErrorMessage = "There was an internal error, please contact to technical support.";
+                response.ErrorMessage = "There was an internal error, please contact technical support.";
 
                 LogError(ex, name);
             }
@@ -621,9 +643,9 @@ namespace DinderMVC.Controllers
         // api/v1/Users/Meals/5
 
         /// <summary>
-        /// Updates an existing party choice --Untested
+        /// Updates an existing party choice
         /// </summary>
-        /// <param name="partyID">Party ID</param>
+        /// <param name="PartyID">Party ID</param>
         /// <param name="userGuid">User GUID</param>
         /// <param name="mealID">Meal ID</param>
         /// <param name="request">Request model</param>
@@ -636,7 +658,7 @@ namespace DinderMVC.Controllers
         [ProducesResponseType(400)]
         [ProducesResponseType(500)]
         [Authorize(AuthenticationSchemes = "Bearer")]
-        public async Task<IActionResult> PutPartyChoiceAsync([BindRequired] int partyID, [BindRequired] Guid userGuid, [BindRequired] int mealID, [FromBody] PutPartyChoiceRequest request)
+        public async Task<IActionResult> PutPartyChoiceAsync([BindRequired] int PartyID, [BindRequired] Guid userGuid, [BindRequired] int mealID, [FromBody] PutPartyChoiceRequest request)
         {
             string name = nameof(PutPartyChoiceAsync);
 
@@ -648,12 +670,17 @@ namespace DinderMVC.Controllers
 
             try
             {
+                if (!(userGuid != id.UserGuid))
+                {
+                    LogGatekeeperInfraction_NotSameUser(id.AppInstallGuid, id.UserGuid, name);
+                    return BadRequest();
+                }
                 LogMethodInvoked(name);
 
-    
+
 
                 // Get stock item by id
-                var entity = await DbContext.GetPartyChoiceEditableAsync(new Party(partyID), new User(userGuid), new UserMeal(userGuid,mealID));
+                var entity = await DbContext.GetPartyChoiceEditableAsync(PartyID, userGuid, mealID);
 
                 // Validate if entity exists
                 if (entity == null)
@@ -669,11 +696,12 @@ namespace DinderMVC.Controllers
                 await DbContext.SaveChangesAsync();
 
                 response.Model = entity.ReturnDM();
+                response.detailed = false;
             }
             catch (Exception ex)
             {
                 response.DidError = true;
-                response.ErrorMessage = "There was an internal error, please contact to technical support.";
+                response.ErrorMessage = "There was an internal error, please contact technical support.";
 
                 LogError(ex, name);
             }
@@ -686,9 +714,8 @@ namespace DinderMVC.Controllers
         // api/v1/Users/Parties/5
 
         /// <summary>
-        /// Deletes an existing Party Choice --Untested
+        /// Deletes an existing Party Choice
         /// </summary>
-        /// <param name="appInstallID">AppInstallID</param>
         /// <param name="userGuid">userGuid</param>
         /// <param name="partyID">Party ID</param>
         /// <param name="mealID">Party ID</param>
@@ -709,11 +736,16 @@ namespace DinderMVC.Controllers
 
             try
             {
+                if (!(userGuid != id.UserGuid))
+                {
+                    LogGatekeeperInfraction_NotSameUser(id.AppInstallGuid, id.UserGuid, name);
+                    return BadRequest();
+                }
                 LogMethodInvoked(name);
 
 
                 // Get stock item by id
-                var entity = await DbContext.GetPartyInviteEditableAsync(partyID, id.UserGuid);
+                var entity = await DbContext.GetPartyChoiceEditableAsync(partyID, userGuid, mealID);
 
                 // Validate if entity exists
                 if (entity == null)
@@ -724,11 +756,12 @@ namespace DinderMVC.Controllers
 
                 // Delete entity in database
                 await DbContext.SaveChangesAsync();
+
             }
             catch (Exception ex)
             {
                 response.DidError = true;
-                response.ErrorMessage = "There was an internal error, please contact to technical support.";
+                response.ErrorMessage = "There was an internal error, please contact technical support.";
 
                 LogError(ex, name);
             }
@@ -739,7 +772,7 @@ namespace DinderMVC.Controllers
         // api/v1/Party/
 
         /// <summary>
-        /// Creates a new party choice --Untested
+        /// Creates a new party choice
         /// </summary>
         /// <param name="partyID">Request model</param>
         /// <param name="userGuid">Request model</param>
@@ -765,6 +798,11 @@ namespace DinderMVC.Controllers
 
             try
             {
+                if (!(userGuid != id.UserGuid))
+                {
+                    LogGatekeeperInfraction_NotSameUser(id.AppInstallGuid, id.UserGuid, name);
+                    return BadRequest();
+                }
                 LogMethodInvoked(name);
 
                 if (!ModelState.IsValid)
@@ -781,11 +819,12 @@ namespace DinderMVC.Controllers
 
                 // Set the entity to response model
                 response.Model = entity.ReturnDM();
+                response.detailed = false;
             }
             catch (Exception ex)
             {
                 response.DidError = true;
-                response.ErrorMessage = "There was an internal error, please contact to technical support.";
+                response.ErrorMessage = "There was an internal error, please contact technical support.";
 
                 LogError(ex, name);
             }
@@ -798,7 +837,7 @@ namespace DinderMVC.Controllers
         // api/v1/Party/PartyID/Invites
 
         /// <summary>
-        /// Retrieves party choices --Untested
+        /// Retrieves party choices
         /// </summary>
         /// <param name="PartyID">PartyID</param>
         /// <returns>A response with party settings list</returns>
@@ -818,15 +857,15 @@ namespace DinderMVC.Controllers
 
             try
             {
+
                 LogMethodInvoked(name);
 
 
-                response.Model = await DbContext.GetPartyChoicesAsync(PartyID, id.UserGuid);
-                response.PageSize = 100;
-
-
-                response.ItemsCount = response.Model.Count();
-
+                response.Model = await DapperQueries.GetPartyChoicesAsync(PartyID, id.UserGuid);
+                response.ItemsCount = response.Model.Count;
+                response.PageNumber = 1;
+                response.PageSize = response.Model.Count;
+                response.detailed = false;
                 LogCustom("The party settings have been retrieved successfully.", name);
             }
             catch (Exception ex)
@@ -846,7 +885,7 @@ namespace DinderMVC.Controllers
         // api/v1/Party/
 
         /// <summary>
-        /// Creates a new party --Untested
+        /// Creates a new party invite
         /// </summary>
         /// <param name="partyID">Request model</param>
         /// <param name="request">Request model</param>
@@ -869,11 +908,19 @@ namespace DinderMVC.Controllers
 
             try
             {
+
                 LogMethodInvoked(name);
 
 
                 if (!ModelState.IsValid)
                     return BadRequest();
+
+                Party party = DbContext.Parties.Where(x => x.PartyID == partyID).FirstOrDefault();
+                if (party.CookGuid != id.UserGuid)
+                {
+                    LogGatekeeperInfraction_NotHost(id.AppInstallGuid, id.UserGuid, name);
+                    return BadRequest();
+                }
 
                 // Create entity from request model
                 var entity = request.ToEntity(partyID);
@@ -887,11 +934,12 @@ namespace DinderMVC.Controllers
 
                 // Set the entity to response model
                 response.Model = entity.ReturnDM();
+                response.detailed = false;
             }
             catch (Exception ex)
             {
                 response.DidError = true;
-                response.ErrorMessage = "There was an internal error, please contact to technical support.";
+                response.ErrorMessage = "There was an internal error, please contact technical support.";
 
                 LogError(ex, name);
             }
@@ -903,10 +951,9 @@ namespace DinderMVC.Controllers
         // api/v1/Party/PartyID/Meals
 
         /// <summary>
-        /// Retrieves party meals --Untested
+        /// Retrieves party meals
         /// </summary>
-        /// <param name="appInstallID">AppInstallID</param>
-        /// <param name="partyID">PartyID</param>
+        /// <param name="PartyID">PartyID</param>
         /// <returns>A response with party settings list</returns>
         /// <response code="200">Returns the stock items list</response>
         /// <response code="500">If there was an internal server error</response>
@@ -914,7 +961,7 @@ namespace DinderMVC.Controllers
         [ProducesResponseType(typeof(PagedResponse<MealDM>), 200)]
         [ProducesResponseType(500)]
         [Authorize(AuthenticationSchemes = "Bearer")]
-        public async Task<IActionResult> GetPartyMealsAsync([BindRequired] int partyID)
+        public async Task<IActionResult> GetPartyMealsAsync([BindRequired] int PartyID)
         {
             string name = nameof(GetPartyMealsAsync);
 
@@ -926,7 +973,13 @@ namespace DinderMVC.Controllers
             {
                 LogMethodInvoked(name);
 
-                response.Model = await DbContext.GetPartyMealsAsync(partyID);
+                if (!(await DbContext.UserInParty(PartyID, id.UserGuid)))
+                {
+                    LogGatekeeperInfraction_NotInvited(id.AppInstallGuid, id.UserGuid, name);
+                    return BadRequest();
+                }
+
+                response.Model = await DapperQueries.GetPartyMealsAsync(PartyID);
                 response.PageSize = 100;
 
 
@@ -949,9 +1002,10 @@ namespace DinderMVC.Controllers
         // api/v1/Party/
 
         /// <summary>
-        /// Creates a new party meal --Untested
+        /// Creates a new party meal
         /// </summary>
-        /// <param name="request">Request model</param>
+        /// <param name="PartyID">Party ID</param>
+        /// <param name="MealID">Request model</param>
         /// <returns>A response with new meal</returns>
         /// <response code="201">A response as creation of party</response>
         /// <response code="400">For bad request</response>
@@ -961,7 +1015,7 @@ namespace DinderMVC.Controllers
         [ProducesResponseType(400)]
         [ProducesResponseType(500)]
         [Authorize(AuthenticationSchemes = "Bearer")]
-        public async Task<IActionResult> PostPartyMealAsync([FromBody] PostPartyMealRequest request)
+        public async Task<IActionResult> PostPartyMealAsync(int PartyID, int MealID)
         {
             string name = nameof(PostPartyMealAsync);
 
@@ -976,22 +1030,23 @@ namespace DinderMVC.Controllers
                 if (!ModelState.IsValid)
                     return BadRequest();
 
-                // Create entity from request model
-                var entity = request.ToEntity();
+                PartyMeal partyMeal = new PartyMeal();
+                partyMeal.PartyID = PartyID;
+                partyMeal.MealID = MealID;
 
                 // Add entity to repository
-                DbContext.PartyMeals.Add(entity);
+                DbContext.PartyMeals.Add(partyMeal);
 
                 // Save entity in database
                 await DbContext.SaveChangesAsync();
 
                 // Set the entity to response model
-                response.Model = entity.ReturnDM();
+                response.Model = partyMeal.ReturnDM();
             }
             catch (Exception ex)
             {
                 response.DidError = true;
-                response.ErrorMessage = "There was an internal error, please contact to technical support.";
+                response.ErrorMessage = "There was an internal error, please contact technical support.";
 
                 LogError(ex, name);
             }
@@ -1002,10 +1057,10 @@ namespace DinderMVC.Controllers
         // api/v1/Users/Parties/5
 
         /// <summary>
-        /// Deletes an existing Party Meal --Untested
+        /// Deletes an existing Party Meal
         /// </summary>
-        /// <param name="partyID">Party ID</param>
-        /// <param name="MealID">Party ID</param>
+        /// <param name="PartyID">Party ID</param>
+        /// <param name="MealID">Meal ID</param>
         /// <returns>A response as delete party result</returns>
         /// <response code="200">If meal was deleted successfully</response>
         /// <response code="500">If there was an internal server error</response>
@@ -1013,7 +1068,7 @@ namespace DinderMVC.Controllers
         [ProducesResponseType(200)]
         [ProducesResponseType(500)]
         [Authorize(AuthenticationSchemes = "Bearer")]
-        public async Task<IActionResult> DeletePartyMealAsync([BindRequired] int partyID, [BindRequired] int MealID)
+        public async Task<IActionResult> DeletePartyMealAsync([BindRequired] int PartyID, [BindRequired] int MealID)
         {
             string name = nameof(DeletePartyMealAsync);
 
@@ -1027,9 +1082,9 @@ namespace DinderMVC.Controllers
 
 
                 // Get stock item by id
-                var entity = await DbContext.GetPartyMealEditableAsync(partyID, MealID);
+                var entity = await DbContext.GetPartyMealEditableAsync(PartyID, MealID);
 
-                var party = await DbContext.GetPartyByIDEditableAsync(new Party(partyID));
+                var party = await DbContext.GetPartyByIDEditableAsync(PartyID);
 
                 // Validate if entity exists
                 if (entity == null)
@@ -1047,7 +1102,7 @@ namespace DinderMVC.Controllers
             catch (Exception ex)
             {
                 response.DidError = true;
-                response.ErrorMessage = "There was an internal error, please contact to technical support.";
+                response.ErrorMessage = "There was an internal error, please contact technical support.";
 
                 LogError(ex, name);
             }

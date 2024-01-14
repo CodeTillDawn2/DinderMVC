@@ -2,7 +2,6 @@
 using System.Reflection;
 using static DinderMVC.Models.AppInstall;
 using static DinderMVC.Models.GlobalMeal;
-using static DinderMVC.Models.UserMeal;
 using static DinderMVC.Models.Party;
 using static DinderMVC.Models.PartyMeal;
 using static DinderMVC.Models.PartySettingMatrix;
@@ -11,10 +10,7 @@ using static DinderMVC.Models.PartySettingValue;
 using static DinderMVC.Models.SwipeChoice;
 using static DinderMVC.Models.User;
 using static DinderMVC.Models.UserFriend;
-using System.Threading.Tasks;
-using System;
-using Microsoft.Data.SqlClient;
-using System.Linq;
+using static DinderMVC.Models.UserMeal;
 
 namespace DinderMVC.Models
 {
@@ -58,7 +54,7 @@ namespace DinderMVC.Models
             base.OnModelCreating(modelBuilder);
         }
 
- 
+
 
 
         public DbSet<AppInstall> AppInstalls { get; set; }

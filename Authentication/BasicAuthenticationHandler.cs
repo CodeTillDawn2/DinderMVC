@@ -1,13 +1,9 @@
 ﻿using DinderMVC.Models;
 using DinderMVC.Queries;
 using Microsoft.AspNetCore.Authentication;
-using Microsoft.Data.SqlClient;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
-using System.Linq;
-using System.Net;
 using System.Security.Claims;
 using System.Text;
 using System.Text.Encodings.Web;
@@ -49,7 +45,7 @@ namespace DinderMVC.Authentication
                     string password = credentials[1];
 
                     // Perform authentication logic here...
-                    var result = await _dbContext.AuthenticateUser(username, password);
+                    var result = await DapperQueries.AuthenticateUser(username, password);
                     if (result == null)
                     {
                         return AuthenticateResult.Fail("Invalid credentials");
@@ -68,7 +64,7 @@ namespace DinderMVC.Authentication
                     //identity.AddClaim(new Claim(ClaimTypes.Expiration, token.ExpirationDate.ToString()));
                     //identity.AddClaim(new Claim(ClaimTypes.System, token.AppInstallGuid.ToString()));
                     identity.AddClaim(new Claim(ClaimTypes.Thumbprint, userGuid.ToString()));
-                    
+
 
 
 

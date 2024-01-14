@@ -4,11 +4,9 @@ using DinderDLL.Responses;
 using DinderMVC.Authentication;
 using DinderMVC.Models;
 using DinderMVC.Queries;
-using DinderMVC.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -78,7 +76,7 @@ namespace DinderMVC.Controllers
 
                 TokenIssuerService tokenIssuer = new TokenIssuerService();
                 string userGuid = authenticatedUser.Claims.Where(x => x.Type == ClaimTypes.Thumbprint).FirstOrDefault().Value;
-                (string,DateTime) token = tokenIssuer.IssueToken(appInstallID.ToString(), userGuid);
+                (string, DateTime) token = tokenIssuer.IssueToken(appInstallID.ToString(), userGuid);
 
                 DinderToken newToken = new DinderToken();
                 newToken.AppInstallGuid = appInstallID;
@@ -106,7 +104,7 @@ namespace DinderMVC.Controllers
             catch (Exception ex)
             {
                 response.DidError = true;
-                response.ErrorMessage = "There was an internal error, please contact to technical support.";
+                response.ErrorMessage = "There was an internal error, please contact technical support.";
 
                 LogError(ex, name);
             }

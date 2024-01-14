@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace DinderMVC.Models
 {
@@ -13,8 +14,8 @@ namespace DinderMVC.Models
 
         public int SettingValueDataType { get; set; }
 
-        //[NotMapped]
-        //public virtual PartySettingValue SettingValue { get; set; }
+        [NotMapped]
+        public DataType DataType { get; set; }
 
         public PartySettingType()
         {
@@ -57,9 +58,7 @@ namespace DinderMVC.Models
                     .IsRequired();
 
 
-                //builder.HasOne(x => x.Friend).WithMany(b => b.)
-
-                //builder.HasMany(x => x.Meals).WithOne(b => b.User).HasForeignKey(b => b.UserGUID).OnDelete(DeleteBehavior.Restrict);
+                builder.HasOne(x => x.DataType).WithOne().HasForeignKey<DataType>(a => a.DataTypeID).OnDelete(DeleteBehavior.Restrict);
 
             }
         }

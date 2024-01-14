@@ -1,12 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using System;
-using System.Threading.Tasks;
+﻿using DinderDLL.DataModels;
 using DinderDLL.Requests;
-using DinderDLL.DataModels;
 using DinderDLL.Responses;
 using DinderMVC.Models;
 using DinderMVC.Queries;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using System;
+using System.Threading.Tasks;
 
 namespace DinderMVC.Controllers
 {
@@ -71,7 +71,7 @@ namespace DinderMVC.Controllers
             catch (Exception ex)
             {
                 response.DidError = true;
-                response.ErrorMessage = "There was an internal error, please contact to technical support.";
+                response.ErrorMessage = "There was an internal error, please contact technical support.";
 
                 LogError(ex, name);
             }
@@ -134,7 +134,7 @@ namespace DinderMVC.Controllers
         //        catch (Exception ex)
         //        {
         //            response.DidError = true;
-        //            response.ErrorMessage = "There was an internal error, please contact to technical support.";
+        //            response.ErrorMessage = "There was an internal error, please contact technical support.";
 
         //            AppInstallLogger?.LogCritical("There was an error on '{0}' invocation: {1}", nameof(PostAppInstallAsync), ex);
         //        }

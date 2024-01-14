@@ -1,7 +1,6 @@
 ﻿using DinderDLL.DataModels;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using System;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace DinderMVC.Models
@@ -23,7 +22,7 @@ namespace DinderMVC.Models
         {
         }
 
-        public PartyMeal(int partyid,  int mealid)
+        public PartyMeal(int partyid, int mealid)
         {
             PartyID = partyid;
             MealID = mealid;
@@ -58,8 +57,8 @@ namespace DinderMVC.Models
                     .HasColumnType("int")
                     .IsRequired();
 
-                builder.HasOne(x => x.Party).WithMany(x => x.Meals).HasForeignKey(a => a.PartyID).OnDelete(DeleteBehavior.Restrict);
-                builder.HasOne(x => x.Meal).WithMany().HasForeignKey(a => a.MealID).OnDelete(DeleteBehavior.Restrict);
+                builder.HasOne(x => x.Party).WithMany(x => x.Meals).HasForeignKey(a => a.PartyID).OnDelete(DeleteBehavior.NoAction);
+                builder.HasOne(x => x.Meal).WithMany().HasForeignKey(a => a.MealID).OnDelete(DeleteBehavior.NoAction);
             }
         }
 
