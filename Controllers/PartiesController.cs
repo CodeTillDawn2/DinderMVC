@@ -465,7 +465,7 @@ namespace DinderMVC.Controllers
         // api/v1/Users/Parties/5
 
         /// <summary>
-        /// Deletes an existing party --Untested
+        /// Deletes an existing party
         /// </summary>
         /// <param name="PartyID">Party ID (required)</param>
         /// <returns>A response as delete party result</returns>
@@ -708,66 +708,7 @@ namespace DinderMVC.Controllers
 
             return response.ToHttpResponse();
         }
-
-
-        // DELETE
-        // api/v1/Users/Parties/5
-
-        /// <summary>
-        /// Deletes an existing Party Choice
-        /// </summary>
-        /// <param name="userGuid">userGuid</param>
-        /// <param name="partyID">Party ID</param>
-        /// <param name="mealID">Party ID</param>
-        /// <returns>A response as delete party result</returns>
-        /// <response code="200">If meal was deleted successfully</response>
-        /// <response code="500">If there was an internal server error</response>
-        [HttpDelete("{partyID}/Choices/{userGuid}/{mealID}")]
-        [ProducesResponseType(200)]
-        [ProducesResponseType(500)]
-        [Authorize(AuthenticationSchemes = "Bearer")]
-        public async Task<IActionResult> DeletePartyChoiceAsync([BindRequired] int partyID, [BindRequired] Guid userGuid, [BindRequired] int mealID)
-        {
-            string name = nameof(DeletePartyChoiceAsync);
-
-            UserIdentity id = APIServices.GetUserID(HttpContext.User.Claims);
-
-            var response = new Response();
-
-            try
-            {
-                if (!(userGuid != id.UserGuid))
-                {
-                    LogGatekeeperInfraction_NotSameUser(id.AppInstallGuid, id.UserGuid, name);
-                    return BadRequest();
-                }
-                LogMethodInvoked(name);
-
-
-                // Get stock item by id
-                var entity = await DbContext.GetPartyChoiceEditableAsync(partyID, userGuid, mealID);
-
-                // Validate if entity exists
-                if (entity == null)
-                    return NotFound();
-
-                // Remove entity from repository
-                DbContext.Remove(entity);
-
-                // Delete entity in database
-                await DbContext.SaveChangesAsync();
-
-            }
-            catch (Exception ex)
-            {
-                response.DidError = true;
-                response.ErrorMessage = "There was an internal error, please contact technical support.";
-
-                LogError(ex, name);
-            }
-
-            return response.ToHttpResponse();
-        }
+        
         // POST
         // api/v1/Party/
 

@@ -29,6 +29,13 @@ namespace DinderMVC.Models
         {
         }
 
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+
+            optionsBuilder.EnableSensitiveDataLogging();
+
+        }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             // Apply configurations for entity

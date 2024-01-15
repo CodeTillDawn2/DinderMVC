@@ -119,7 +119,7 @@
         </member>
         <member name="M:DinderMVC.Controllers.PartiesController.DeletePartyAsync(System.Int32)">
             <summary>
-            Deletes an existing party --Untested
+            Deletes an existing party
             </summary>
             <param name="PartyID">Party ID (required)</param>
             <returns>A response as delete party result</returns>
@@ -160,17 +160,6 @@
             <returns>A response as update party result</returns>
             <response code="200">If meal was updated successfully</response>
             <response code="400">For bad request</response>
-            <response code="500">If there was an internal server error</response>
-        </member>
-        <member name="M:DinderMVC.Controllers.PartiesController.DeletePartyChoiceAsync(System.Int32,System.Guid,System.Int32)">
-            <summary>
-            Deletes an existing Party Choice
-            </summary>
-            <param name="userGuid">userGuid</param>
-            <param name="partyID">Party ID</param>
-            <param name="mealID">Party ID</param>
-            <returns>A response as delete party result</returns>
-            <response code="200">If meal was deleted successfully</response>
             <response code="500">If there was an internal server error</response>
         </member>
         <member name="M:DinderMVC.Controllers.PartiesController.PostPartyChoiceAsync(System.Int32,System.Guid,DinderDLL.Requests.PostPartyChoiceRequest)">

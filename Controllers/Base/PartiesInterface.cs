@@ -40,8 +40,6 @@ namespace DinderMVC.Controllers
 
         public abstract Task<IActionResult> PutPartyChoiceAsync(int partyID, Guid userGuid, int mealID, PutPartyChoiceRequest request);
         public abstract Task<IActionResult> PostPartyChoiceAsync(int partyID, Guid userGuid, PostPartyChoiceRequest request);
-        public abstract Task<IActionResult> DeletePartyChoiceAsync(int PartyID, Guid UserGuid, int MealID);
-
         public abstract Task<IActionResult> GetPartyMealsAsync(int partyID);
 
         public abstract Task<IActionResult> PostPartyMealAsync(int PartyID, int MealID);
