@@ -57,7 +57,8 @@ namespace DinderMVC.Controllers
             {
 
                 List<LinkCO> ResponseLinks = new List<LinkCO>();
-                ResponseLinks.Add(new LinkCO(LinkService.REL_apiversion, LinkService.HREF_versionone, LinkService.CRUD_Get));
+                ResponseLinks.Add(new LinkCO(LinkService.REL_get_self, LinkService.HREF_api));
+                ResponseLinks.Add(new LinkCO(LinkService.REL_version_one, LinkService.HREF_versionone));
 
                 // Get the total rows
                 response.ItemsCount = ResponseLinks.Count();
@@ -104,11 +105,44 @@ namespace DinderMVC.Controllers
             {
 
                 List<LinkCO> ResponseLinks = new List<LinkCO>();
-                ResponseLinks.Add(new LinkCO(LinkService.REL_get_token, LinkService.HREF_get_token(), LinkService.CRUD_Get));
-                ResponseLinks.Add(new LinkCO(LinkService.REL_get_parties, LinkService.HREF_parties, LinkService.CRUD_Get));
-                ResponseLinks.Add(new LinkCO(LinkService.REL_create_party, LinkService.HREF_parties, LinkService.CRUD_Post));
-                ResponseLinks.Add(new LinkCO(LinkService.REL_get_users, LinkService.HREF_users, LinkService.CRUD_Get));
-                ResponseLinks.Add(new LinkCO(LinkService.REL_create_user, LinkService.HREF_users, LinkService.CRUD_Post));
+
+                //Root
+                ResponseLinks.Add(new LinkCO(LinkService.REL_get_self, LinkService.HREF_versionone));
+                ResponseLinks.Add(new LinkCO(LinkService.REL_apiversion, LinkService.HREF_api));
+
+                //Global meals
+                ResponseLinks.Add(new LinkCO(LinkService.REL_get_global_meal, LinkService.HREF_globalmeal() ));
+                ResponseLinks.Add(new LinkCO(LinkService.REL_get_global_meals, LinkService.HREF_globalmeals));
+
+                //Parties
+                ResponseLinks.Add(new LinkCO(LinkService.REL_get_parties, LinkService.HREF_parties));
+                ResponseLinks.Add(new LinkCO(LinkService.REL_create_party, LinkService.HREF_parties));
+                ResponseLinks.Add(new LinkCO(LinkService.REL_get_party_settings, LinkService.HREF_party_settings()));
+                ResponseLinks.Add(new LinkCO(LinkService.REL_get_party_invites, LinkService.HREF_party_invites()));
+                ResponseLinks.Add(new LinkCO(LinkService.REL_get_party, LinkService.HREF_party()));
+                ResponseLinks.Add(new LinkCO(LinkService.REL_update_party, LinkService.HREF_party()));
+                ResponseLinks.Add(new LinkCO(LinkService.REL_delete_party, LinkService.HREF_party()));
+                ResponseLinks.Add(new LinkCO(LinkService.REL_delete_party, LinkService.HREF_party()));
+                ResponseLinks.Add(new LinkCO(LinkService.REL_update_party_setting, LinkService.HREF_party_setting()));
+                ResponseLinks.Add(new LinkCO(LinkService.REL_update_party_invite, LinkService.HREF_party_invite()));
+                ResponseLinks.Add(new LinkCO(LinkService.REL_delete_party_invite, LinkService.HREF_party_invite()));
+                ResponseLinks.Add(new LinkCO(LinkService.REL_update_party_choice, LinkService.HREF_party_choice()));
+                ResponseLinks.Add(new LinkCO(LinkService.REL_create_party_choice, LinkService.HREF_party_choices()));
+                ResponseLinks.Add(new LinkCO(LinkService.REL_get_party_choices, LinkService.HREF_party_choices()));
+                ResponseLinks.Add(new LinkCO(LinkService.REL_create_party_invite, LinkService.HREF_party_invites()));
+                ResponseLinks.Add(new LinkCO(LinkService.REL_get_party_meals, LinkService.HREF_party_meals()));
+                ResponseLinks.Add(new LinkCO(LinkService.REL_create_party_meal, LinkService.HREF_party_meal()));
+                ResponseLinks.Add(new LinkCO(LinkService.REL_delete_party_meal, LinkService.HREF_party_meal()));
+
+                //Token
+                ResponseLinks.Add(new LinkCO(LinkService.REL_get_token, LinkService.HREF_token()));
+
+                ResponseLinks.Add(new LinkCO(LinkService.REL_get_users, LinkService.HREF_users));
+                ResponseLinks.Add(new LinkCO(LinkService.REL_create_user, LinkService.HREF_users));
+
+
+
+
 
                 // Get the total rows
                 response.ItemsCount = ResponseLinks.Count();

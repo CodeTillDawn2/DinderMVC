@@ -14,8 +14,6 @@ namespace DinderMVC.Controllers
 
         public abstract Task<IActionResult> GetUserPartiesAsync(Guid appInstallID, Guid userGuid);
 
-        public abstract Task<IActionResult> GetUserMealsAsync(Guid appInstallID, Guid userGuid, int pageSize = 10, int pageNumber = 1);
-
         public abstract Task<IActionResult> GetUserAsync(Guid appInstallID, Guid UserGuid);
 
         public abstract Task<IActionResult> PostUserAsync([FromBody] PostUserRequest request);

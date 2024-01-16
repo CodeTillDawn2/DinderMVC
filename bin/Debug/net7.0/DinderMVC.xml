@@ -285,18 +285,6 @@
             <response code="200">Returns the stock items list</response>
             <response code="500">If there was an internal server error</response>
         </member>
-        <member name="M:DinderMVC.Controllers.UsersController.GetUserMealsAsync(System.Guid,System.Guid,System.Int32,System.Int32)">
-            <summary>
-            Retrieves user meals --Untested
-            </summary>
-            <param name="appInstallID">AppInstallID</param>
-            <param name="pageSize">Page size</param>
-            <param name="pageNumber">Page number</param>
-            <param name="userGuid">User Guid</param>
-            <returns>A response with stock items list</returns>
-            <response code="200">Returns the stock items list</response>
-            <response code="500">If there was an internal server error</response>
-        </member>
         <member name="M:DinderMVC.Controllers.UsersController.GetUserAsync(System.Guid,System.Guid)">
             <summary>
             Retrieves a user by GUID --Untested

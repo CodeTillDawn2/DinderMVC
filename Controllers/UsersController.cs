@@ -181,56 +181,7 @@ namespace DinderMVC.Controllers
             return response.ToHttpResponse();
         }
 
-        // GET
-        // api/v1/Users/{UserGuid}/Meals
-
-        /// <summary>
-        /// Retrieves user meals --Untested
-        /// </summary>
-        /// <param name="appInstallID">AppInstallID</param>
-        /// <param name="pageSize">Page size</param>
-        /// <param name="pageNumber">Page number</param>
-        /// <param name="userGuid">User Guid</param>
-        /// <returns>A response with stock items list</returns>
-        /// <response code="200">Returns the stock items list</response>
-        /// <response code="500">If there was an internal server error</response>
-        [HttpGet("{userGuid}/Meals")]
-        [ProducesResponseType(200)]
-        [ProducesResponseType(500)]
-        public async Task<IActionResult> GetUserMealsAsync(Guid appInstallID, Guid userGuid, int pageSize = 10, int pageNumber = 1)
-        {
-
-            string name = nameof(GetUserMealsAsync);
-
-            var response = new PagedResponse<UserMealDM>();
-            try
-            {
-                LogMethodInvoked(name);
-
-                if (!(await DbContext.AppInstallRegistered(appInstallID)))
-                {
-                    LogInvalidInstall(appInstallID, name);
-                    return BadRequest();
-                }
-
-                response.Model = await DapperQueries.GetUserMealsAsync(userGuid);
-
-                response.ItemsCount = response.Model.Count();
-                response.PageSize = pageSize;
-                response.PageNumber = pageNumber;
-
-                LogCustom("The users have been retrieved successfully.", name);
-            }
-            catch (Exception ex)
-            {
-                response.DidError = true;
-                response.ErrorMessage = "There was an internal error, please contact technical support.";
-
-                LogError(ex, name);
-            }
-
-            return response.ToHttpResponse();
-        }
+      
 
         // GET
         // api/v1/Users/
@@ -644,7 +595,7 @@ namespace DinderMVC.Controllers
         /// <returns>A response with stock items list</returns>
         /// <response code="200">Returns the stock items list</response>
         /// <response code="500">If there was an internal server error</response>
-        [HttpGet("Users/{UserGuid}/Meals")]
+        [HttpGet("{UserGuid}/Meals")]
         [ProducesResponseType(200)]
         [ProducesResponseType(500)]
         public async Task<IActionResult> GetUserMealsAsync(Guid appInstallID, Guid userGUID, int pageSize = 10, int pageNumber = 1,
@@ -692,7 +643,7 @@ namespace DinderMVC.Controllers
 
             return response.ToHttpResponse();
         }
-
+      
 
         // GET
         // api/v1/Users/{UserGUID}/Meals/{MealID}
@@ -707,7 +658,7 @@ namespace DinderMVC.Controllers
         /// <response code="200">Returns the meal list</response>
         /// <response code="404">If meal is not exists</response>
         /// <response code="500">If there was an internal server error</response>
-        [HttpGet("Users/{UserGuid}/Meals/{MealID}")]
+        [HttpGet("{UserGuid}/Meals/{MealID}")]
         [ProducesResponseType(200)]
         [ProducesResponseType(404)]
         [ProducesResponseType(500)]
@@ -760,7 +711,7 @@ namespace DinderMVC.Controllers
         /// <response code="201">A response as creation of meal</response>
         /// <response code="400">For bad request</response>
         /// <response code="500">If there was an internal server error</response>
-        [HttpPost("Users/{UserGuid}/Meals")]
+        [HttpPost("{UserGuid}/Meals")]
         [ProducesResponseType(200)]
         [ProducesResponseType(201)]
         [ProducesResponseType(400)]
@@ -834,7 +785,7 @@ namespace DinderMVC.Controllers
         /// <returns>A response as delete meal result</returns>
         /// <response code="200">If meal was deleted successfully</response>
         /// <response code="500">If there was an internal server error</response>
-        [HttpDelete("Users/{UserGuid}/Meals/{MealID}")]
+        [HttpDelete("{UserGuid}/Meals/{MealID}")]
         [ProducesResponseType(200)]
         [ProducesResponseType(500)]
         public async Task<IActionResult> DeleteUserMealAsync(Guid appInstallID, Guid userGuid, int mealID)
@@ -893,7 +844,7 @@ namespace DinderMVC.Controllers
         /// <response code="200">If meal was updated successfully</response>
         /// <response code="400">For bad request</response>
         /// <response code="500">If there was an internal server error</response>
-        [HttpPut("Users/{UserGuid}/Meals/{MealID}")]
+        [HttpPut("{UserGuid}/Meals/{MealID}")]
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]
         [ProducesResponseType(500)]
