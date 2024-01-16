@@ -1,11 +1,13 @@
 ﻿
 using DinderDLL.DataModels;
+using DinderDLL.Models;
 using DinderDLL.Responses;
 using DinderMVC.Models;
 using DinderMVC.Queries;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -14,7 +16,7 @@ namespace DinderMVC.Controllers
 #pragma warning disable CS1591
 
     [ApiController]
-    [Route("api/v1/[controller]")]
+    [Route("api")]
     public class RootController : DinderControllerBase<RootController>, RootInterface
     {
 
@@ -33,52 +35,90 @@ namespace DinderMVC.Controllers
 
 
         // GET
-        // api/v1/Roots/
+        // api
 
         /// <summary>
-        /// Retrieves roots --Untested
+        /// Retrieves API versions
         /// </summary>
-        /// <param name="appInstallID">AppInstallID</param>
-        /// <param name="pageSize">Page size</param>
-        /// <param name="pageNumber">Page number</param>
-        /// <returns>A response with stock items list</returns>
+        /// <returns>Returns links to different versions</returns>
         /// <response code="200">Returns the stock items list</response>
         /// <response code="500">If there was an internal server error</response>
         [HttpGet("")]
         [ProducesResponseType(200)]
         [ProducesResponseType(500)]
-        public async Task<IActionResult> GetRootsAsync(Guid appInstallID, int pageSize = 100, int pageNumber = 1)
+        public async Task<IActionResult> GetVersions()
         {
-            string name = nameof(GetRootsAsync);
+            string name = nameof(GetVersions);
             LogMethodInvoked(name);
 
-            var response = new PagedResponse<RootDM>();
+            var response = new PagedResponse<LinkCO>();
 
             try
             {
 
-                if (!(await DbContext.AppInstallRegistered(appInstallID)))
-                {
-                    LogInvalidInstall(appInstallID, name);
-                    return BadRequest();
-                }
-
-
-                // Get the "proposed" query from repository
-                var query = DbContext.GetRoots();
-
-
-                // Set paging values
-                response.PageSize = pageSize;
-                response.PageNumber = pageNumber;
+                List<LinkCO> ResponseLinks = new List<LinkCO>();
+                ResponseLinks.Add(new LinkCO(LinkService.REL_apiversion, LinkService.HREF_versionone, LinkService.CRUD_Get));
 
                 // Get the total rows
-                response.ItemsCount = query.Count();
+                response.ItemsCount = ResponseLinks.Count();
+                response.PageNumber = 1;
+                response.PageSize = ResponseLinks.Count();
+                response.detailed = false;
 
-                // Get the specific page from database
-                response.Model = query.Paging(pageSize, pageNumber).ToList();
+                response.Model = ResponseLinks;
 
-                LogCustom("The roots have been retrieved successfully.", name);
+                LogCustom("The versions have been retrieved successfully.", name);
+            }
+            catch (Exception ex)
+            {
+                response.DidError = true;
+                response.ErrorMessage = "There was an internal error, please contact technical support.";
+
+                LogError(ex, name);
+            }
+
+            return response.ToHttpResponse();
+        }
+
+
+        // GET
+        // api
+
+        /// <summary>
+        /// Retrieves v1 Nodes
+        /// </summary>
+        /// <returns>Returns links to different nodes</returns>
+        /// <response code="200">Returns the stock items list</response>
+        /// <response code="500">If there was an internal server error</response>
+        [HttpGet("v1")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(500)]
+        public async Task<IActionResult> GetVersion1Endpoints()
+        {
+            string name = nameof(GetVersions);
+            LogMethodInvoked(name);
+
+            var response = new PagedResponse<LinkCO>();
+
+            try
+            {
+
+                List<LinkCO> ResponseLinks = new List<LinkCO>();
+                ResponseLinks.Add(new LinkCO(LinkService.REL_get_token, LinkService.HREF_get_token(), LinkService.CRUD_Get));
+                ResponseLinks.Add(new LinkCO(LinkService.REL_get_parties, LinkService.HREF_parties, LinkService.CRUD_Get));
+                ResponseLinks.Add(new LinkCO(LinkService.REL_create_party, LinkService.HREF_parties, LinkService.CRUD_Post));
+                ResponseLinks.Add(new LinkCO(LinkService.REL_get_users, LinkService.HREF_users, LinkService.CRUD_Get));
+                ResponseLinks.Add(new LinkCO(LinkService.REL_create_user, LinkService.HREF_users, LinkService.CRUD_Post));
+
+                // Get the total rows
+                response.ItemsCount = ResponseLinks.Count();
+                response.PageNumber = 1;
+                response.PageSize = ResponseLinks.Count();
+                response.detailed = false;
+
+                response.Model = ResponseLinks;
+
+                LogCustom("The versions have been retrieved successfully.", name);
             }
             catch (Exception ex)
             {
@@ -95,3 +135,4 @@ namespace DinderMVC.Controllers
 
     }
 }
+

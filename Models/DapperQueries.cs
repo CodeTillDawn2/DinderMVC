@@ -65,7 +65,7 @@ namespace DinderMVC.Queries
 
 
 
-        public static async Task<List<MealDM>> GetUserMealsAsync(Guid userGuid, int pageSize = 10, int pageNumber = 1)
+        public static async Task<List<UserMealDM>> GetUserMealsAsync(Guid userGuid, int pageSize = 10, int pageNumber = 1)
         {
 
 
@@ -88,12 +88,12 @@ namespace DinderMVC.Queries
             // Run query using Dapper
             using (IDbConnection db = new SqlConnection(Startup.Configuration["AppSettings:ConnectionString"]))
             {
-                List<MealDM> data = (await db.QueryAsync<MealDM>
+                List<UserMealDM> data = (await db.QueryAsync<UserMealDM>
                     (sql, new { @userGuid = userGuid, @pageNumber = pageNumber, @pageSize = pageSize }
                     )).ToList();
 
                 //Add links after the fact
-                foreach (MealDM dto in data)
+                foreach (UserMealDM dto in data)
                 {
                     dto.AddLinks();
                 }
@@ -280,7 +280,7 @@ namespace DinderMVC.Queries
             return null;
         }
 
-        public static async Task<List<MealDM>> GetPartyMealsAsync(int partyID, int pageSize = 100, int pageNumber = 1)
+        public static async Task<List<UserMealDM>> GetPartyMealsAsync(int partyID, int pageSize = 100, int pageNumber = 1)
         {
 
             //Build where clause
@@ -304,12 +304,12 @@ namespace DinderMVC.Queries
             // Run query using Dapper
             using (IDbConnection db = new SqlConnection(Startup.Configuration["AppSettings:ConnectionString"]))
             {
-                List<MealDM> data = (await db.QueryAsync<MealDM>
+                List<UserMealDM> data = (await db.QueryAsync<UserMealDM>
                     (sql, new { @partyID = partyID, @pageNumber = pageNumber, @pageSize = pageSize }
                     )).ToList();
 
                 //Add links after the fact
-                foreach (MealDM dto in data)
+                foreach (UserMealDM dto in data)
                 {
                     dto.AddLinks();
                 }

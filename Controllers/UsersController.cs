@@ -202,7 +202,7 @@ namespace DinderMVC.Controllers
 
             string name = nameof(GetUserMealsAsync);
 
-            var response = new PagedResponse<MealDM>();
+            var response = new PagedResponse<UserMealDM>();
             try
             {
                 LogMethodInvoked(name);
@@ -654,7 +654,7 @@ namespace DinderMVC.Controllers
             string name = nameof(GetUserMealsAsync);
 
 
-            var response = new PagedResponse<MealDM>();
+            var response = new PagedResponse<UserMealDM>();
 
             try
             {
@@ -715,7 +715,7 @@ namespace DinderMVC.Controllers
         {
 
             string name = nameof(GetUserMealAsync);
-            var response = new SingleResponse<MealDM>();
+            var response = new SingleResponse<UserMealDM>();
 
             try
             {
@@ -770,7 +770,7 @@ namespace DinderMVC.Controllers
 
             string name = nameof(PostUserMealAsync);
 
-            var response = new SingleResponse<MealDM>();
+            var response = new SingleResponse<UserMealDM>();
 
             try
             {
@@ -900,7 +900,7 @@ namespace DinderMVC.Controllers
         public async Task<IActionResult> PutUserMealsAsync(Guid userGuid, int MealID, [FromBody] PostUserMealRequest request)
         {
             string name = nameof(PutUserMealsAsync);
-            var response = new SingleResponse<MealDM>();
+            var response = new SingleResponse<UserMealDM>();
 
 
 

@@ -8,7 +8,8 @@ namespace DinderMVC.Controllers
     public interface RootInterface
     {
 
-        public abstract Task<IActionResult> GetRootsAsync(Guid appInstallID, int pageSize = 100, int pageNumber = 1);
+        public abstract Task<IActionResult> GetVersions();
+        public abstract Task<IActionResult> GetVersion1Endpoints();
 
 
 #pragma warning restore CS1591

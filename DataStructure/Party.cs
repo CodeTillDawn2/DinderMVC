@@ -57,7 +57,7 @@ namespace DinderMVC.Models
 
         public PartyDM ReturnDM()
         {
-            List<MealDM> mealList = new List<MealDM>();
+            List<UserMealDM> mealList = new List<UserMealDM>();
 
             if (Meals != null)
             {

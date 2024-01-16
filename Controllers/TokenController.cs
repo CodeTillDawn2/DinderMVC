@@ -41,15 +41,14 @@ namespace DinderMVC.Controllers
         // api/v1/Token/
 
         /// <summary>
-        /// Retrieves auth token --Untested
+        /// Retrieves auth token
         /// </summary>
         /// <param name="appInstallID">App Install Guid (required)</param>
         /// <returns>A response with a party</returns>
-        /// <response code="200">Returns the party list</response>
-        /// <response code="404">If meal is not exists</response>
+        /// <response code="200">Reutrns the bearer token and expiration</response>
+        /// /// <response code="404">If app install ID does not exist</response>
         /// <response code="500">If there was an internal server error</response>
-        [ProducesResponseType(typeof(SingleResponse<PartyDM>), 200)]
-        [ProducesResponseType(404)]
+        [ProducesResponseType(typeof(SingleResponse<DinderToken>), 200)]
         [ProducesResponseType(500)]
         [HttpGet("{appInstallID}")]
         [Authorize(AuthenticationSchemes = "BasicAuthentication")]
@@ -66,12 +65,10 @@ namespace DinderMVC.Controllers
                 if (!(await DbContext.AppInstallRegistered(appInstallID)))
                 {
                     LogInvalidInstall(appInstallID, name);
-                    return BadRequest();
+                    return NotFound();
                 }
 
                 var authenticatedUser = HttpContext.User;
-
-
 
 
                 TokenIssuerService tokenIssuer = new TokenIssuerService();

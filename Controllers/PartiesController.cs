@@ -899,7 +899,7 @@ namespace DinderMVC.Controllers
         /// <response code="200">Returns the stock items list</response>
         /// <response code="500">If there was an internal server error</response>
         [HttpGet("{PartyID}/Meals")]
-        [ProducesResponseType(typeof(PagedResponse<MealDM>), 200)]
+        [ProducesResponseType(typeof(PagedResponse<UserMealDM>), 200)]
         [ProducesResponseType(500)]
         [Authorize(AuthenticationSchemes = "Bearer")]
         public async Task<IActionResult> GetPartyMealsAsync([BindRequired] int PartyID)
@@ -908,7 +908,7 @@ namespace DinderMVC.Controllers
 
             UserIdentity id = APIServices.GetUserID(HttpContext.User.Claims);
 
-            var response = new PagedResponse<MealDM>();
+            var response = new PagedResponse<UserMealDM>();
 
             try
             {

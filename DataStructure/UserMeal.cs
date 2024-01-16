@@ -36,9 +36,9 @@ namespace DinderMVC.Models
             CookGuid = cookGuid;
         }
 
-        public MealDM ReturnDM()
+        public UserMealDM ReturnDM()
         {
-            return new MealDM("", CookGuid, MealID, MealName, MealDescription, MadeItBefore, PrivateNotes, GlobalLink);
+            return new UserMealDM("", CookGuid, MealID, MealName, MealDescription, MadeItBefore, PrivateNotes, GlobalLink);
         }
 
         public class UserMealsConfiguration : IEntityTypeConfiguration<UserMeal>

@@ -78,7 +78,7 @@ namespace DinderMVC.Queries
             return appInstallDM;
         }
 
-        public static IQueryable<MealDM> GetUserMeals(this DinderContext dbContext, Guid UserGUID, int? MealID, string MealName, string MealDescription, Guid? GlobalLink, bool? MadeItBefore)
+        public static IQueryable<UserMealDM> GetUserMeals(this DinderContext dbContext, Guid UserGUID, int? MealID, string MealName, string MealDescription, Guid? GlobalLink, bool? MadeItBefore)
         {
             // Get query from DbSet
             var query = dbContext.UserMeals.AsNoTracking().AsQueryable();
