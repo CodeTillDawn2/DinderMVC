@@ -111,7 +111,7 @@ namespace DinderMVC.Controllers
                 ResponseLinks.Add(new LinkCO(LinkService.REL_apiversion, LinkService.HREF_api));
 
                 //Global meals
-                ResponseLinks.Add(new LinkCO(LinkService.REL_get_global_meal, LinkService.HREF_globalmeal() ));
+                ResponseLinks.Add(new LinkCO(LinkService.REL_get_global_meal, LinkService.HREF_globalmeal()));
                 ResponseLinks.Add(new LinkCO(LinkService.REL_get_global_meals, LinkService.HREF_globalmeals));
 
                 //Parties
@@ -137,8 +137,23 @@ namespace DinderMVC.Controllers
                 //Token
                 ResponseLinks.Add(new LinkCO(LinkService.REL_get_token, LinkService.HREF_token()));
 
+                //Users
                 ResponseLinks.Add(new LinkCO(LinkService.REL_get_users, LinkService.HREF_users));
                 ResponseLinks.Add(new LinkCO(LinkService.REL_create_user, LinkService.HREF_users));
+                ResponseLinks.Add(new LinkCO(LinkService.REL_get_user_friends, LinkService.HREF_user_friends()));
+                ResponseLinks.Add(new LinkCO(LinkService.REL_create_user_friend, LinkService.HREF_user_friend()));
+                ResponseLinks.Add(new LinkCO(LinkService.REL_get_user_parties, LinkService.HREF_user_parties()));
+                ResponseLinks.Add(new LinkCO(LinkService.REL_get_user, LinkService.HREF_user()));
+                ResponseLinks.Add(new LinkCO(LinkService.REL_delete_user, LinkService.HREF_user()));
+                ResponseLinks.Add(new LinkCO(LinkService.REL_update_user, LinkService.HREF_user()));
+                ResponseLinks.Add(new LinkCO(LinkService.REL_update_user_friend, LinkService.HREF_user_friend()));
+                ResponseLinks.Add(new LinkCO(LinkService.REL_delete_user_friend, LinkService.HREF_user_friend()));
+                ResponseLinks.Add(new LinkCO(LinkService.REL_get_user_meals, LinkService.HREF_user_meals()));
+                ResponseLinks.Add(new LinkCO(LinkService.REL_create_user_meal, LinkService.HREF_user_meals()));
+                ResponseLinks.Add(new LinkCO(LinkService.REL_get_user_meal, LinkService.HREF_user_meal()));
+                ResponseLinks.Add(new LinkCO(LinkService.REL_delete_user_meal, LinkService.HREF_user_meal()));
+                ResponseLinks.Add(new LinkCO(LinkService.REL_update_user_meal, LinkService.HREF_user_meal()));
+
 
 
 

@@ -55,26 +55,20 @@ namespace DinderMVC.Queries
         }
 
 
-        public static async Task<UserDM> GetUsersByUsernameAsync(this DinderContext dbContext, User entity)
+        public static async Task<UserDM> GetUsersByUsernameAsync(this DinderContext dbContext, string UserName)
         {
-            User user = (await dbContext.Users.AsNoTracking().FirstOrDefaultAsync(item => item.UserName == entity.UserName));
+            User user = (await dbContext.Users.AsNoTracking().FirstOrDefaultAsync(item => item.UserName == UserName));
             if (user != null) return user.ReturnDM();
             return null;
         }
 
 
-        public static async Task<UserDM> GetDetailedUserByGuidAsync(this DinderContext dbContext, User entity)
-        {
-            UserDM userDM = (await dbContext.Users.Include(x => x.Meals).Include(x => x.Parties).AsSplitQuery().FirstOrDefaultAsync(item => item.UserGUID == entity.UserGUID)).ReturnDM();
-            userDM.FriendsList = await DapperQueries.GetUserFriendsAsync(userDM.UserGUID);
-            //userDM.PartyList = await dbContext.GetUserPartiesAsync(userDM.UserGUID);
-            return userDM;
-        }
 
 
-        public static async Task<AppInstallDM> VerifyInstall(this DinderContext dbContext, AppInstall entity)
+
+        public static async Task<AppInstallDM> VerifyInstall(this DinderContext dbContext, Guid AppInstallID)
         {
-            AppInstallDM appInstallDM = (await dbContext.AppInstalls.AsNoTracking().FirstOrDefaultAsync(item => item.AppInstallGUID == entity.AppInstallGUID)).ReturnDTO();
+            AppInstallDM appInstallDM = (await dbContext.AppInstalls.AsNoTracking().FirstOrDefaultAsync(item => item.AppInstallGUID == AppInstallID)).ReturnDTO();
             return appInstallDM;
         }
 
@@ -167,9 +161,9 @@ namespace DinderMVC.Queries
             return query.Select(x => x.ReturnDM());
         }
 
-        public static async Task<UserFriend> GetUserFriendAsync(this DinderContext dbContext, UserFriend entity)
+        public static async Task<UserFriend> GetUserFriendAsync(this DinderContext dbContext, Guid UserGuid, Guid FriendGuid)
         {
-            return (dbContext.UserFriends.Where(x => x.UserGUID == entity.UserGUID && x.FriendGUID == entity.FriendGUID)).FirstOrDefault();
+            return (dbContext.UserFriends.Where(x => x.UserGUID == UserGuid && x.FriendGUID == FriendGuid)).FirstOrDefault();
         }
 
         public static async Task<PartyDM> GetDetailedPartyByIDAsync(this DinderContext dbContext, int PartyID, bool IsDetailed)
@@ -244,12 +238,12 @@ namespace DinderMVC.Queries
         public static async Task<PartyChoice> GetPartyChoiceEditableAsync(this DinderContext dbContext, int PartyID, Guid userGuid, int MealID)
          => dbContext.PartyChoices.Where(item => item.PartyID == PartyID && item.UserGUID == userGuid && item.MealID == MealID).FirstOrDefault();
 
-        public static async Task<UserMeal> GetUserMealByIDEditableAsync(this DinderContext dbContext, UserMeal entity)
-            => dbContext.UserMeals.Where(item => item.MealID == entity.MealID && item.CookGuid == entity.CookGuid).FirstOrDefault();
+        public static async Task<UserMeal> GetUserMealByIDEditableAsync(this DinderContext dbContext, Guid CookGuid, int MealID)
+            => dbContext.UserMeals.Where(item => item.MealID == MealID && item.CookGuid == CookGuid).FirstOrDefault();
 
 
-        public static async Task<UserMeal> GetUserMealByMealNameAsync(this DinderContext dbContext, UserMeal entity) //To find any duplicates
-    => await dbContext.UserMeals.AsNoTracking().FirstOrDefaultAsync(item => item.MealName == entity.MealName && item.CookGuid == entity.CookGuid);
+        public static async Task<UserMeal> GetUserMealByMealNameAsync(this DinderContext dbContext, Guid CookGuid, string MealName) //To find any duplicates
+    => await dbContext.UserMeals.AsNoTracking().FirstOrDefaultAsync(item => item.MealName == MealName && item.CookGuid == CookGuid);
 
     }
 

@@ -66,7 +66,7 @@ namespace DinderMVC.Controllers
             try
             {
                 // Get the Guid by id
-                response.Model = await DbContext.VerifyInstall(new AppInstall(request.lookupGUID));
+                response.Model = await DbContext.VerifyInstall(request.lookupGUID);
             }
             catch (Exception ex)
             {

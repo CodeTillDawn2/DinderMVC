@@ -41,6 +41,7 @@ namespace DinderMVC.Models
             return new UserMealDM("", CookGuid, MealID, MealName, MealDescription, MadeItBefore, PrivateNotes, GlobalLink);
         }
 
+
         public class UserMealsConfiguration : IEntityTypeConfiguration<UserMeal>
         {
             public void Configure(EntityTypeBuilder<UserMeal> builder)

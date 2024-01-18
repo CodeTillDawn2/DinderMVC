@@ -251,45 +251,40 @@
             /// <response code="404">If app install ID does not exist</response>
             <response code="500">If there was an internal server error</response>
         </member>
-        <member name="M:DinderMVC.Controllers.UsersController.GetUsersAsync(System.Guid,System.Int32,System.Int32,System.String,System.Nullable{System.DateTime},System.Nullable{System.DateTime})">
+        <member name="M:DinderMVC.Controllers.UsersController.GetUsersAsync(System.Int32,System.Int32,System.String)">
             <summary>
-            Retrieves users --Untested
+            Retrieves users
             </summary>
             <param name="appInstallID">AppInstallID</param>
             <param name="pageSize">Page size</param>
             <param name="pageNumber">Page number</param>
             <param name="displayName">Display Name</param>
-            <param name="createDate">User Created Since</param>
-            <param name="lastActiveDate">User Active Since</param>
             <returns>A response with stock items list</returns>
             <response code="200">Returns the stock items list</response>
             <response code="500">If there was an internal server error</response>
         </member>
-        <member name="M:DinderMVC.Controllers.UsersController.GetUserFriendsAsync(System.Guid,System.Guid)">
+        <member name="M:DinderMVC.Controllers.UsersController.GetUserFriendsAsync(System.Guid)">
             <summary>
-            Retrieves user friends --Untested
+            Retrieves user friends
             </summary>
-            <param name="appInstallID">AppInstallID</param>
             <param name="userGuid">User Guid</param>
             <returns>A response with stock items list</returns>
             <response code="200">Returns the stock items list</response>
             <response code="500">If there was an internal server error</response>
         </member>
-        <member name="M:DinderMVC.Controllers.UsersController.GetUserPartiesAsync(System.Guid,System.Guid)">
+        <member name="M:DinderMVC.Controllers.UsersController.GetUserPartiesAsync(System.Guid)">
             <summary>
-            Retrieves user Parties --Untested
+            Retrieves user Parties
             </summary>
-            <param name="appInstallID">AppInstallID</param>
             <param name="userGuid">User Guid</param>
             <returns>A response with stock items list</returns>
             <response code="200">Returns the stock items list</response>
             <response code="500">If there was an internal server error</response>
         </member>
-        <member name="M:DinderMVC.Controllers.UsersController.GetUserAsync(System.Guid,System.Guid)">
+        <member name="M:DinderMVC.Controllers.UsersController.GetUserAsync(System.Guid)">
             <summary>
-            Retrieves a user by GUID --Untested
+            Retrieves a user by GUID
             </summary>
-            <param name="appInstallID">AppInstallID</param>
             <param name="UserGuid">User GUID</param>
             <returns>A response with a user</returns>
             <response code="200">Returns the user list</response>
@@ -298,7 +293,7 @@
         </member>
         <member name="M:DinderMVC.Controllers.UsersController.PostUserAsync(DinderDLL.Requests.PostUserRequest)">
             <summary>
-            Creates a new user --Untested
+            Creates a new user
             </summary>
             <param name="request">Request model</param>
             <returns>A response with new user</returns>
@@ -311,7 +306,6 @@
             <summary>
             Updates an existing user --Untested
             </summary>
-            <param name="appInstallID">AppInstallID</param>
             <param name="userGuid">User GUID</param>
             <param name="request">Request model</param>
             <returns>A response as update user result</returns>
@@ -319,12 +313,11 @@
             <response code="400">For bad request</response>
             <response code="500">If there was an internal server error</response>
         </member>
-        <member name="M:DinderMVC.Controllers.UsersController.DeleteUserAsync(System.Guid,System.Guid)">
+        <member name="M:DinderMVC.Controllers.UsersController.DeleteUserAsync(System.Guid)">
             <summary>
             Deletes an existing user --Untested
             </summary>
-            <param name="appInstallID">AppInstallID</param>
-            <param name="userGuid">User GUID</param>
+            <param name="UserGuid">User GUID</param>
             <returns>A response as delete user result</returns>
             <response code="200">If user was deleted successfully</response>
             <response code="500">If there was an internal server error</response>
@@ -351,22 +344,20 @@
             <response code="400">For bad request</response>
             <response code="500">If there was an internal server error</response>
         </member>
-        <member name="M:DinderMVC.Controllers.UsersController.DeleteUserFriendAsync(System.Guid,System.Guid,System.Guid)">
+        <member name="M:DinderMVC.Controllers.UsersController.DeleteUserFriendAsync(System.Guid,System.Guid)">
             <summary>
             Deletes an existing user friend --Untested
             </summary>
-            <param name="appInstallID">AppInstallID</param>
             <param name="userGuid">User GUID</param>
             <param name="friendGuid">Freind GUID</param>
             <returns>A response as post user result</returns>
             <response code="200">If user was deleted successfully</response>
             <response code="500">If there was an internal server error</response>
         </member>
-        <member name="M:DinderMVC.Controllers.UsersController.GetUserMealsAsync(System.Guid,System.Guid,System.Int32,System.Int32,System.Nullable{System.Int32},System.String,System.String,System.Nullable{System.Guid},System.Nullable{System.Boolean})">
+        <member name="M:DinderMVC.Controllers.UsersController.GetUserMealsAsync(System.Guid,System.Int32,System.Int32,System.Nullable{System.Int32},System.String,System.String,System.Nullable{System.Guid},System.Nullable{System.Boolean})">
             <summary>
             Retrieves meals --Untested
             </summary>
-            <param name="appInstallID">AppInstallID</param>
             <param name="pageSize">Page size</param>
             <param name="pageNumber">Page number</param>
             <param name="userGUID">User GUID</param>
@@ -379,11 +370,10 @@
             <response code="200">Returns the stock items list</response>
             <response code="500">If there was an internal server error</response>
         </member>
-        <member name="M:DinderMVC.Controllers.UsersController.GetUserMealAsync(System.Guid,System.Guid,System.Int32)">
+        <member name="M:DinderMVC.Controllers.UsersController.GetUserMealAsync(System.Guid,System.Int32)">
             <summary>
             Retrieves a meal by MealID --Untested
             </summary>
-            <param name="appInstallID">AppInstallID</param>
             <param name="UserGuid">UserGuid</param>
             <param name="mealID">Meal ID</param>
             <returns>A response with a meal</returns>
@@ -391,10 +381,11 @@
             <response code="404">If meal is not exists</response>
             <response code="500">If there was an internal server error</response>
         </member>
-        <member name="M:DinderMVC.Controllers.UsersController.PostUserMealAsync(DinderDLL.Requests.PostUserMealRequest)">
+        <member name="M:DinderMVC.Controllers.UsersController.PostUserMealAsync(System.Guid,DinderDLL.Requests.PostUserMealRequest)">
             <summary>
             Creates a new meal --Untested
             </summary>
+            <param name="UserGuid">Cook guid</param>
             <param name="request">Request model</param>
             <returns>A response with new meal</returns>
             <response code="200">Returns the meal list</response>
@@ -402,7 +393,7 @@
             <response code="400">For bad request</response>
             <response code="500">If there was an internal server error</response>
         </member>
-        <member name="M:DinderMVC.Controllers.UsersController.DeleteUserMealAsync(System.Guid,System.Guid,System.Int32)">
+        <member name="M:DinderMVC.Controllers.UsersController.DeleteUserMealAsync(System.Guid,System.Int32)">
             <summary>
             Deletes an existing meal --Untested
             </summary>
@@ -413,7 +404,7 @@
             <response code="200">If meal was deleted successfully</response>
             <response code="500">If there was an internal server error</response>
         </member>
-        <member name="M:DinderMVC.Controllers.UsersController.PutUserMealsAsync(System.Guid,System.Int32,DinderDLL.Requests.PostUserMealRequest)">
+        <member name="M:DinderMVC.Controllers.UsersController.PutUserMealsAsync(System.Guid,System.Int32,DinderDLL.Requests.PutUserMealRequest)">
             <summary>
             Updates an existing meal --Untested
             </summary>

@@ -3,7 +3,9 @@ using DinderDLL.Requests;
 using DinderDLL.Responses;
 using DinderMVC.Models;
 using DinderMVC.Queries;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
@@ -29,21 +31,19 @@ namespace DinderMVC.Controllers
         // api/v1/Users/
 
         /// <summary>
-        /// Retrieves users --Untested
+        /// Retrieves users
         /// </summary>
         /// <param name="appInstallID">AppInstallID</param>
         /// <param name="pageSize">Page size</param>
         /// <param name="pageNumber">Page number</param>
         /// <param name="displayName">Display Name</param>
-        /// <param name="createDate">User Created Since</param>
-        /// <param name="lastActiveDate">User Active Since</param>
         /// <returns>A response with stock items list</returns>
         /// <response code="200">Returns the stock items list</response>
         /// <response code="500">If there was an internal server error</response>
         [HttpGet("")]
         [ProducesResponseType(200)]
         [ProducesResponseType(500)]
-        public async Task<IActionResult> GetUsersAsync(Guid appInstallID, int pageSize = 10, int pageNumber = 1, string displayName = null, DateTime? createDate = null, DateTime? lastActiveDate = null)
+        public async Task<IActionResult> GetUsersAsync(int pageSize = 10, int pageNumber = 1, string displayName = null)
         {
 
             string name = nameof(GetUsersAsync);
@@ -53,12 +53,6 @@ namespace DinderMVC.Controllers
             try
             {
                 LogMethodInvoked(name);
-
-                if (!(await DbContext.AppInstallRegistered(appInstallID)))
-                {
-                    LogInvalidInstall(appInstallID, name);
-                    return BadRequest();
-                }
 
                 response.Model = await DapperQueries.GetUsersAsync(pageSize, pageNumber, displayName);
 
@@ -86,9 +80,8 @@ namespace DinderMVC.Controllers
         // api/v1/Users/
 
         /// <summary>
-        /// Retrieves user friends --Untested
+        /// Retrieves user friends
         /// </summary>
-        /// <param name="appInstallID">AppInstallID</param>
         /// <param name="userGuid">User Guid</param>
         /// <returns>A response with stock items list</returns>
         /// <response code="200">Returns the stock items list</response>
@@ -96,7 +89,7 @@ namespace DinderMVC.Controllers
         [HttpGet("{userGuid}/Friends")]
         [ProducesResponseType(200)]
         [ProducesResponseType(500)]
-        public async Task<IActionResult> GetUserFriendsAsync(Guid appInstallID, Guid userGuid)
+        public async Task<IActionResult> GetUserFriendsAsync(Guid userGuid)
         {
             string name = nameof(GetUserFriendsAsync);
 
@@ -106,17 +99,13 @@ namespace DinderMVC.Controllers
             {
                 LogMethodInvoked(name);
 
-                if (!(await DbContext.AppInstallRegistered(appInstallID)))
-                {
-                    LogInvalidInstall(appInstallID, name);
-                    return BadRequest();
-                }
-
                 response.Model = await DapperQueries.GetUserFriendsAsync(userGuid);
-                response.PageSize = 100;
+
 
 
                 response.ItemsCount = response.Model.Count();
+                response.PageSize = response.Model.Count();
+                response.PageNumber = 1;
 
                 LogCustom("The users have been retrieved successfully.", name);
             }
@@ -136,9 +125,8 @@ namespace DinderMVC.Controllers
         // api/v1/Parties/
 
         /// <summary>
-        /// Retrieves user Parties --Untested
+        /// Retrieves user Parties
         /// </summary>
-        /// <param name="appInstallID">AppInstallID</param>
         /// <param name="userGuid">User Guid</param>
         /// <returns>A response with stock items list</returns>
         /// <response code="200">Returns the stock items list</response>
@@ -146,7 +134,7 @@ namespace DinderMVC.Controllers
         [HttpGet("{userGuid}/Parties")]
         [ProducesResponseType(200)]
         [ProducesResponseType(500)]
-        public async Task<IActionResult> GetUserPartiesAsync(Guid appInstallID, Guid userGuid)
+        public async Task<IActionResult> GetUserPartiesAsync(Guid userGuid)
         {
             string name = nameof(GetUserPartiesAsync);
 
@@ -156,17 +144,10 @@ namespace DinderMVC.Controllers
             {
                 LogMethodInvoked(name);
 
-                if (!(await DbContext.AppInstallRegistered(appInstallID)))
-                {
-                    LogInvalidInstall(appInstallID, name);
-                    return BadRequest();
-                }
-
-
-
                 response.Model = await DapperQueries.GetUserPartiesAsync(userGuid);
-                response.PageSize = 100;
-                response.ItemsCount = response.Model.Count();
+                response.PageSize = response.Model.Count;
+                response.ItemsCount = response.Model.Count;
+                response.PageNumber = 1;
 
                 LogCustom("The users have been retrieved successfully.", name);
             }
@@ -187,9 +168,8 @@ namespace DinderMVC.Controllers
         // api/v1/Users/
 
         /// <summary>
-        /// Retrieves a user by GUID --Untested
+        /// Retrieves a user by GUID
         /// </summary>
-        /// <param name="appInstallID">AppInstallID</param>
         /// <param name="UserGuid">User GUID</param>
         /// <returns>A response with a user</returns>
         /// <response code="200">Returns the user list</response>
@@ -199,7 +179,7 @@ namespace DinderMVC.Controllers
         [ProducesResponseType(200)]
         [ProducesResponseType(404)]
         [ProducesResponseType(500)]
-        public async Task<IActionResult> GetUserAsync(Guid appInstallID, Guid UserGuid)
+        public async Task<IActionResult> GetUserAsync(Guid UserGuid)
         {
             string name = nameof(GetUserAsync);
 
@@ -208,13 +188,7 @@ namespace DinderMVC.Controllers
             {
                 LogMethodInvoked(name);
 
-                if (!(await DbContext.AppInstallRegistered(appInstallID)))
-                {
-                    LogInvalidInstall(appInstallID, name);
-                    return BadRequest();
-                }
-
-                response.Model = await DbContext.GetDetailedUserByGuidAsync(new User(UserGuid));
+                response.Model = DbContext.Users.Where(x => x.UserGUID == UserGuid).FirstOrDefault().ReturnDM();
             }
             catch (Exception ex)
             {
@@ -231,7 +205,7 @@ namespace DinderMVC.Controllers
         // api/v1/Users/
 
         /// <summary>
-        /// Creates a new user --Untested
+        /// Creates a new user
         /// </summary>
         /// <param name="request">Request model</param>
         /// <returns>A response with new user</returns>
@@ -253,18 +227,8 @@ namespace DinderMVC.Controllers
             {
                 LogMethodInvoked(name);
 
-                if (!(await DbContext.AppInstallRegistered(request.appInstallID)))
-                {
-                    LogInvalidInstall(request.appInstallID, name);
-                    return BadRequest();
-                }
-
-
                 var existingEntity = await DbContext
-                    .GetUsersByUsernameAsync(new User
-                    {
-                        UserName = request.userName
-                    });
+                    .GetUsersByUsernameAsync(request.userName);
 
                 if (existingEntity != null)
                     ModelState.AddModelError("UserName", "Username is already taken");
@@ -301,7 +265,6 @@ namespace DinderMVC.Controllers
         /// <summary>
         /// Updates an existing user --Untested
         /// </summary>
-        /// <param name="appInstallID">AppInstallID</param>
         /// <param name="userGuid">User GUID</param>
         /// <param name="request">Request model</param>
         /// <returns>A response as update user result</returns>
@@ -316,29 +279,23 @@ namespace DinderMVC.Controllers
         {
             string name = nameof(PutUsersAsync);
 
-            var response = new Response();
+            var response = new SingleResponse<UserDM>();
 
             try
             {
                 LogMethodInvoked(name);
 
-                if (!(await DbContext.AppInstallRegistered(request.appInstallID)))
-                {
-                    LogInvalidInstall(request.appInstallID, name);
-                    return BadRequest();
-                }
 
+                User user = DbContext.Users.Where(x => x.UserGUID == userGuid).FirstOrDefault();
 
-                var entity = await DbContext.GetDetailedUserByGuidAsync(new User(userGuid));
-
-                if (entity == null)
+                if (user == null)
                     return NotFound();
 
-                entity.DisplayName = request.displayName;
-
-                DbContext.Update(entity);
+                user.DisplayName = request.displayName;
 
                 await DbContext.SaveChangesAsync();
+
+                response.Model = user.ReturnDM();
             }
             catch (Exception ex)
             {
@@ -357,15 +314,14 @@ namespace DinderMVC.Controllers
         /// <summary>
         /// Deletes an existing user --Untested
         /// </summary>
-        /// <param name="appInstallID">AppInstallID</param>
-        /// <param name="userGuid">User GUID</param>
+        /// <param name="UserGuid">User GUID</param>
         /// <returns>A response as delete user result</returns>
         /// <response code="200">If user was deleted successfully</response>
         /// <response code="500">If there was an internal server error</response>
         [HttpDelete("{UserGuid}")]
         [ProducesResponseType(200)]
         [ProducesResponseType(500)]
-        public async Task<IActionResult> DeleteUserAsync(Guid appInstallID, Guid userGuid)
+        public async Task<IActionResult> DeleteUserAsync(Guid UserGuid)
         {
 
             string name = nameof(DeleteUserAsync);
@@ -375,18 +331,13 @@ namespace DinderMVC.Controllers
             {
                 LogMethodInvoked(name);
 
-                if (!(await DbContext.AppInstallRegistered(appInstallID)))
-                {
-                    LogInvalidInstall(appInstallID, name);
-                    return BadRequest();
-                }
 
-                var entity = await DbContext.GetDetailedUserByGuidAsync(new User(userGuid));
+                User user = DbContext.Users.Where(x => x.UserGUID == UserGuid).FirstOrDefault();
 
-                if (entity == null)
+                if (user == null)
                     return NotFound();
 
-                DbContext.Remove(entity);
+                DbContext.Users.Remove(user);
 
                 await DbContext.SaveChangesAsync();
             }
@@ -426,19 +377,9 @@ namespace DinderMVC.Controllers
             {
                 LogMethodInvoked(name);
 
-                if (!(await DbContext.AppInstallRegistered(request.appInstallID)))
-                {
-                    LogInvalidInstall(request.appInstallID, name);
-                    return BadRequest();
-                }
-
 
                 var existingEntity = await DbContext
-                    .GetUserFriendAsync(new UserFriend
-                    {
-                        UserGUID = userGuid,
-                        FriendGUID = request.friendGUID,
-                    });
+                    .GetUserFriendAsync(userGuid, request.friendGUID);
 
                 if (existingEntity != null)
                     ModelState.AddModelError("UserName", "Username is already taken");
@@ -496,14 +437,7 @@ namespace DinderMVC.Controllers
             {
                 LogMethodInvoked(name);
 
-                if (!(await DbContext.AppInstallRegistered(request.appInstallID)))
-                {
-                    LogInvalidInstall(request.appInstallID, name);
-                    return BadRequest();
-                }
-
-
-                var entity = await DbContext.GetUserFriendAsync(new UserFriend(userGuid, friendGuid));
+                var entity = await DbContext.GetUserFriendAsync(userGuid, friendGuid);
 
                 if (entity == null)
                     return NotFound();
@@ -531,7 +465,6 @@ namespace DinderMVC.Controllers
         /// <summary>
         /// Deletes an existing user friend --Untested
         /// </summary>
-        /// <param name="appInstallID">AppInstallID</param>
         /// <param name="userGuid">User GUID</param>
         /// <param name="friendGuid">Freind GUID</param>
         /// <returns>A response as post user result</returns>
@@ -540,7 +473,7 @@ namespace DinderMVC.Controllers
         [HttpDelete("{userGuid}/Friends/{friendGuid}/")]
         [ProducesResponseType(200)]
         [ProducesResponseType(500)]
-        public async Task<IActionResult> DeleteUserFriendAsync(Guid appInstallID, Guid userGuid, Guid friendGuid)
+        public async Task<IActionResult> DeleteUserFriendAsync(Guid userGuid, Guid friendGuid)
         {
             string name = nameof(DeleteUserFriendAsync);
             var response = new Response();
@@ -549,13 +482,8 @@ namespace DinderMVC.Controllers
             {
                 LogMethodInvoked(name);
 
-                if (!(await DbContext.AppInstallRegistered(appInstallID)))
-                {
-                    LogInvalidInstall(appInstallID, name);
-                    return BadRequest();
-                }
-
-                var entity = await DbContext.GetUserFriendAsync(new UserFriend(userGuid, friendGuid));
+ 
+                var entity = await DbContext.GetUserFriendAsync(userGuid, friendGuid);
 
                 if (entity == null)
                     return NotFound();
@@ -583,7 +511,6 @@ namespace DinderMVC.Controllers
         /// <summary>
         /// Retrieves meals --Untested
         /// </summary>
-        /// <param name="appInstallID">AppInstallID</param>
         /// <param name="pageSize">Page size</param>
         /// <param name="pageNumber">Page number</param>
         /// <param name="userGUID">User GUID</param>
@@ -598,7 +525,7 @@ namespace DinderMVC.Controllers
         [HttpGet("{UserGuid}/Meals")]
         [ProducesResponseType(200)]
         [ProducesResponseType(500)]
-        public async Task<IActionResult> GetUserMealsAsync(Guid appInstallID, Guid userGUID, int pageSize = 10, int pageNumber = 1,
+        public async Task<IActionResult> GetUserMealsAsync(Guid userGUID, int pageSize = 10, int pageNumber = 1,
             int? mealID = null, string mealName = null, string mealDescription = null, Guid? globalLink = null, bool? madeItBefore = null)
         {
 
@@ -611,12 +538,6 @@ namespace DinderMVC.Controllers
             {
 
                 LogMethodInvoked(name);
-
-                if (!(await DbContext.AppInstallRegistered(appInstallID)))
-                {
-                    LogInvalidInstall(appInstallID, name);
-                    return BadRequest();
-                }
 
                 var query = DbContext.GetUserMeals(userGUID, mealID, mealName, mealDescription, globalLink, madeItBefore);
 
@@ -651,7 +572,6 @@ namespace DinderMVC.Controllers
         /// <summary>
         /// Retrieves a meal by MealID --Untested
         /// </summary>
-        /// <param name="appInstallID">AppInstallID</param>
         /// <param name="UserGuid">UserGuid</param>
         /// <param name="mealID">Meal ID</param>
         /// <returns>A response with a meal</returns>
@@ -662,7 +582,7 @@ namespace DinderMVC.Controllers
         [ProducesResponseType(200)]
         [ProducesResponseType(404)]
         [ProducesResponseType(500)]
-        public async Task<IActionResult> GetUserMealAsync(Guid appInstallID, Guid UserGuid, int mealID)
+        public async Task<IActionResult> GetUserMealAsync(Guid UserGuid, int mealID)
         {
 
             string name = nameof(GetUserMealAsync);
@@ -673,15 +593,8 @@ namespace DinderMVC.Controllers
                 LogMethodInvoked(name);
 
 
-                if (!(await DbContext.AppInstallRegistered(appInstallID)))
-                {
-                    LogInvalidInstall(appInstallID, name);
-                    return BadRequest();
-                }
-
-
                 // Get the stock item by id
-                UserMeal meal = (await DbContext.GetUserMealByIDEditableAsync(new UserMeal(UserGuid, mealID)));
+                UserMeal meal = (await DbContext.GetUserMealByIDEditableAsync(UserGuid, mealID));
 
                 if (meal != null)
                     response.Model = meal.ReturnDM();
@@ -705,6 +618,7 @@ namespace DinderMVC.Controllers
         /// <summary>
         /// Creates a new meal --Untested
         /// </summary>
+        /// <param name="UserGuid">Cook guid</param>
         /// <param name="request">Request model</param>
         /// <returns>A response with new meal</returns>
         /// <response code="200">Returns the meal list</response>
@@ -716,7 +630,7 @@ namespace DinderMVC.Controllers
         [ProducesResponseType(201)]
         [ProducesResponseType(400)]
         [ProducesResponseType(500)]
-        public async Task<IActionResult> PostUserMealAsync([FromBody] PostUserMealRequest request)
+        public async Task<IActionResult> PostUserMealAsync([BindRequired] Guid UserGuid, [FromBody] PostUserMealRequest request)
         {
 
             string name = nameof(PostUserMealAsync);
@@ -728,19 +642,8 @@ namespace DinderMVC.Controllers
                 LogMethodInvoked(name);
 
 
-                if (!(await DbContext.AppInstallRegistered(request.appInstallID)))
-                {
-                    LogInvalidInstall(request.appInstallID, name);
-                    return BadRequest();
-                }
-
-
                 var existingEntity = await DbContext
-                    .GetUserMealByMealNameAsync(new UserMeal
-                    {
-                        MealName = request.mealName,
-                        CookGuid = request.userGUID
-                    });
+                    .GetUserMealByMealNameAsync(UserGuid, request.mealName);
 
                 if (existingEntity != null)
                     ModelState.AddModelError("MealName", "Meal Name is already taken");
@@ -788,7 +691,7 @@ namespace DinderMVC.Controllers
         [HttpDelete("{UserGuid}/Meals/{MealID}")]
         [ProducesResponseType(200)]
         [ProducesResponseType(500)]
-        public async Task<IActionResult> DeleteUserMealAsync(Guid appInstallID, Guid userGuid, int mealID)
+        public async Task<IActionResult> DeleteUserMealAsync(Guid userGuid, int mealID)
         {
             string name = nameof(DeleteUserMealAsync);
 
@@ -798,14 +701,8 @@ namespace DinderMVC.Controllers
             {
                 LogMethodInvoked(name);
 
-                if (!(await DbContext.AppInstallRegistered(appInstallID)))
-                {
-                    LogInvalidInstall(appInstallID, name);
-                    return BadRequest();
-                }
-
                 // Get stock item by id
-                var entity = await DbContext.GetUserMealByIDEditableAsync(new UserMeal(userGuid, mealID));
+                var entity = await DbContext.GetUserMealByIDEditableAsync(userGuid, mealID);
 
                 // Validate if entity exists
                 if (entity == null)
@@ -848,7 +745,7 @@ namespace DinderMVC.Controllers
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]
         [ProducesResponseType(500)]
-        public async Task<IActionResult> PutUserMealsAsync(Guid userGuid, int MealID, [FromBody] PostUserMealRequest request)
+        public async Task<IActionResult> PutUserMealsAsync(Guid userGuid, int MealID, [FromBody] PutUserMealRequest request)
         {
             string name = nameof(PutUserMealsAsync);
             var response = new SingleResponse<UserMealDM>();
@@ -859,21 +756,14 @@ namespace DinderMVC.Controllers
             {
                 LogMethodInvoked(name);
 
-                if (!(await DbContext.AppInstallRegistered(request.appInstallID)))
-                {
-                    LogInvalidInstall(request.appInstallID, name);
-                    return BadRequest();
-                }
-
-
                 // Get stock item by id
-                var entity = await DbContext.GetUserMealByIDEditableAsync(new UserMeal(userGuid, MealID));
+                var entity = await DbContext.GetUserMealByIDEditableAsync(userGuid, MealID);
 
                 // Validate if entity exists
                 if (entity == null)
                     return NotFound();
 
-                if (entity.CookGuid != request.userGUID)
+                if (entity.CookGuid != userGuid)
                     return Forbid();
 
                 // Set changes to entity

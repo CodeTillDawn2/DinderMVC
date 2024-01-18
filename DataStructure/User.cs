@@ -14,8 +14,8 @@ namespace DinderMVC.Models
         public Guid UserGUID { get; set; }
         public string UserName { get; set; }
         public string DisplayName { get; set; }
-        public DateTime CreateDate { get; set; }
-        public DateTime LastActiveDate { get; set; }
+        public DateTime? CreateDate { get; set; }
+        public DateTime? LastActiveDate { get; set; }
 
         [NotMapped]
         public virtual List<UserMeal> Meals { get; set; }
@@ -69,13 +69,11 @@ namespace DinderMVC.Models
 
                 builder
                     .Property(p => p.CreateDate)
-                    .HasColumnType("datetime")
-                    .IsRequired();
+                    .HasColumnType("datetime");
 
                 builder
                     .Property(p => p.LastActiveDate)
-                    .HasColumnType("datetime")
-                    .IsRequired();
+                    .HasColumnType("datetime");
 
             }
         }
