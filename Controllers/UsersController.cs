@@ -263,7 +263,7 @@ namespace DinderMVC.Controllers
         // api/v1/Users/5
 
         /// <summary>
-        /// Updates an existing user --Untested
+        /// Updates an existing user
         /// </summary>
         /// <param name="userGuid">User GUID</param>
         /// <param name="request">Request model</param>
@@ -312,7 +312,7 @@ namespace DinderMVC.Controllers
         // api/v1/Users/Users/5
 
         /// <summary>
-        /// Deletes an existing user --Untested
+        /// Deletes an existing user
         /// </summary>
         /// <param name="UserGuid">User GUID</param>
         /// <returns>A response as delete user result</returns>
@@ -356,7 +356,7 @@ namespace DinderMVC.Controllers
         // api/v1/Users/{UserGUID}/Friends
 
         /// <summary>
-        /// Creates a user friend --Untested
+        /// Creates a user friend 
         /// </summary>
         /// <param name="userGuid">User GUID</param>
         /// <param name="request">Request</param>
@@ -414,7 +414,7 @@ namespace DinderMVC.Controllers
         // api/v1/Users/5
 
         /// <summary>
-        /// Updates an existing user friend --Untested
+        /// Updates an existing user friend
         /// </summary>
         /// <param name="userGuid">AppInstallID</param>
         /// <param name="friendGuid">AppInstallID</param>
@@ -463,7 +463,7 @@ namespace DinderMVC.Controllers
         // api/v1/Users/{UserGUID}/Friends
 
         /// <summary>
-        /// Deletes an existing user friend --Untested
+        /// Deletes an existing user friend 
         /// </summary>
         /// <param name="userGuid">User GUID</param>
         /// <param name="friendGuid">Freind GUID</param>
@@ -509,11 +509,11 @@ namespace DinderMVC.Controllers
         // api/v1/Users/{UserGUID}/Meals
 
         /// <summary>
-        /// Retrieves meals --Untested
+        /// Retrieves meals
         /// </summary>
         /// <param name="pageSize">Page size</param>
         /// <param name="pageNumber">Page number</param>
-        /// <param name="userGUID">User GUID</param>
+        /// <param name="UserGuid">User GUID</param>
         /// <param name="mealID">Meal ID</param>
         /// <param name="mealName">Meal Name</param>
         /// <param name="mealDescription">Meal Description</param>
@@ -525,7 +525,7 @@ namespace DinderMVC.Controllers
         [HttpGet("{UserGuid}/Meals")]
         [ProducesResponseType(200)]
         [ProducesResponseType(500)]
-        public async Task<IActionResult> GetUserMealsAsync(Guid userGUID, int pageSize = 10, int pageNumber = 1,
+        public async Task<IActionResult> GetUserMealsAsync(Guid UserGuid, int pageSize = 10, int pageNumber = 1,
             int? mealID = null, string mealName = null, string mealDescription = null, Guid? globalLink = null, bool? madeItBefore = null)
         {
 
@@ -539,7 +539,7 @@ namespace DinderMVC.Controllers
 
                 LogMethodInvoked(name);
 
-                var query = DbContext.GetUserMeals(userGUID, mealID, mealName, mealDescription, globalLink, madeItBefore);
+                var query = DbContext.GetUserMeals(UserGuid, mealID, mealName, mealDescription, globalLink, madeItBefore);
 
                 response.detailed = false;
 
@@ -564,16 +564,16 @@ namespace DinderMVC.Controllers
 
             return response.ToHttpResponse();
         }
-      
+
 
         // GET
         // api/v1/Users/{UserGUID}/Meals/{MealID}
 
         /// <summary>
-        /// Retrieves a meal by MealID --Untested
+        /// Retrieves a meal by MealID
         /// </summary>
         /// <param name="UserGuid">UserGuid</param>
-        /// <param name="mealID">Meal ID</param>
+        /// <param name="MealID">Meal ID</param>
         /// <returns>A response with a meal</returns>
         /// <response code="200">Returns the meal list</response>
         /// <response code="404">If meal is not exists</response>
@@ -582,7 +582,7 @@ namespace DinderMVC.Controllers
         [ProducesResponseType(200)]
         [ProducesResponseType(404)]
         [ProducesResponseType(500)]
-        public async Task<IActionResult> GetUserMealAsync(Guid UserGuid, int mealID)
+        public async Task<IActionResult> GetUserMealAsync(Guid UserGuid, int MealID)
         {
 
             string name = nameof(GetUserMealAsync);
@@ -594,7 +594,7 @@ namespace DinderMVC.Controllers
 
 
                 // Get the stock item by id
-                UserMeal meal = (await DbContext.GetUserMealByIDEditableAsync(UserGuid, mealID));
+                UserMeal meal = (await DbContext.GetUserMealByIDEditableAsync(UserGuid, MealID));
 
                 if (meal != null)
                     response.Model = meal.ReturnDM();
@@ -616,7 +616,7 @@ namespace DinderMVC.Controllers
         // api/v1/Users/{UserGUID}/Meals
 
         /// <summary>
-        /// Creates a new meal --Untested
+        /// Creates a new meal
         /// </summary>
         /// <param name="UserGuid">Cook guid</param>
         /// <param name="request">Request model</param>
@@ -652,7 +652,7 @@ namespace DinderMVC.Controllers
                     return BadRequest();
 
                 // Create entity from request model
-                var entity = request.ToEntity();
+                var entity = request.ToEntity(UserGuid);
 
 
                 DbContext.UserMeals.Add(entity);
@@ -680,18 +680,17 @@ namespace DinderMVC.Controllers
         // api/v1/Users/{UserGUID}/Meals/{mealID}
 
         /// <summary>
-        /// Deletes an existing meal --Untested
+        /// Deletes an existing meal
         /// </summary>
-        /// <param name="appInstallID">AppInstallID</param>
-        /// <param name="userGuid">UserGuid</param>
-        /// <param name="mealID">Meal ID</param>
+        /// <param name="UserGuid">UserGuid</param>
+        /// <param name="MealID">Meal ID</param>
         /// <returns>A response as delete meal result</returns>
         /// <response code="200">If meal was deleted successfully</response>
         /// <response code="500">If there was an internal server error</response>
         [HttpDelete("{UserGuid}/Meals/{MealID}")]
         [ProducesResponseType(200)]
         [ProducesResponseType(500)]
-        public async Task<IActionResult> DeleteUserMealAsync(Guid userGuid, int mealID)
+        public async Task<IActionResult> DeleteUserMealAsync(Guid UserGuid, int MealID)
         {
             string name = nameof(DeleteUserMealAsync);
 
@@ -702,13 +701,13 @@ namespace DinderMVC.Controllers
                 LogMethodInvoked(name);
 
                 // Get stock item by id
-                var entity = await DbContext.GetUserMealByIDEditableAsync(userGuid, mealID);
+                var entity = await DbContext.GetUserMealByIDEditableAsync(UserGuid, MealID);
 
                 // Validate if entity exists
                 if (entity == null)
                     return NotFound();
 
-                if (entity.CookGuid != userGuid)
+                if (entity.CookGuid != UserGuid)
                     return Forbid();
 
                 // Remove entity from repository
@@ -732,10 +731,10 @@ namespace DinderMVC.Controllers
         // api/v1/Users/Meals/5
 
         /// <summary>
-        /// Updates an existing meal --Untested
+        /// Updates an existing meal
         /// </summary>
         /// <param name="MealID">Meal ID</param>
-        /// <param name="userGuid">userGuid</param>
+        /// <param name="UserGuid">userGuid</param>
         /// <param name="request">Request model</param>
         /// <returns>A response as update meal result</returns>
         /// <response code="200">If meal was updated successfully</response>
@@ -745,7 +744,7 @@ namespace DinderMVC.Controllers
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]
         [ProducesResponseType(500)]
-        public async Task<IActionResult> PutUserMealsAsync(Guid userGuid, int MealID, [FromBody] PutUserMealRequest request)
+        public async Task<IActionResult> PutUserMealsAsync(Guid UserGuid, int MealID, [FromBody] PutUserMealRequest request)
         {
             string name = nameof(PutUserMealsAsync);
             var response = new SingleResponse<UserMealDM>();
@@ -757,13 +756,13 @@ namespace DinderMVC.Controllers
                 LogMethodInvoked(name);
 
                 // Get stock item by id
-                var entity = await DbContext.GetUserMealByIDEditableAsync(userGuid, MealID);
+                var entity = await DbContext.GetUserMealByIDEditableAsync(UserGuid, MealID);
 
                 // Validate if entity exists
                 if (entity == null)
                     return NotFound();
 
-                if (entity.CookGuid != userGuid)
+                if (entity.CookGuid != UserGuid)
                     return Forbid();
 
                 // Set changes to entity

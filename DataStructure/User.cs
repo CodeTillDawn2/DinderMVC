@@ -14,7 +14,7 @@ namespace DinderMVC.Models
         public Guid UserGUID { get; set; }
         public string UserName { get; set; }
         public string DisplayName { get; set; }
-        public DateTime? CreateDate { get; set; }
+        public DateTime CreateDate { get; set; }
         public DateTime? LastActiveDate { get; set; }
 
         [NotMapped]

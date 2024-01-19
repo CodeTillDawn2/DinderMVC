@@ -304,7 +304,7 @@
         </member>
         <member name="M:DinderMVC.Controllers.UsersController.PutUsersAsync(System.Guid,DinderDLL.Requests.PutUserRequest)">
             <summary>
-            Updates an existing user --Untested
+            Updates an existing user
             </summary>
             <param name="userGuid">User GUID</param>
             <param name="request">Request model</param>
@@ -315,7 +315,7 @@
         </member>
         <member name="M:DinderMVC.Controllers.UsersController.DeleteUserAsync(System.Guid)">
             <summary>
-            Deletes an existing user --Untested
+            Deletes an existing user
             </summary>
             <param name="UserGuid">User GUID</param>
             <returns>A response as delete user result</returns>
@@ -324,7 +324,7 @@
         </member>
         <member name="M:DinderMVC.Controllers.UsersController.PostUserFriendAsync(System.Guid,DinderDLL.Requests.PostUserFriendRequest)">
             <summary>
-            Creates a user friend --Untested
+            Creates a user friend 
             </summary>
             <param name="userGuid">User GUID</param>
             <param name="request">Request</param>
@@ -334,7 +334,7 @@
         </member>
         <member name="M:DinderMVC.Controllers.UsersController.PutUserFriendAsync(System.Guid,System.Guid,DinderDLL.Requests.PutUserFriendRequest)">
             <summary>
-            Updates an existing user friend --Untested
+            Updates an existing user friend
             </summary>
             <param name="userGuid">AppInstallID</param>
             <param name="friendGuid">AppInstallID</param>
@@ -346,7 +346,7 @@
         </member>
         <member name="M:DinderMVC.Controllers.UsersController.DeleteUserFriendAsync(System.Guid,System.Guid)">
             <summary>
-            Deletes an existing user friend --Untested
+            Deletes an existing user friend 
             </summary>
             <param name="userGuid">User GUID</param>
             <param name="friendGuid">Freind GUID</param>
@@ -356,11 +356,11 @@
         </member>
         <member name="M:DinderMVC.Controllers.UsersController.GetUserMealsAsync(System.Guid,System.Int32,System.Int32,System.Nullable{System.Int32},System.String,System.String,System.Nullable{System.Guid},System.Nullable{System.Boolean})">
             <summary>
-            Retrieves meals --Untested
+            Retrieves meals
             </summary>
             <param name="pageSize">Page size</param>
             <param name="pageNumber">Page number</param>
-            <param name="userGUID">User GUID</param>
+            <param name="UserGuid">User GUID</param>
             <param name="mealID">Meal ID</param>
             <param name="mealName">Meal Name</param>
             <param name="mealDescription">Meal Description</param>
@@ -372,10 +372,10 @@
         </member>
         <member name="M:DinderMVC.Controllers.UsersController.GetUserMealAsync(System.Guid,System.Int32)">
             <summary>
-            Retrieves a meal by MealID --Untested
+            Retrieves a meal by MealID
             </summary>
             <param name="UserGuid">UserGuid</param>
-            <param name="mealID">Meal ID</param>
+            <param name="MealID">Meal ID</param>
             <returns>A response with a meal</returns>
             <response code="200">Returns the meal list</response>
             <response code="404">If meal is not exists</response>
@@ -383,7 +383,7 @@
         </member>
         <member name="M:DinderMVC.Controllers.UsersController.PostUserMealAsync(System.Guid,DinderDLL.Requests.PostUserMealRequest)">
             <summary>
-            Creates a new meal --Untested
+            Creates a new meal
             </summary>
             <param name="UserGuid">Cook guid</param>
             <param name="request">Request model</param>
@@ -395,21 +395,20 @@
         </member>
         <member name="M:DinderMVC.Controllers.UsersController.DeleteUserMealAsync(System.Guid,System.Int32)">
             <summary>
-            Deletes an existing meal --Untested
+            Deletes an existing meal
             </summary>
-            <param name="appInstallID">AppInstallID</param>
-            <param name="userGuid">UserGuid</param>
-            <param name="mealID">Meal ID</param>
+            <param name="UserGuid">UserGuid</param>
+            <param name="MealID">Meal ID</param>
             <returns>A response as delete meal result</returns>
             <response code="200">If meal was deleted successfully</response>
             <response code="500">If there was an internal server error</response>
         </member>
         <member name="M:DinderMVC.Controllers.UsersController.PutUserMealsAsync(System.Guid,System.Int32,DinderDLL.Requests.PutUserMealRequest)">
             <summary>
-            Updates an existing meal --Untested
+            Updates an existing meal
             </summary>
             <param name="MealID">Meal ID</param>
-            <param name="userGuid">userGuid</param>
+            <param name="UserGuid">userGuid</param>
             <param name="request">Request model</param>
             <returns>A response as update meal result</returns>
             <response code="200">If meal was updated successfully</response>
