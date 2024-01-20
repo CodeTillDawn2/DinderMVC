@@ -44,6 +44,16 @@ namespace DinderMVC.Queries
             return true;
         }
 
+        public static async Task<bool> MealInParty(this DinderContext dbContext, int PartyID, int MealID)
+        {
+            Party party = dbContext.Parties.Where(x => x.PartyID == PartyID).Include(x => x.PartyMeals).FirstOrDefault();
+            if (party == null)
+                return false;
+            if (!party.PartyMeals.Select(x => x.MealID).ToList().Contains(MealID))
+                return false;
+            return true;
+        }
+
         public static async Task<bool> UserIsHost(this DinderContext dbContext, int PartyID, Guid UserGuid)
         {
             Party party = dbContext.Parties.Where(x => x.PartyID == PartyID).Include(x => x.PartyInvites).FirstOrDefault();
@@ -194,13 +204,13 @@ namespace DinderMVC.Queries
 
         // Create a method that returns the lambda expression
         public static DetailedPartyDelegate DetailedPartyQuery = query =>
-            query.Include(b => b.Meals).ThenInclude(b => b.Meal)
+            query.Include(b => b.PartyMeals).ThenInclude(b => b.Meal)
                 .Include(b => b.PartyInvites)
                 .Include(b => b.Settings).ThenInclude(c => c.Setting).ThenInclude(d => d.DataType)
                 .Include(b => b.Settings).ThenInclude(c => c.Choice)
                 .Include(b => b.PartyChoices);
         public static DetailedPartyDelegate NotDetailedPartyQuery = query =>
-            query.Include(b => b.Meals).ThenInclude(b => b.Meal);
+            query.Include(b => b.PartyMeals).ThenInclude(b => b.Meal);
 
 
 

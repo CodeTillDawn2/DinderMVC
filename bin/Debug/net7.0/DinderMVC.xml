@@ -40,7 +40,7 @@
         </member>
         <member name="M:DinderMVC.Controllers.PartiesController.GetPartiesAsync(System.Boolean,System.Int32,System.Int32,System.Nullable{System.Guid},System.String,System.String)">
             <summary>
-            Retrieves parties the user is invited to or hosting
+            Retrieves parties the user is invited to or hosting.
             </summary>
             <param name="IsDetailed">Whether or not to include: Party invites, settings, or choices</param>
             <param name="pageSize">Page size</param>
@@ -48,181 +48,214 @@
             <param name="cookGuid">Cook GUID</param>
             <param name="sessionName">Session Name</param>
             <param name="sessionMessage">Session Message</param>
-            <returns>A response with parties the user is invited to or is hosting</returns>
+            <returns>A response with the parties the user is invited to or is hosting</returns>
             <response code="200">Returns the parties list</response>
+            <response code="400">If the request is bad</response>
             <response code="500">If there was an internal server error</response>
         </member>
         <member name="M:DinderMVC.Controllers.PartiesController.GetPartySettingsAsync(System.Int32)">
             <summary>
-            Retrieves party settings
+            Retrieves party settings. Only the host of a party or an invitee can call this endpoint.
             </summary>
             <param name="PartyID">Party ID (required)</param>
-            <param name="IsDetailed">Whether or not to include detailed information</param>
-            <returns>A response with party settings list</returns>
+            <returns>A response with the party settings list</returns>
             <response code="200">Returns the party settings list</response>
+            <response code="400">If the request is bad</response>
+            <response code="403">If you are not involved with the party, either as the host or as an invitee</response>
+            <response code="404">If the party does not exist</response>
             <response code="500">If there was an internal server error</response>
         </member>
         <member name="M:DinderMVC.Controllers.PartiesController.GetPartyInvitesAsync(System.Int32)">
             <summary>
-            Retrieves party invites
+            Retrieves party invites. Only the host of a party or an invitee can call this endpoint.
             </summary>
             <param name="PartyID">Party ID (required)</param>
             <returns>A response with party settings list</returns>
-            <response code="200">Returns the stock items list</response>
+            <response code="200">Returns the party invites list</response>
+            <response code="400">If the request is bad</response>
+            <response code="403">If you are not involved with the party, either as the host or as an invitee</response>
+            <response code="404">If the party does not exist</response>
             <response code="500">If there was an internal server error</response>
         </member>
         <member name="M:DinderMVC.Controllers.PartiesController.GetPartyAsync(System.Int32,System.Boolean)">
             <summary>
-            Retrieves a party by PartyID
+            Retrieves a party by PartyID. Only the host of a party or an invitee can call this endpoint.
             </summary>
             <param name="PartyID">Party ID (required)</param>
             <param name="IsDetailed">Whether or not to include: Party invites, settings, or choices</param>
             <returns>A response with a party</returns>
             <response code="200">Returns the party</response>
-            <response code="404">If meal is not exists</response>
+            <response code="403">If you are not involved with the party, either as the host or as an invitee</response>
+            <response code="404">If the party does not exist</response>
             <response code="500">If there was an internal server error</response>
         </member>
         <member name="M:DinderMVC.Controllers.PartiesController.PostPartyAsync(DinderDLL.Requests.PostPartyRequest)">
             <summary>
-            Creates a new party
+            Creates a new party. 
             </summary>
             <param name="request">Request model</param>
-            <returns>A response with new meal</returns>
-            <response code="201">A response as creation of party</response>
-            <response code="400">For bad request</response>
+            <returns>A response with the new meal</returns>
+            <response code="201">A successful response</response>
+            <response code="400">For a bad request</response>
             <response code="500">If there was an internal server error</response>
         </member>
-        <member name="M:DinderMVC.Controllers.PartiesController.PutPartySettingAsync(System.Int32,System.Int32,System.Int32,System.String)">
+        <member name="M:DinderMVC.Controllers.PartiesController.PutPartySettingAsync(System.Int32,System.Int32,DinderDLL.Requests.PutPartySettingRequest)">
             <summary>
-            Updates an existing party setting
+            Updates an existing party setting. Only the host of the party can update a setting.
             </summary>
             <param name="PartyID">Party ID (required)</param>
             <param name="SettingID">Setting ID to update (required)</param>
-            <param name="ChoiceID">Choice ID (required)</param>
-            <param name="ChoiceEntry">Choice Entry (optional)</param>
-            <returns>A response as update party setting result</returns>
-            <response code="200">If meal was updated successfully</response>
+            <param name="request">Request body</param>
+            <returns>A response with the updated party setting</returns>
+            <response code="200">If the party setting was updated successfully</response>
             <response code="400">For bad request</response>
+            <response code="403">If you are not the host of the party</response>
+            <response code="404">If the party or the setting does not exist</response>
             <response code="500">If there was an internal server error</response>
         </member>
         <member name="M:DinderMVC.Controllers.PartiesController.PutPartyAsync(System.Int32,DinderDLL.Requests.PutPartyRequest,System.Boolean)">
             <summary>
-            Updates an existing party
+            Updates an existing party. Only the host of the party can update a party.
             </summary>
             <param name="PartyID">Party ID (required)</param>
-            <param name="IsDetailed">Whether or not to include: Party invites, settings, or choices</param>
+            <param name="IsDetailed">Whether or not to include: Party invites, settings, meals or choices</param>
             <param name="request">Request model</param>
             <returns>A response as update party result</returns>
-            <response code="200">If meal was updated successfully</response>
+            <response code="200">If the party was updated successfully</response>
             <response code="400">For bad request</response>
+            <response code="403">If you are not the host of the party</response>
+            <response code="404">If the party does not exist</response>
             <response code="500">If there was an internal server error</response>
         </member>
         <member name="M:DinderMVC.Controllers.PartiesController.DeletePartyAsync(System.Int32)">
             <summary>
-            Deletes an existing party
+            Deletes an existing party. Only the host of the party can delete a party.
             </summary>
             <param name="PartyID">Party ID (required)</param>
             <returns>A response as delete party result</returns>
-            <response code="200">If meal was deleted successfully</response>
+            <response code="200">If the party was deleted successfully</response>
+            <response code="400">For a bad request</response>
+            <response code="403">If you are not the host of the party</response>
+            <response code="404">If the party does not exist</response>
             <response code="500">If there was an internal server error</response>
         </member>
-        <member name="M:DinderMVC.Controllers.PartiesController.PutPartyInviteAsync(System.Int32,System.Guid,System.Boolean)">
+        <member name="M:DinderMVC.Controllers.PartiesController.PutPartyInviteAsync(System.Int32,System.Guid,DinderDLL.Requests.PutPartyInviteRequest)">
             <summary>
             Updates an existing party invite. You can only update your own party invites.
             </summary>
             <param name="PartyID">Party ID (required)</param>
-            <param name="userGuid">User Guid (required)</param>
-            <param name="RSVP">Whether you are RSVPing (required)</param>
+            <param name="UserGuid">User Guid (required)</param>
+            <param name="request">Request body (required)</param>
             <returns>A response as update party result</returns>
-            <response code="200">If meal was updated successfully</response>
-            <response code="400">For bad request</response>
+            <response code="200">If party invite was updated successfully</response>
+            <response code="400">For a bad request</response>
+            <response code="403">If the updated invite is not your invite</response>
+            <response code="404">If the party or the party invite is not found.</response>
             <response code="500">If there was an internal server error</response>
-            <response code="200">Returns an instance of ResponseObject</response>
         </member>
         <member name="M:DinderMVC.Controllers.PartiesController.DeletePartyInviteAsync(System.Int32,System.Guid)">
             <summary>
-            Deletes an existing Party Invite
+            Deletes an existing Party Invite. Only the host can delete a party invite.
             </summary>
-            <param name="partyID">Party ID (required)</param>
-            <param name="userGuid">User Guid (required)</param>
-            <returns>A response as delete party result</returns>
-            <response code="200">If party invite was deleted successfully</response>
+            <param name="PartyID">Party ID (required)</param>
+            <param name="UserGuid">User Guid (required)</param>
+            <returns>A response with no data</returns>
+            <response code="200">If the party invite was deleted successfully</response>
+            <response code="400">For a bad request</response>
+            <response code="403">If you are not the host of the party</response>
+            <response code="404">If the party or the party invite is not found.</response>
             <response code="500">If there was an internal server error</response>
         </member>
         <member name="M:DinderMVC.Controllers.PartiesController.PutPartyChoiceAsync(System.Int32,System.Guid,System.Int32,DinderDLL.Requests.PutPartyChoiceRequest)">
             <summary>
-            Updates an existing party choice
+            Updates an existing party choice. You can only update your own party choices and the meal must have been selected for the party.
             </summary>
-            <param name="PartyID">Party ID</param>
-            <param name="userGuid">User GUID</param>
-            <param name="mealID">Meal ID</param>
+            <param name="PartyID">Party ID (required)</param>
+            <param name="UserGuid">User GUID (required)</param>
+            <param name="MealID">Meal ID (required)</param>
             <param name="request">Request model</param>
             <returns>A response as update party result</returns>
-            <response code="200">If meal was updated successfully</response>
-            <response code="400">For bad request</response>
+            <response code="200">If the party choice was updated successfully</response>
+            <response code="400">For a bad request</response>
+            <response code="403">If this is not your choice or the meal is not selected for the party.</response>
+            <response code="404">If the party or the party choice is not found.</response>
             <response code="500">If there was an internal server error</response>
         </member>
         <member name="M:DinderMVC.Controllers.PartiesController.PostPartyChoiceAsync(System.Int32,System.Guid,DinderDLL.Requests.PostPartyChoiceRequest)">
             <summary>
-            Creates a new party choice
+            Creates a new party choice. You can only make choices in parties you are invited to, and only on meals which exist in the party.
             </summary>
-            <param name="partyID">Request model</param>
-            <param name="userGuid">Request model</param>
+            <param name="PartyID">Request model</param>
+            <param name="UserGuid">Request model</param>
             <param name="request">Request model</param>
             <returns>A response with new meal</returns>
-            <response code="200">Returns the meal list</response>
             <response code="201">A response as creation of party</response>
-            <response code="400">For bad request</response>
+            <response code="400">For a bad request</response>
+            <response code="403">If this is not your choice or the meal is not selected for the party.</response>
+            <response code="404">If the party or the party choice is not found.</response>
             <response code="500">If there was an internal server error</response>
         </member>
         <member name="M:DinderMVC.Controllers.PartiesController.GetPartyChoicesAsync(System.Int32)">
             <summary>
-            Retrieves party choices
+            Retrieves party choices. You can only see all choices if you are the host. If you are not the host, only your choices will be returned.
             </summary>
             <param name="PartyID">PartyID</param>
-            <returns>A response with party settings list</returns>
-            <response code="200">Returns the stock items list</response>
+            <returns>A response with party choices list</returns>
+            <response code="200">Returns the party choices list</response>
+            <response code="400">For a bad request</response>
+            <response code="403">If you are not the host or an invitee.</response>
+            <response code="404">If the party is not found.</response>
             <response code="500">If there was an internal server error</response>
         </member>
         <member name="M:DinderMVC.Controllers.PartiesController.PostPartyInviteAsync(System.Int32,DinderDLL.Requests.PostPartyInviteRequest)">
             <summary>
-            Creates a new party invite
+            Creates a new party invite. Only the host can create party invites.
             </summary>
-            <param name="partyID">Request model</param>
+            <param name="PartyID">Request model</param>
             <param name="request">Request model</param>
             <returns>A response with new meal</returns>
-            <response code="201">A response as creation of party</response>
+            <response code="201">A response with the party invite created</response>
             <response code="400">For bad request</response>
+            <response code="403">If you are not the host of the party.</response>
+            <response code="404">If the party is not found.</response>
             <response code="500">If there was an internal server error</response>
         </member>
         <member name="M:DinderMVC.Controllers.PartiesController.GetPartyMealsAsync(System.Int32)">
             <summary>
-            Retrieves party meals
+            Retrieves party meals. You can only retrieve the party meals if you are the host, or an invitee.
             </summary>
             <param name="PartyID">PartyID</param>
             <returns>A response with party settings list</returns>
             <response code="200">Returns the stock items list</response>
+            <response code="400">For bad request</response>
+            <response code="403">If you are not the host of the party or an invitee.</response>
+            <response code="404">If the party is not found.</response>
             <response code="500">If there was an internal server error</response>
         </member>
-        <member name="M:DinderMVC.Controllers.PartiesController.PostPartyMealAsync(System.Int32,System.Int32)">
+        <member name="M:DinderMVC.Controllers.PartiesController.PostPartyMealAsync(System.Int32,DinderDLL.Requests.PostPartyMealRequest)">
             <summary>
-            Creates a new party meal
+            Creates a new party meal. Only the host can create a party meal.
             </summary>
             <param name="PartyID">Party ID</param>
-            <param name="MealID">Request model</param>
+            <param name="request">Request model</param>
             <returns>A response with new meal</returns>
-            <response code="201">A response as creation of party</response>
+            <response code="201">A response with the successfully created party meal</response>
             <response code="400">For bad request</response>
+            <response code="403">If you are not the host of the party.</response>
+            <response code="404">If the party is not found.</response>
             <response code="500">If there was an internal server error</response>
         </member>
         <member name="M:DinderMVC.Controllers.PartiesController.DeletePartyMealAsync(System.Int32,System.Int32)">
             <summary>
-            Deletes an existing Party Meal
+            Deletes an existing Party Meal. Only the host can delete a party meal.
             </summary>
             <param name="PartyID">Party ID</param>
             <param name="MealID">Meal ID</param>
             <returns>A response as delete party result</returns>
             <response code="200">If meal was deleted successfully</response>
+            <response code="400">For bad request</response>
+            <response code="403">If you are not the host of the party.</response>
+            <response code="404">If the party is not found.</response>
             <response code="500">If there was an internal server error</response>
         </member>
         <member name="M:DinderMVC.Controllers.RootController.GetVersions">

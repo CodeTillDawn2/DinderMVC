@@ -31,7 +31,7 @@ namespace DinderMVC.Controllers
         [NonAction]
         public void LogGatekeeperInfraction_NotInvited(Guid AppInstallID, Guid UserGuid, string NameOfMethod)
         {
-            Logger?.LogDebug("'{1}' has had a user, {2} attempting to see a party they are not authorized to see using " + AppInstallID.ToString(), UserGuid, NameOfMethod);
+            Logger?.LogDebug("'{1}' has had a user, {2} attempting to access a party they are not authorized to see using " + AppInstallID.ToString(), UserGuid, NameOfMethod);
         }
         [NonAction]
         public void LogGatekeeperInfraction_NotHost(Guid AppInstallID, Guid UserGuid, string NameOfMethod)
@@ -42,6 +42,11 @@ namespace DinderMVC.Controllers
         public void LogGatekeeperInfraction_NotSameUser(Guid AppInstallID, Guid UserGuid, string NameOfMethod)
         {
             Logger?.LogDebug("'{1}' has had a user, {2} attempting to make changes on a party invite for someone else using " + AppInstallID.ToString(), UserGuid, NameOfMethod);
+        }
+        [NonAction]
+        public void LogGatekeeperInfraction_MealNotInParty(Guid AppInstallID, Guid UserGuid, string NameOfMethod)
+        {
+            Logger?.LogDebug("'{1}' has had a user, {2} attempting to make changes on a party invite when the meal is not assigned using " + AppInstallID.ToString(), UserGuid, NameOfMethod);
         }
         [NonAction]
         public void LogCustom(string Message, string NameOfMethod)

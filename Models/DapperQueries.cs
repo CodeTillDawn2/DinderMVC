@@ -186,7 +186,7 @@ namespace DinderMVC.Queries
             //Build where clause
 
             string whereclause = "";
-            whereclause += " PartyID = @partyID and UserGuid = @userGuid";
+            whereclause += " PartyID = @partyID and (UserGuid = @userGuid or CookGuid = @userGuid)";
             whereclause = " Where " + whereclause;
 
             string sql = @"SELECT * from dbo.PartyChoices " +

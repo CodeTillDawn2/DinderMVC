@@ -29,7 +29,7 @@ namespace DinderMVC.Models
         public virtual User Cook { get; set; }
 
         [NotMapped]
-        public virtual List<PartyMeal> Meals { get; set; } = new List<PartyMeal>();
+        public virtual List<PartyMeal> PartyMeals { get; set; } = new List<PartyMeal>();
 
         [NotMapped]
         public virtual List<PartyChoice> PartyChoices { get; set; } = new List<PartyChoice>();
@@ -59,9 +59,9 @@ namespace DinderMVC.Models
         {
             List<UserMealDM> mealList = new List<UserMealDM>();
 
-            if (Meals != null)
+            if (PartyMeals != null)
             {
-                foreach (PartyMeal pm in Meals)
+                foreach (PartyMeal pm in PartyMeals)
                 {
                     mealList.Add(pm.Meal.ReturnDM());
                 }
@@ -132,7 +132,7 @@ namespace DinderMVC.Models
                 builder.Property(p => p.StatusID).HasColumnType("int");
 
                 builder.HasMany(x => x.Settings).WithOne().HasForeignKey(b => b.PartyID).OnDelete(DeleteBehavior.Cascade);
-                builder.HasMany(x => x.Meals).WithOne(b => b.Party).HasForeignKey(b => b.PartyID).OnDelete(DeleteBehavior.Cascade);
+                builder.HasMany(x => x.PartyMeals).WithOne(b => b.Party).HasForeignKey(b => b.PartyID).OnDelete(DeleteBehavior.Cascade);
                 builder.HasMany(x => x.PartyInvites).WithOne(b => b.Party).HasForeignKey(b => b.PartyID).OnDelete(DeleteBehavior.Cascade);
                 builder.HasMany(x => x.PartyChoices).WithOne(b => b.Party).HasForeignKey(b => b.PartyID).OnDelete(DeleteBehavior.Cascade);
             }

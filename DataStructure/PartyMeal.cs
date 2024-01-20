@@ -57,7 +57,7 @@ namespace DinderMVC.Models
                     .HasColumnType("int")
                     .IsRequired();
 
-                builder.HasOne(x => x.Party).WithMany(x => x.Meals).HasForeignKey(a => a.PartyID).OnDelete(DeleteBehavior.NoAction);
+                builder.HasOne(x => x.Party).WithMany(x => x.PartyMeals).HasForeignKey(a => a.PartyID).OnDelete(DeleteBehavior.NoAction);
                 builder.HasOne(x => x.Meal).WithMany().HasForeignKey(a => a.MealID).OnDelete(DeleteBehavior.NoAction);
             }
         }

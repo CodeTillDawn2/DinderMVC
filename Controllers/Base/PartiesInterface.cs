@@ -25,10 +25,10 @@ namespace DinderMVC.Controllers
 
         public abstract Task<IActionResult> GetPartySettingsAsync(int PartyID);
         public abstract Task<IActionResult> PutPartySettingAsync(int PartyID,
-            int SettingID, int ChoiceID, string ChoiceEntry);
+            int SettingID, PutPartySettingRequest request);
 
         public abstract Task<IActionResult> GetPartyInvitesAsync(int PartyID);
-        public abstract Task<IActionResult> PutPartyInviteAsync(int PartyID, Guid userGuid, bool RSVP);
+        public abstract Task<IActionResult> PutPartyInviteAsync(int PartyID, Guid userGuid, PutPartyInviteRequest request);
 
         public abstract Task<IActionResult> PostPartyInviteAsync(int PartyID, PostPartyInviteRequest request);
 
@@ -42,7 +42,7 @@ namespace DinderMVC.Controllers
         public abstract Task<IActionResult> PostPartyChoiceAsync(int partyID, Guid userGuid, PostPartyChoiceRequest request);
         public abstract Task<IActionResult> GetPartyMealsAsync(int partyID);
 
-        public abstract Task<IActionResult> PostPartyMealAsync(int PartyID, int MealID);
+        public abstract Task<IActionResult> PostPartyMealAsync(int PartyID, PostPartyMealRequest request);
         public abstract Task<IActionResult> DeletePartyMealAsync(int partyID, int MealID);
 
 #pragma warning restore CS1591
