@@ -1,6 +1,4 @@
-﻿
-using DinderDLL.DataModels;
-using DinderDLL.Responses;
+﻿using DinderDLL.Responses;
 using DinderMVC.Authentication;
 using DinderMVC.Models;
 using DinderMVC.Queries;
@@ -42,7 +40,7 @@ namespace DinderMVC.Controllers
         /// </summary>
         /// <param name="AppInstallID">App Install Guid (required)</param>
         /// <returns>A response with a bearer token</returns>
-        /// <response code="200">Reutrns the bearer token and expiration</response>
+        /// <response code="200">Returns the bearer token and expiration</response>
         /// <response code="400">For a bad request</response>
         /// <response code="404">If app install ID does not exist</response>
         /// <response code="500">If there was an internal server error</response>

@@ -13,7 +13,6 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace DinderMVC.Controllers
@@ -286,6 +285,13 @@ namespace DinderMVC.Controllers
 
                 // Add entity to repository
                 DbContext.Parties.Add(entity);
+
+
+                List<PartySettingType> settings = DbContext.PartySettingTypes.ToList();
+                List<PartySettingValue> settingsValues = DbContext.PartySettingValues.ToList();
+
+
+
 
                 await DbContext.SaveChangesAsync();
 
@@ -691,7 +697,8 @@ namespace DinderMVC.Controllers
                     return Forbid();
                 }
 
-                if (!await DbContext.MealInParty(PartyID, MealID)) {
+                if (!await DbContext.MealInParty(PartyID, MealID))
+                {
                     LogGatekeeperInfraction_MealNotInParty(id.AppInstallGuid, id.UserGuid, name);
                     return Forbid();
                 }

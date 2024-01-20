@@ -255,7 +255,7 @@ namespace DinderMVC.Controllers
                     ModelState.AddModelError("UserName", "Username is already taken");
                     return Forbid();
                 }
-                    
+
 
                 if (!ModelState.IsValid)
                     return BadRequest();
@@ -304,7 +304,7 @@ namespace DinderMVC.Controllers
         [ProducesResponseType(500)]
         [Authorize(AuthenticationSchemes = "Bearer")]
         public async Task<IActionResult> PutUsersAsync([BindRequired] Guid UserGuid, [FromBody] PutUserRequest request)
-        {   
+        {
             string name = nameof(PutUsersAsync);
 
             UserIdentity id = APIServices.GetUserID(HttpContext.User.Claims);
@@ -771,7 +771,7 @@ namespace DinderMVC.Controllers
                     ModelState.AddModelError("MealName", "Meal Name is already taken");
                     return Forbid();
                 }
-                    
+
 
                 if (!ModelState.IsValid)
                     return BadRequest();

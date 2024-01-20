@@ -3,7 +3,6 @@ using DinderDLL.DataModels;
 using DinderDLL.Models;
 using DinderDLL.Responses;
 using DinderMVC.Models;
-using DinderMVC.Queries;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;

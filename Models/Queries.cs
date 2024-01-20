@@ -228,7 +228,7 @@ namespace DinderMVC.Queries
             }
 
             return returnParty;
-            
+
         }
         public static async Task<PartyMeal> GetPartyMealEditableAsync(this DinderContext dbContext, int PartyID, int MealID)
           => dbContext.PartyMeals.Where(item => item.PartyID == PartyID && item.MealID == MealID).FirstOrDefault();
