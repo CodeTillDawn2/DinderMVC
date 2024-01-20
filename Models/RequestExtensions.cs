@@ -10,8 +10,8 @@ namespace DinderMVC.Models
         public static User ToEntity(this PostUserRequest request)
             => new User
             {
-                UserName = request.userName,
-                DisplayName = request.displayName,
+                UserName = request.UserName,
+                DisplayName = request.DisplayName,
                 CreateDate = DateTime.Now,
                 LastActiveDate = DateTime.Now
 
@@ -58,7 +58,7 @@ namespace DinderMVC.Models
             {
 
                 UserGUID = userGUID,
-                FriendGUID = request.friendGUID,
+                FriendGUID = request.FriendGUID,
                 FriendSinceDate = DateTime.Now,
                 IsBlocked = false
             };

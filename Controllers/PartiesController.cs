@@ -183,7 +183,7 @@ namespace DinderMVC.Controllers
                 response.PageSize = response.Model.Count;
                 response.detailed = false;
 
-                LogCustom("The party settings have been retrieved successfully.", name);
+                LogCustom("The party invites have been retrieved successfully.", name);
             }
             catch (Exception ex)
             {
@@ -238,6 +238,8 @@ namespace DinderMVC.Controllers
                     response.Model = party;
 
                 response.detailed = IsDetailed;
+
+                LogCustom("The party has been retrieved successfully.", name);
             }
             catch (Exception ex)
             {
@@ -290,7 +292,9 @@ namespace DinderMVC.Controllers
                 // Set the entity to response model
                 response.Model = entity.ReturnDM();
                 response.detailed = true;
-                
+
+                LogCustom("The party have been created successfully.", name);
+
             }
             catch (Exception ex)
             {
@@ -368,7 +372,7 @@ namespace DinderMVC.Controllers
                 response.PageSize = response.Model.Count;
                 response.detailed = false;
 
-
+                LogCustom("The party setting has been updated successfully.", name);
             }
             catch (Exception ex)
             {
@@ -440,6 +444,8 @@ namespace DinderMVC.Controllers
 
                 response.Model = entity.ReturnDM();
                 response.detailed = IsDetailed;
+
+                LogCustom("The party has been updated successfully.", name);
             }
             catch (Exception ex)
             {
@@ -499,6 +505,8 @@ namespace DinderMVC.Controllers
 
                 // Delete entity in database
                 await DbContext.SaveChangesAsync();
+
+                LogCustom("The party has been deleted successfully.", name);
             }
             catch (Exception ex)
             {
@@ -568,6 +576,8 @@ namespace DinderMVC.Controllers
 
                 response.Model = entity.ReturnDM();
                 response.detailed = false;
+
+                LogCustom("The party invite has been updated successfully.", name);
             }
             catch (Exception ex)
             {
@@ -627,6 +637,8 @@ namespace DinderMVC.Controllers
 
                 // Delete entity in database
                 await DbContext.SaveChangesAsync();
+
+                LogCustom("The party invite has been deleted successfully.", name);
             }
             catch (Exception ex)
             {
@@ -701,6 +713,8 @@ namespace DinderMVC.Controllers
 
                 response.Model = entity.ReturnDM();
                 response.detailed = false;
+
+                LogCustom("The party choice has been updated successfully.", name);
             }
             catch (Exception ex)
             {
@@ -774,6 +788,8 @@ namespace DinderMVC.Controllers
                 // Set the entity to response model
                 response.Model = entity.ReturnDM();
                 response.detailed = false;
+
+                LogCustom("The party choice has been created successfully.", name);
             }
             catch (Exception ex)
             {
@@ -828,7 +844,7 @@ namespace DinderMVC.Controllers
                 response.PageNumber = 1;
                 response.PageSize = response.Model.Count;
                 response.detailed = false;
-                LogCustom("The party settings have been retrieved successfully.", name);
+                LogCustom("The party choices have been retrieved successfully.", name);
             }
             catch (Exception ex)
             {
@@ -902,6 +918,8 @@ namespace DinderMVC.Controllers
                 // Set the entity to response model
                 response.Model = entity.ReturnDM();
                 response.detailed = false;
+
+                LogCustom("The party invite has been created successfully.", name);
             }
             catch (Exception ex)
             {
@@ -1022,6 +1040,8 @@ namespace DinderMVC.Controllers
 
                 // Set the entity to response model
                 response.Model = partyMeal.ReturnDM();
+
+                LogCustom("The party meal has been created successfully.", name);
             }
             catch (Exception ex)
             {
@@ -1085,6 +1105,8 @@ namespace DinderMVC.Controllers
 
                 // Delete entity in database
                 await DbContext.SaveChangesAsync();
+
+                LogCustom("The party meal has been deleted successfully.", name);
             }
             catch (Exception ex)
             {

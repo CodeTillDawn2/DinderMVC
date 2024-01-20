@@ -37,22 +37,22 @@ namespace DinderMVC.Controllers
 #pragma warning restore CS1591
 
 
-        // GET
-        // api/v1/Token/
-
         /// <summary>
-        /// Retrieves auth token
+        /// Retrieves auth token. Uses basic authentication.
         /// </summary>
-        /// <param name="appInstallID">App Install Guid (required)</param>
-        /// <returns>A response with a party</returns>
+        /// <param name="AppInstallID">App Install Guid (required)</param>
+        /// <returns>A response with a bearer token</returns>
         /// <response code="200">Reutrns the bearer token and expiration</response>
-        /// /// <response code="404">If app install ID does not exist</response>
+        /// <response code="400">For a bad request</response>
+        /// <response code="404">If app install ID does not exist</response>
         /// <response code="500">If there was an internal server error</response>
         [ProducesResponseType(typeof(SingleResponse<DinderToken>), 200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
         [ProducesResponseType(500)]
-        [HttpGet("{appInstallID}")]
+        [HttpGet("{AppInstallID}")]
         [Authorize(AuthenticationSchemes = "BasicAuthentication")]
-        public async Task<IActionResult> GetTokenAsync([BindRequired] Guid appInstallID)
+        public async Task<IActionResult> GetTokenAsync([BindRequired] Guid AppInstallID)
         {
             string name = nameof(GetTokenAsync);
             var response = new SingleResponse<DinderToken>();
@@ -62,9 +62,9 @@ namespace DinderMVC.Controllers
                 LogMethodInvoked(name);
 
 
-                if (!(await DbContext.AppInstallRegistered(appInstallID)))
+                if (!(await DbContext.AppInstallRegistered(AppInstallID)))
                 {
-                    LogInvalidInstall(appInstallID, name);
+                    LogInvalidInstall(AppInstallID, name);
                     return NotFound();
                 }
 
@@ -73,10 +73,10 @@ namespace DinderMVC.Controllers
 
                 TokenIssuerService tokenIssuer = new TokenIssuerService();
                 string userGuid = authenticatedUser.Claims.Where(x => x.Type == ClaimTypes.Thumbprint).FirstOrDefault().Value;
-                (string, DateTime) token = tokenIssuer.IssueToken(appInstallID.ToString(), userGuid);
+                (string, DateTime) token = tokenIssuer.IssueToken(AppInstallID.ToString(), userGuid);
 
                 DinderToken newToken = new DinderToken();
-                newToken.AppInstallGuid = appInstallID;
+                newToken.AppInstallGuid = AppInstallID;
                 newToken.UserGuid = new Guid(userGuid);
                 newToken.IPAddress = "";
                 newToken.IssueDate = DateTime.Now;
@@ -97,6 +97,8 @@ namespace DinderMVC.Controllers
                 response.Model.ExpirationDate = newToken.ExpirationDate;
                 response.Model.BearerToken = newToken.BearerToken;
                 response.Model.UserGuid = newToken.UserGuid;
+
+                LogCustom("The token has been created successfully.", name);
             }
             catch (Exception ex)
             {

@@ -33,18 +33,14 @@ namespace DinderMVC.Controllers
 
 #pragma warning restore CS1591
 
-
-        // GET
-        // api
-
         /// <summary>
         /// Retrieves API versions
         /// </summary>
         /// <returns>Returns links to different versions</returns>
-        /// <response code="200">Returns the stock items list</response>
+        /// <response code="200">Returns the api versions available</response>
         /// <response code="500">If there was an internal server error</response>
         [HttpGet("")]
-        [ProducesResponseType(200)]
+        [ProducesResponseType(typeof(PagedResponse<LinkCO>), 200)]
         [ProducesResponseType(500)]
         public async Task<IActionResult> GetVersions()
         {
@@ -80,10 +76,6 @@ namespace DinderMVC.Controllers
 
             return response.ToHttpResponse();
         }
-
-
-        // GET
-        // api
 
         /// <summary>
         /// Retrieves v1 Nodes

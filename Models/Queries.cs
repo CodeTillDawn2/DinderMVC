@@ -82,17 +82,13 @@ namespace DinderMVC.Queries
             return appInstallDM;
         }
 
-        public static IQueryable<UserMealDM> GetUserMeals(this DinderContext dbContext, Guid UserGUID, int? MealID, string MealName, string MealDescription, Guid? GlobalLink, bool? MadeItBefore)
+        public static IQueryable<UserMealDM> GetUserMeals(this DinderContext dbContext, Guid UserGUID, string MealName, string MealDescription, Guid? GlobalLink, bool? MadeItBefore)
         {
             // Get query from DbSet
             var query = dbContext.UserMeals.AsNoTracking().AsQueryable();
 
             // Filter by: 'UserGUID'
             query = query.Where(item => item.CookGuid == UserGUID);
-
-            // Filter by: 'MealID'
-            if (MealID.HasValue)
-                query = query.Where(item => item.MealID == MealID);
 
             // Filter by: 'mealName'
             if (MealName != null)

@@ -28,7 +28,7 @@ namespace DinderMVC.Controllers
         public abstract Task<IActionResult> PutUserFriendAsync(Guid userGuid, Guid friendGUID, [FromBody] PutUserFriendRequest request);
         public abstract Task<IActionResult> DeleteUserFriendAsync(Guid userGuid, Guid friendGuid);
         public abstract Task<IActionResult> GetUserMealsAsync(Guid userGUID, int pageSize = 10, int pageNumber = 1,
-            int? mealID = null, string mealName = null, string mealDescription = null, Guid? globalLink = null, bool? madeItBefore = null);
+            string mealName = null, string mealDescription = null, Guid? globalLink = null, bool? madeItBefore = null);
 
         public abstract Task<IActionResult> GetUserMealAsync(Guid UserGuid, int mealID);
 
