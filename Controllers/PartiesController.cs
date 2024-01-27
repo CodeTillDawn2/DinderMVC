@@ -286,20 +286,31 @@ namespace DinderMVC.Controllers
                 // Add entity to repository
                 DbContext.Parties.Add(entity);
 
+                await DbContext.SaveChangesAsync();
+
+
+                LogCustom("The party has been created successfully.", name);
 
                 List<PartySettingType> settings = DbContext.PartySettingTypes.ToList();
-                List<PartySettingValue> settingsValues = DbContext.PartySettingValues.ToList();
 
-
-
+                foreach (PartySettingType setting in settings)
+                {
+                    PartySettingMatrix matrix = new PartySettingMatrix();
+                    matrix.PartyID = entity.PartyID;
+                    matrix.SettingID = setting.PartySettingID;
+                    matrix.ChoiceID = setting.DefaultSettingChoice;
+                    matrix.ChoiceEntry = setting.DefaultSettingEntry;
+                    DbContext.PartySettingMatrices.Add(matrix);
+                }
 
                 await DbContext.SaveChangesAsync();
+
+                LogCustom("Created " + settings.Count + " settings.", name);
 
                 // Set the entity to response model
                 response.Model = entity.ReturnDM();
                 response.detailed = true;
 
-                LogCustom("The party have been created successfully.", name);
 
             }
             catch (Exception ex)

@@ -12,7 +12,9 @@ namespace DinderMVC.Models
 
         public string SettingName { get; set; }
 
-        public int SettingValueDataType { get; set; }
+        public int SettingValueDataType { get; set; }        
+        public int DefaultSettingChoice { get; set; }
+        public string DefaultSettingEntry { get; set; }
 
         [NotMapped]
         public DataType DataType { get; set; }
@@ -41,6 +43,16 @@ namespace DinderMVC.Models
                 builder.HasKey(p => p.PartySettingID);
 
                 // Columns with default value
+
+                builder
+                    .Property(p => p.DefaultSettingChoice)
+                    .HasColumnType("int")
+                    .IsRequired();
+
+                builder
+                    .Property(p => p.DefaultSettingEntry)
+                    .HasColumnType("varchar(255)")
+                    .IsRequired();
 
                 builder
                     .Property(p => p.PartySettingID)
