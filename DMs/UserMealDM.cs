@@ -11,7 +11,7 @@ namespace DinderDLL.DataModels
     {
 
 
-        public Guid CookGuid { get; set; }
+        public Guid HostGuid { get; set; }
         public int MealID { get; set; }
         public string MealName { get; set; }
         public string MealDescription { get; set; }
@@ -24,9 +24,9 @@ namespace DinderDLL.DataModels
         public override List<LinkCO> Links { get { return _links; } set { _links = value; } }
 
 
-        public UserMealDM(string href, Guid cookGUID, int mealID, string mealName, string mealDescription, bool madeItBefore, string privateNotes, Guid? globalLink)
+        public UserMealDM(string href, Guid hostGuid, int mealID, string mealName, string mealDescription, bool madeItBefore, string privateNotes, Guid? globalLink)
         {
-            CookGuid = cookGUID;
+            HostGuid = hostGuid;
             MealID = mealID;
             MealName = mealName;
             MealDescription = mealDescription;
@@ -40,7 +40,7 @@ namespace DinderDLL.DataModels
         {
             Links = new List<LinkCO>();
             Links.Add(new LinkCO(LinkService.REL_version_one, LinkService.HREF_versionone));
-            Links.Add(new LinkCO(LinkService.REL_get_parent_user, LinkService.HREF_user(CookGuid.ToString())));
+            Links.Add(new LinkCO(LinkService.REL_get_parent_user, LinkService.HREF_user(HostGuid.ToString())));
             Links.Add(new LinkCO(LinkService.REL_get_parent_meal, LinkService.HREF_user_meal(MealID.ToString())));
             Links.Add(new LinkCO(LinkService.REL_get_self, LinkService.HREF_user_meal(MealID.ToString())));
             Links.Add(new LinkCO(LinkService.REL_update_self, LinkService.HREF_user_meal(MealID.ToString())));
@@ -55,7 +55,7 @@ namespace DinderDLL.DataModels
 
         public override UserMealDTO ReturnDTO()
         {
-            return new UserMealDTO(MealID, MealName, CookGuid, MealDescription, MadeItBefore, PrivateNotes, Links.ConvertAll(x => x.ReturnDTO()));
+            return new UserMealDTO(MealID, MealName, HostGuid, MealDescription, MadeItBefore, PrivateNotes, Links.ConvertAll(x => x.ReturnDTO()));
         }
     }
 #pragma warning restore CS1591

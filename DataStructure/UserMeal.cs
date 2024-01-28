@@ -13,7 +13,7 @@ namespace DinderMVC.Models
     public class UserMeal : DataStructure<UserMealDM, UserMealDTO>
     {
 
-        public Guid CookGuid { get; set; }
+        public Guid HostGuid { get; set; }
         public int MealID { get; set; }
         public string MealName { get; set; }
         public string MealDescription { get; set; }
@@ -32,15 +32,15 @@ namespace DinderMVC.Models
 
         }
 
-        public UserMeal(Guid cookGuid, int mealID)
+        public UserMeal(Guid hostGuid, int mealID)
         {
             MealID = mealID;
-            CookGuid = cookGuid;
+            HostGuid = hostGuid;
         }
 
         public UserMealDM ReturnDM()
         {
-            return new UserMealDM("", CookGuid, MealID, MealName, MealDescription, MadeItBefore, PrivateNotes, GlobalLink);
+            return new UserMealDM("", HostGuid, MealID, MealName, MealDescription, MadeItBefore, PrivateNotes, GlobalLink);
         }
 
         public UserMealDTO ReturnDTO()
@@ -63,7 +63,7 @@ namespace DinderMVC.Models
                 // Columns with default value
 
                 builder
-                    .Property(p => p.CookGuid)
+                    .Property(p => p.HostGuid)
                     .HasColumnType("uniqueidentifier")
                     .IsRequired();
 

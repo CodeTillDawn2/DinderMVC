@@ -11,7 +11,7 @@ namespace DinderDLL.DataModels
     {
 
         public int PartyID { get; set; }
-        public Guid CookGuid { get; set; }
+        public Guid HostGuid { get; set; }
         public string SessionName { get; set; }
         public string SessionMessage { get; set; }
 
@@ -30,11 +30,11 @@ namespace DinderDLL.DataModels
         public override List<LinkCO> Links { get { return _links; } set { _links = value; } }
 
 
-        public PartyDM(int partyID, Guid cookGuid, string sessionName, string sessionMessage, int statusID, List<UserMealDM> mealList,
+        public PartyDM(int partyID, Guid hostGuid, string sessionName, string sessionMessage, int statusID, List<UserMealDM> mealList,
             List<PartyInviteDM> partyInvites, List<PartyChoiceDM> partyChoices)
         {
             PartyID = partyID;
-            CookGuid = cookGuid;
+            HostGuid = hostGuid;
             SessionName = sessionName;
             SessionMessage = sessionMessage;
             StatusID = statusID;
@@ -63,7 +63,7 @@ namespace DinderDLL.DataModels
 
         public override PartyDTO ReturnDTO()
         {
-            return new PartyDTO(PartyID, CookGuid, SessionName, SessionMessage, _links.ConvertAll(x => x.ReturnDTO()),
+            return new PartyDTO(PartyID, HostGuid, SessionName, SessionMessage, _links.ConvertAll(x => x.ReturnDTO()),
                 _inviteList.ConvertAll(x => x.ReturnDTO()), _partyChoices.ConvertAll(x => x.ReturnDTO()));
         }
     }

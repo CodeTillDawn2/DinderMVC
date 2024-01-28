@@ -16,7 +16,7 @@ namespace DinderMVC.Models
                 LastActiveDate = DateTime.Now
 
             };
-        public static UserMeal ToEntity(this PostUserMealRequest request, Guid cookGuid)
+        public static UserMeal ToEntity(this PostUserMealRequest request, Guid hostGuid)
             => new UserMeal
             {
 
@@ -25,7 +25,7 @@ namespace DinderMVC.Models
                 GlobalLink = request.globalLink,
                 MadeItBefore = request.madeItBefore,
                 PrivateNotes = request.privateNotes,
-                CookGuid = cookGuid
+                HostGuid = hostGuid
 
 
             };
@@ -39,14 +39,14 @@ namespace DinderMVC.Models
 
             };
 
-        public static Party ToEntity(this PostPartyRequest request, Guid cookGuid)
+        public static Party ToEntity(this PostPartyRequest request, Guid hostGuid)
         => new Party
         {
 
             SessionName = request.sessionName,
             SessionMessage = request.sessionMessage,
             StatusID = 1,
-            CookGuid = cookGuid
+            HostGuid = hostGuid
 
         };
 

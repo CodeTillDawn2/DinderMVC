@@ -37,11 +37,11 @@ namespace DinderMVC.Controllers
         /// Retrieves parties the user is invited to or hosting.
         /// </summary>
         /// <param name="IsDetailed">Whether or not to include: Party invites, settings, or choices</param>
-        /// <param name="pageSize">Page size</param>
-        /// <param name="pageNumber">Page number</param>
-        /// <param name="cookGuid">Cook GUID</param>
-        /// <param name="sessionName">Session Name</param>
-        /// <param name="sessionMessage">Session Message</param>
+        /// <param name="PageSize">Page size</param>
+        /// <param name="PageNumber">Page number</param>
+        /// <param name="HostGuid">Cook GUID</param>
+        /// <param name="SessionName">Session Name</param>
+        /// <param name="SessionMessage">Session Message</param>
         /// <returns>A response with the parties the user is invited to or is hosting</returns>
         /// <response code="200">Returns the parties list</response>
         /// <response code="400">If the request is bad</response>
@@ -51,8 +51,8 @@ namespace DinderMVC.Controllers
         [ProducesResponseType(400)]
         [ProducesResponseType(500)]
         [Authorize(AuthenticationSchemes = "Bearer")]
-        public async Task<IActionResult> GetPartiesAsync(bool IsDetailed = false, int pageSize = 10, int pageNumber = 1,
-            Guid? cookGuid = null, string sessionName = null, string sessionMessage = null)
+        public async Task<IActionResult> GetPartiesAsync(bool IsDetailed = false, int PageSize = 10, int PageNumber = 1,
+            Guid? HostGuid = null, string SessionName = null, string SessionMessage = null)
         {
             string name = nameof(GetPartiesAsync);
             LogMethodInvoked(name);
@@ -64,18 +64,18 @@ namespace DinderMVC.Controllers
             try
             {
 
-                var query = DbContext.GetParties(IsDetailed, id.UserGuid, cookGuid, sessionName, sessionMessage);
+                var query = DbContext.GetParties(IsDetailed, id.UserGuid, HostGuid, SessionName, SessionMessage);
 
-                response.PageSize = pageSize;
-                response.PageNumber = pageNumber;
+                response.PageSize = PageSize;
+                response.PageNumber = PageNumber;
 
                 response.ItemsCount = await query.CountAsync();
 
-                List<PartyDM> list = await query.Paging(pageSize, pageNumber).ToListAsync();
+                List<PartyDM> list = await query.Paging(PageSize, PageNumber).ToListAsync();
 
                 response.Model = list.ConvertAll(x => x.ReturnDTO());
 
-                response.Message = string.Format("Page {0} of {1}, Total of parties: {2}.", pageNumber, response.PageCount, response.ItemsCount);
+                response.Message = string.Format("Page {0} of {1}, Total of parties: {2}.", PageNumber, response.PageCount, response.ItemsCount);
                 response.detailed = IsDetailed;
                 LogCustom("The parties have been retrieved successfully.", name);
             }
@@ -921,7 +921,7 @@ namespace DinderMVC.Controllers
                 }
 
                 Party party = DbContext.Parties.Where(x => x.PartyID == PartyID).FirstOrDefault();
-                if (party.CookGuid != id.UserGuid)
+                if (party.HostGuid != id.UserGuid)
                 {
                     LogGatekeeperInfraction_NotHost(id.AppInstallGuid, id.UserGuid, name);
                     return BadRequest();

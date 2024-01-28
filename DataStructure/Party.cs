@@ -15,7 +15,7 @@ namespace DinderMVC.Models
     {
 
         public int PartyID { get; set; }
-        public Guid CookGuid { get; set; }
+        public Guid HostGuid { get; set; }
         public string SessionName { get; set; }
         public string SessionMessage { get; set; }
 
@@ -51,7 +51,7 @@ namespace DinderMVC.Models
         public Party(PartyDM partyModel)
         {
             PartyID = partyModel.PartyID;
-            CookGuid = partyModel.CookGuid;
+            HostGuid = partyModel.HostGuid;
             SessionName = partyModel.SessionName;
             SessionMessage = partyModel.SessionMessage;
             StatusID = partyModel.StatusID;
@@ -95,7 +95,7 @@ namespace DinderMVC.Models
 
             }
 
-            return new PartyDM(PartyID, CookGuid, SessionName, SessionMessage, StatusID, mealList, InvitedGuidList, partyChoices);
+            return new PartyDM(PartyID, HostGuid, SessionName, SessionMessage, StatusID, mealList, InvitedGuidList, partyChoices);
         }
 
         public PartyDTO ReturnDTO()
@@ -118,7 +118,7 @@ namespace DinderMVC.Models
                 // Columns with default value
 
                 builder
-                    .Property(p => p.CookGuid)
+                    .Property(p => p.HostGuid)
                     .HasColumnType("uniqueidentifier")
                     .IsRequired();
 

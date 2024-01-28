@@ -33,11 +33,11 @@
             Retrieves parties the user is invited to or hosting.
             </summary>
             <param name="IsDetailed">Whether or not to include: Party invites, settings, or choices</param>
-            <param name="pageSize">Page size</param>
-            <param name="pageNumber">Page number</param>
-            <param name="cookGuid">Cook GUID</param>
-            <param name="sessionName">Session Name</param>
-            <param name="sessionMessage">Session Message</param>
+            <param name="PageSize">Page size</param>
+            <param name="PageNumber">Page number</param>
+            <param name="HostGuid">Cook GUID</param>
+            <param name="SessionName">Session Name</param>
+            <param name="SessionMessage">Session Message</param>
             <returns>A response with the parties the user is invited to or is hosting</returns>
             <response code="200">Returns the parties list</response>
             <response code="400">If the request is bad</response>

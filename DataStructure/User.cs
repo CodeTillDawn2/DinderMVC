@@ -65,8 +65,8 @@ namespace DinderMVC.Models
 
 
 
-                builder.HasMany(x => x.Meals).WithOne(b => b.Cook).HasForeignKey(b => b.CookGuid).OnDelete(DeleteBehavior.Restrict);
-                builder.HasMany(x => x.Parties).WithOne(b => b.Cook).HasForeignKey(b => b.CookGuid).OnDelete(DeleteBehavior.Restrict);
+                builder.HasMany(x => x.Meals).WithOne(b => b.Cook).HasForeignKey(b => b.HostGuid).OnDelete(DeleteBehavior.Restrict);
+                builder.HasMany(x => x.Parties).WithOne(b => b.Cook).HasForeignKey(b => b.HostGuid).OnDelete(DeleteBehavior.Restrict);
                 //builder.HasMany(x => x.Friends).WithOne(b => b.User).HasForeignKey(b => b.UserGUID).OnDelete(DeleteBehavior.Restrict);
 
 

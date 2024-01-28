@@ -845,7 +845,7 @@ namespace DinderMVC.Controllers
                 if (entity == null)
                     return NotFound();
 
-                if (entity.CookGuid != UserGuid)
+                if (entity.HostGuid != UserGuid)
                     return Forbid();
 
                 // Remove entity from repository

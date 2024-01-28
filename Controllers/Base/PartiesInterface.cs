@@ -9,7 +9,7 @@ namespace DinderMVC.Controllers
     public interface PartiesInterface
     {
 
-        public abstract Task<IActionResult> GetPartiesAsync(bool IsDetailed, int pageSize = 10, int pageNumber = 1, Guid? cookGuid = null,
+        public abstract Task<IActionResult> GetPartiesAsync(bool IsDetailed, int pageSize = 10, int pageNumber = 1, Guid? hostGuid = null,
              string sessionName = null, string sessionMessage = null);
 
 

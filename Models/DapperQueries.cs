@@ -186,7 +186,7 @@ namespace DinderMVC.Queries
             //Build where clause
 
             string whereclause = "";
-            whereclause += " PartyID = @partyID and (UserGuid = @userGuid or CookGuid = @userGuid)";
+            whereclause += " PartyID = @partyID and (UserGuid = @userGuid or HostGuid = @userGuid)";
             whereclause = " Where " + whereclause;
 
             string sql = @"SELECT * from dbo.PartyChoices " +
@@ -293,7 +293,7 @@ namespace DinderMVC.Queries
             //Build ordered by clause (required)
             string orderedbyclause = " dbo.UserMeals.MealID";
 
-            string sql = @"Select dbo.UserMeals.CookGuid, dbo.UserMeals.MealID, dbo.UserMeals.MealName, dbo.UserMeals.MealDescription, dbo.UserMeals.GlobalLink, dbo.UserMeals.MadeItBefore, dbo.UserMeals.PrivateNotes
+            string sql = @"Select dbo.UserMeals.HostGuid, dbo.UserMeals.MealID, dbo.UserMeals.MealName, dbo.UserMeals.MealDescription, dbo.UserMeals.GlobalLink, dbo.UserMeals.MadeItBefore, dbo.UserMeals.PrivateNotes
                  FROM dbo.Parties " +
                 " INNER JOIN dbo.PartyMeals ON dbo.Parties.PartyID = dbo.PartyMeals.PartyID " +
                 " INNER JOIN dbo.UserMeals ON dbo.PartyMeals.MealID = dbo.UserMeals.MealID" +
@@ -328,7 +328,7 @@ namespace DinderMVC.Queries
             //Build where clause
 
             string whereclause = "";
-            whereclause += " CookGuid = @userGuid";
+            whereclause += " HostGuid = @userGuid";
             whereclause = " Where " + whereclause;
 
 
