@@ -114,7 +114,6 @@ namespace DinderMVC.Controllers
                 ResponseLinks.Add(new LinkCO(LinkService.REL_get_party, LinkService.HREF_party()));
                 ResponseLinks.Add(new LinkCO(LinkService.REL_update_party, LinkService.HREF_party()));
                 ResponseLinks.Add(new LinkCO(LinkService.REL_delete_party, LinkService.HREF_party()));
-                ResponseLinks.Add(new LinkCO(LinkService.REL_delete_party, LinkService.HREF_party()));
                 ResponseLinks.Add(new LinkCO(LinkService.REL_update_party_setting, LinkService.HREF_party_setting()));
                 ResponseLinks.Add(new LinkCO(LinkService.REL_update_party_invite, LinkService.HREF_party_invite()));
                 ResponseLinks.Add(new LinkCO(LinkService.REL_delete_party_invite, LinkService.HREF_party_invite()));
