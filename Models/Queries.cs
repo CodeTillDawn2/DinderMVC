@@ -14,21 +14,10 @@ namespace DinderMVC.Queries
     {
 
 
-        public static IQueryable<RootDM> GetRoots(this DinderContext dbContext)
-        {
-            // Get query from DbSet
-            List<RootDM> Roots = new List<RootDM>();
-            //Roots.Add(new Root("AppInstall", "AppInstall/"));
-            Roots.Add(new RootDM("Meal", "/api/" + DinderContext.APIVersion + "/Meals/"));
-            Roots.Add(new RootDM("User", "/api/" + DinderContext.APIVersion + "/Users/"));
-            Roots.Add(new RootDM("Party", "/api/" + DinderContext.APIVersion + "/Parties/"));
-
-            return Roots.AsQueryable<RootDM>();
-        }
 
         public static async Task<bool> AppInstallRegistered(this DinderContext dbContext, Guid appInstallID)
         {
-            AppInstallDM AI = dbContext.AppInstalls.Where(x => x.AppInstallGUID == appInstallID).Select(x => x.ReturnDTO()).FirstOrDefault();
+            AppInstallDM AI = dbContext.AppInstalls.Where(x => x.AppInstallGUID == appInstallID).Select(x => x.ReturnDM()).FirstOrDefault();
             if (AI == null)
                 return false;
             return true;
@@ -78,7 +67,7 @@ namespace DinderMVC.Queries
 
         public static async Task<AppInstallDM> VerifyInstall(this DinderContext dbContext, Guid AppInstallID)
         {
-            AppInstallDM appInstallDM = (await dbContext.AppInstalls.AsNoTracking().FirstOrDefaultAsync(item => item.AppInstallGUID == AppInstallID)).ReturnDTO();
+            AppInstallDM appInstallDM = (await dbContext.AppInstalls.AsNoTracking().FirstOrDefaultAsync(item => item.AppInstallGUID == AppInstallID)).ReturnDM();
             return appInstallDM;
         }
 
@@ -190,7 +179,6 @@ namespace DinderMVC.Queries
             }
 
             party.InviteList = invites.ConvertAll(x => x.ReturnDM());
-            party.SettingList = Settings;
             return party;
 
         }

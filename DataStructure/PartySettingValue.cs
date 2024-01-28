@@ -1,11 +1,14 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using DinderDLL.DataModels;
+using DinderDLL.DTOs;
+using DinderMVC.DataStructure.Base;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace DinderMVC.Models
 {
 #pragma warning disable CS1591
 
-    public class PartySettingValue
+    public class PartySettingValue : DataStructure<PartySettingValueDM, PartySettingValueDTO>
     {
         public int SettingID { get; set; }
 
@@ -66,6 +69,15 @@ namespace DinderMVC.Models
             }
         }
 
+        public PartySettingValueDM ReturnDM()
+        {
+            return new PartySettingValueDM(SettingID, SettingChoiceID, SettingChoiceName, SettingChoiceValue);
+        }
+
+        public PartySettingValueDTO ReturnDTO()
+        {
+            return ReturnDM().ReturnDTO();
+        }
     }
 
 

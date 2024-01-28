@@ -1,4 +1,6 @@
 ﻿using DinderDLL.DataModels;
+using DinderDLL.DTOs;
+using DinderMVC.DataStructure.Base;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System;
@@ -7,7 +9,7 @@ namespace DinderMVC.Models
 {
 #pragma warning disable CS1591
 
-    public class GlobalMeal
+    public class GlobalMeal : DataStructure<GlobalMealDM, GlobalMealDTO>
     {
 
         public Guid GlobalMealGUID { get; set; }
@@ -29,6 +31,11 @@ namespace DinderMVC.Models
         public GlobalMealDM ReturnDM()
         {
             return new GlobalMealDM(GlobalMealGUID, MealName, MealDescription, MealCreator, CreateDate);
+        }
+
+        public GlobalMealDTO ReturnDTO()
+        {
+            return ReturnDM().ReturnDTO();
         }
 
         public class GlobalMealsConfiguration : IEntityTypeConfiguration<GlobalMeal>

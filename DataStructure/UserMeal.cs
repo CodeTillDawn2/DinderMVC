@@ -1,4 +1,6 @@
 ﻿using DinderDLL.DataModels;
+using DinderDLL.DTOs;
+using DinderMVC.DataStructure.Base;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System;
@@ -8,7 +10,7 @@ namespace DinderMVC.Models
 {
 #pragma warning disable CS1591
 
-    public class UserMeal
+    public class UserMeal : DataStructure<UserMealDM, UserMealDTO>
     {
 
         public Guid CookGuid { get; set; }
@@ -41,6 +43,10 @@ namespace DinderMVC.Models
             return new UserMealDM("", CookGuid, MealID, MealName, MealDescription, MadeItBefore, PrivateNotes, GlobalLink);
         }
 
+        public UserMealDTO ReturnDTO()
+        {
+            return ReturnDM().ReturnDTO();
+        }
 
         public class UserMealsConfiguration : IEntityTypeConfiguration<UserMeal>
         {

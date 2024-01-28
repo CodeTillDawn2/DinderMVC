@@ -1,11 +1,14 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using DinderDLL.DataModels;
+using DinderDLL.DTOs;
+using DinderMVC.DataStructure.Base;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace DinderMVC.Models
 {
 #pragma warning disable CS1591
 
-    public class SwipeChoice
+    public class SwipeChoice : DataStructure<SwipeChoiceDM, SwipeChoiceDTO>
     {
         public int SwipeChoiceID { get; set; }
 
@@ -52,6 +55,15 @@ namespace DinderMVC.Models
             }
         }
 
+        public SwipeChoiceDM ReturnDM()
+        {
+            return new SwipeChoiceDM(SwipeChoiceID, SwipeChoiceDescription);
+        }
+
+        public SwipeChoiceDTO ReturnDTO()
+        {
+            return ReturnDM().ReturnDTO();
+        }
     }
 
 

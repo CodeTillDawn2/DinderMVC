@@ -1,4 +1,6 @@
 ﻿using DinderDLL.DataModels;
+using DinderDLL.DTOs;
+using DinderMVC.DataStructure.Base;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System;
@@ -8,7 +10,7 @@ namespace DinderMVC.Models
 {
 #pragma warning disable CS1591
 
-    public class PartyInvite
+    public class PartyInvite : DataStructure<PartyInviteDM, PartyInviteDTO>
     {
         [NotMapped]
         public virtual Party Party { get; set; }
@@ -38,6 +40,11 @@ namespace DinderMVC.Models
         public PartyInviteDM ReturnDM()
         {
             return new PartyInviteDM(PartyID, UserGuid, AcceptDate, RSVP);
+        }
+
+        public PartyInviteDTO ReturnDTO()
+        {
+            return ReturnDM().ReturnDTO();
         }
 
         public class PartyInviteConfiguration : IEntityTypeConfiguration<PartyInvite>

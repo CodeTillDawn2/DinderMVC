@@ -1,4 +1,5 @@
 ﻿using DinderDLL.DataModels;
+using DinderDLL.DTOs;
 using DinderDLL.Requests;
 using DinderDLL.Responses;
 using DinderMVC.Models;
@@ -46,7 +47,7 @@ namespace DinderMVC.Controllers
         /// <response code="400">If the request is bad</response>
         /// <response code="500">If there was an internal server error</response>
         [HttpGet("")]
-        [ProducesResponseType(typeof(PagedResponse<PartyDM>), 200)]
+        [ProducesResponseType(typeof(PagedResponse<PartyDTO>), 200)]
         [ProducesResponseType(400)]
         [ProducesResponseType(500)]
         [Authorize(AuthenticationSchemes = "Bearer")]
@@ -58,7 +59,7 @@ namespace DinderMVC.Controllers
 
             UserIdentity id = APIServices.GetUserID(HttpContext.User.Claims);
 
-            var response = new PagedResponse<PartyDM>();
+            var response = new PagedResponse<PartyDTO>();
 
             try
             {
@@ -70,7 +71,9 @@ namespace DinderMVC.Controllers
 
                 response.ItemsCount = await query.CountAsync();
 
-                response.Model = await query.Paging(pageSize, pageNumber).ToListAsync();
+                List<PartyDM> list = await query.Paging(pageSize, pageNumber).ToListAsync();
+
+                response.Model = list.ConvertAll(x => x.ReturnDTO());
 
                 response.Message = string.Format("Page {0} of {1}, Total of parties: {2}.", pageNumber, response.PageCount, response.ItemsCount);
                 response.detailed = IsDetailed;
@@ -99,7 +102,7 @@ namespace DinderMVC.Controllers
         /// <response code="404">If the party does not exist</response>
         /// <response code="500">If there was an internal server error</response>
         [HttpGet("{PartyID}/Settings")]
-        [ProducesResponseType(typeof(PagedResponse<PartySettingsViewCO>), 200)]
+        [ProducesResponseType(typeof(PagedResponse<PartySettingsViewDTO>), 200)]
         [ProducesResponseType(400)]
         [ProducesResponseType(403)]
         [ProducesResponseType(404)]
@@ -111,7 +114,7 @@ namespace DinderMVC.Controllers
 
             UserIdentity id = APIServices.GetUserID(HttpContext.User.Claims);
 
-            var response = new PagedResponse<PartySettingsViewCO>();
+            var response = new PagedResponse<PartySettingsViewDTO>();
 
             try
             {
@@ -123,7 +126,9 @@ namespace DinderMVC.Controllers
                     return Forbid();
                 }
 
-                response.Model = await DapperQueries.GetPartySettingsAsync(PartyID);
+                List<PartySettingsViewCO> list = await DapperQueries.GetPartySettingsAsync(PartyID);
+
+                response.Model = list.ConvertAll(x => x.ReturnDTO());
                 response.ItemsCount = response.Model.Count;
                 response.PageNumber = 1;
                 response.PageSize = response.Model.Count;
@@ -152,7 +157,7 @@ namespace DinderMVC.Controllers
         /// <response code="404">If the party does not exist</response>
         /// <response code="500">If there was an internal server error</response>
         [HttpGet("{PartyID}/Invites")]
-        [ProducesResponseType(typeof(PagedResponse<PartyInviteViewCO>), 200)]
+        [ProducesResponseType(typeof(PagedResponse<PartyInviteViewDTO>), 200)]
         [ProducesResponseType(400)]
         [ProducesResponseType(403)]
         [ProducesResponseType(404)]
@@ -164,7 +169,7 @@ namespace DinderMVC.Controllers
 
             UserIdentity id = APIServices.GetUserID(HttpContext.User.Claims);
 
-            var response = new PagedResponse<PartyInviteViewCO>();
+            var response = new PagedResponse<PartyInviteViewDTO>();
 
             try
             {
@@ -176,7 +181,9 @@ namespace DinderMVC.Controllers
                     return Forbid();
                 }
 
-                response.Model = await DapperQueries.GetPartyInvitesAsync(PartyID);
+                List<PartyInviteViewCO> list = await DapperQueries.GetPartyInvitesAsync(PartyID);
+
+                response.Model = list.ConvertAll(x => x.ReturnDTO());
                 response.ItemsCount = response.Model.Count;
                 response.PageNumber = 1;
                 response.PageSize = response.Model.Count;
@@ -207,7 +214,7 @@ namespace DinderMVC.Controllers
         /// <response code="404">If the party does not exist</response>
         /// <response code="500">If there was an internal server error</response>
         [HttpGet("{PartyID}")]
-        [ProducesResponseType(typeof(SingleResponse<PartyDM>), 200)]
+        [ProducesResponseType(typeof(SingleResponse<PartyDTO>), 200)]
         [ProducesResponseType(403)]
         [ProducesResponseType(404)]
         [ProducesResponseType(500)]
@@ -218,7 +225,7 @@ namespace DinderMVC.Controllers
 
             UserIdentity id = APIServices.GetUserID(HttpContext.User.Claims);
 
-            var response = new SingleResponse<PartyDM>();
+            var response = new SingleResponse<PartyDTO>();
 
             try
             {
@@ -234,7 +241,7 @@ namespace DinderMVC.Controllers
                 // Get the party by id
                 PartyDM party = await DbContext.GetDetailedPartyByIDAsync(PartyID, IsDetailed);
                 if (party != null)
-                    response.Model = party;
+                    response.Model = party.ReturnDTO();
 
                 response.detailed = IsDetailed;
 
@@ -260,7 +267,7 @@ namespace DinderMVC.Controllers
         /// <response code="400">For a bad request</response>
         /// <response code="500">If there was an internal server error</response>
         [HttpPost("")]
-        [ProducesResponseType(typeof(SingleResponse<PartyDM>), 201)]
+        [ProducesResponseType(typeof(SingleResponse<PartyDTO>), 201)]
         [ProducesResponseType(400)]
         [ProducesResponseType(500)]
         //[Authorize(AuthenticationSchemes = "Bearer")]
@@ -270,7 +277,7 @@ namespace DinderMVC.Controllers
 
             UserIdentity id = APIServices.GetUserID(HttpContext.User.Claims);
 
-            var response = new SingleResponse<PartyDM>();
+            var response = new SingleResponse<PartyDTO>();
 
             try
             {
@@ -308,7 +315,7 @@ namespace DinderMVC.Controllers
                 LogCustom("Created " + settings.Count + " settings.", name);
 
                 // Set the entity to response model
-                response.Model = entity.ReturnDM();
+                response.Model = entity.ReturnDTO();
                 response.detailed = true;
 
 
@@ -339,7 +346,7 @@ namespace DinderMVC.Controllers
         /// <response code="404">If the party or the setting does not exist</response>
         /// <response code="500">If there was an internal server error</response>
         [HttpPut("{PartyID}/Settings/{SettingID}")]
-        [ProducesResponseType(typeof(PagedResponse<PartySettingsViewCO>), 200)]
+        [ProducesResponseType(typeof(PagedResponse<PartySettingsViewDTO>), 200)]
         [ProducesResponseType(400)]
         [ProducesResponseType(403)]
         [ProducesResponseType(404)]
@@ -352,7 +359,7 @@ namespace DinderMVC.Controllers
 
             UserIdentity id = APIServices.GetUserID(HttpContext.User.Claims);
 
-            var response = new PagedResponse<PartySettingsViewCO>();
+            var response = new PagedResponse<PartySettingsViewDTO>();
 
             try
             {
@@ -383,7 +390,7 @@ namespace DinderMVC.Controllers
                 // Save entity in database
                 await DbContext.SaveChangesAsync();
 
-                response.Model = await DapperQueries.GetPartySettingsAsync(PartyID);
+                response.Model = (await DapperQueries.GetPartySettingsAsync(PartyID)).ConvertAll(x => x.ReturnDTO());
                 response.ItemsCount = response.Model.Count;
                 response.PageNumber = 1;
                 response.PageSize = response.Model.Count;
@@ -415,7 +422,7 @@ namespace DinderMVC.Controllers
         /// <response code="404">If the party does not exist</response>
         /// <response code="500">If there was an internal server error</response>
         [HttpPut("{PartyID}")]
-        [ProducesResponseType(typeof(SingleResponse<PartyDM>), 200)]
+        [ProducesResponseType(typeof(SingleResponse<PartyDTO>), 200)]
         [ProducesResponseType(400)]
         [ProducesResponseType(403)]
         [ProducesResponseType(404)]
@@ -427,7 +434,7 @@ namespace DinderMVC.Controllers
 
             UserIdentity id = APIServices.GetUserID(HttpContext.User.Claims);
 
-            var response = new SingleResponse<PartyDM>();
+            var response = new SingleResponse<PartyDTO>();
 
 
 
@@ -459,7 +466,7 @@ namespace DinderMVC.Controllers
                 // Save entity in database
                 await DbContext.SaveChangesAsync();
 
-                response.Model = entity.ReturnDM();
+                response.Model = entity.ReturnDTO();
                 response.detailed = IsDetailed;
 
                 LogCustom("The party has been updated successfully.", name);
@@ -550,7 +557,7 @@ namespace DinderMVC.Controllers
         /// <response code="404">If the party or the party invite is not found.</response>
         /// <response code="500">If there was an internal server error</response>
         [HttpPut("{PartyID}/Invites/{UserGuid}/")]
-        [ProducesResponseType(typeof(SingleResponse<PartyInviteDM>), 200)]
+        [ProducesResponseType(typeof(SingleResponse<PartyInviteDTO>), 200)]
         [ProducesResponseType(400)]
         [ProducesResponseType(403)]
         [ProducesResponseType(404)]
@@ -562,7 +569,7 @@ namespace DinderMVC.Controllers
 
             UserIdentity id = APIServices.GetUserID(HttpContext.User.Claims);
 
-            var response = new SingleResponse<PartyInviteDM>();
+            var response = new SingleResponse<PartyInviteDTO>();
 
             try
             {
@@ -591,7 +598,7 @@ namespace DinderMVC.Controllers
                 // Save entity in database
                 await DbContext.SaveChangesAsync();
 
-                response.Model = entity.ReturnDM();
+                response.Model = entity.ReturnDTO();
                 response.detailed = false;
 
                 LogCustom("The party invite has been updated successfully.", name);
@@ -682,7 +689,7 @@ namespace DinderMVC.Controllers
         /// <response code="404">If the party or the party choice is not found.</response>
         /// <response code="500">If there was an internal server error</response>
         [HttpPut("{PartyID}/Choices/{UserGuid}/{MealID}")]
-        [ProducesResponseType(typeof(SingleResponse<PartyChoiceDM>), 200)]
+        [ProducesResponseType(typeof(SingleResponse<PartyChoiceDTO>), 200)]
         [ProducesResponseType(400)]
         [ProducesResponseType(403)]
         [ProducesResponseType(404)]
@@ -694,7 +701,7 @@ namespace DinderMVC.Controllers
 
             UserIdentity id = APIServices.GetUserID(HttpContext.User.Claims);
 
-            var response = new SingleResponse<PartyChoiceDM>();
+            var response = new SingleResponse<PartyChoiceDTO>();
 
 
 
@@ -729,7 +736,7 @@ namespace DinderMVC.Controllers
                 // Save entity in database
                 await DbContext.SaveChangesAsync();
 
-                response.Model = entity.ReturnDM();
+                response.Model = entity.ReturnDTO();
                 response.detailed = false;
 
                 LogCustom("The party choice has been updated successfully.", name);
@@ -759,7 +766,7 @@ namespace DinderMVC.Controllers
         /// <response code="404">If the party or the party choice is not found.</response>
         /// <response code="500">If there was an internal server error</response>
         [HttpPost("{PartyID}/Choices/{UserGuid}/")]
-        [ProducesResponseType(typeof(SingleResponse<PartyChoiceDM>), 200)]
+        [ProducesResponseType(typeof(SingleResponse<PartyChoiceDTO>), 200)]
         [ProducesResponseType(201)]
         [ProducesResponseType(400)]
         [ProducesResponseType(403)]
@@ -772,7 +779,7 @@ namespace DinderMVC.Controllers
 
             UserIdentity id = APIServices.GetUserID(HttpContext.User.Claims);
 
-            var response = new SingleResponse<PartyChoiceDM>();
+            var response = new SingleResponse<PartyChoiceDTO>();
 
             try
             {
@@ -804,7 +811,7 @@ namespace DinderMVC.Controllers
                 await DbContext.SaveChangesAsync();
 
                 // Set the entity to response model
-                response.Model = entity.ReturnDM();
+                response.Model = entity.ReturnDTO();
                 response.detailed = false;
 
                 LogCustom("The party choice has been created successfully.", name);
@@ -831,7 +838,7 @@ namespace DinderMVC.Controllers
         /// <response code="404">If the party is not found.</response>
         /// <response code="500">If there was an internal server error</response>
         [HttpGet("{PartyID}/Choices")]
-        [ProducesResponseType(typeof(PagedResponse<PartyChoiceDM>), 200)]
+        [ProducesResponseType(typeof(PagedResponse<PartyChoiceDTO>), 200)]
         [ProducesResponseType(400)]
         [ProducesResponseType(403)]
         [ProducesResponseType(404)]
@@ -843,7 +850,7 @@ namespace DinderMVC.Controllers
 
             UserIdentity id = APIServices.GetUserID(HttpContext.User.Claims);
 
-            var response = new PagedResponse<PartyChoiceDM>();
+            var response = new PagedResponse<PartyChoiceDTO>();
 
             try
             {
@@ -857,7 +864,7 @@ namespace DinderMVC.Controllers
                     return Forbid();
                 }
 
-                response.Model = await DapperQueries.GetPartyChoicesAsync(PartyID, id.UserGuid);
+                response.Model = (await DapperQueries.GetPartyChoicesAsync(PartyID, id.UserGuid)).ConvertAll(x => x.ReturnDTO());
                 response.ItemsCount = response.Model.Count;
                 response.PageNumber = 1;
                 response.PageSize = response.Model.Count;
@@ -888,7 +895,7 @@ namespace DinderMVC.Controllers
         /// <response code="404">If the party is not found.</response>
         /// <response code="500">If there was an internal server error</response>
         [HttpPost("{PartyID}/Invites/")]
-        [ProducesResponseType(typeof(SingleResponse<PartyInviteDM>), 201)]
+        [ProducesResponseType(typeof(SingleResponse<PartyInviteDTO>), 201)]
         [ProducesResponseType(400)]
         [ProducesResponseType(403)]
         [ProducesResponseType(404)]
@@ -900,7 +907,7 @@ namespace DinderMVC.Controllers
 
             UserIdentity id = APIServices.GetUserID(HttpContext.User.Claims);
 
-            var response = new SingleResponse<PartyInviteDM>();
+            var response = new SingleResponse<PartyInviteDTO>();
 
             try
             {
@@ -934,7 +941,7 @@ namespace DinderMVC.Controllers
                 await DbContext.SaveChangesAsync();
 
                 // Set the entity to response model
-                response.Model = entity.ReturnDM();
+                response.Model = entity.ReturnDTO();
                 response.detailed = false;
 
                 LogCustom("The party invite has been created successfully.", name);
@@ -961,7 +968,7 @@ namespace DinderMVC.Controllers
         /// <response code="404">If the party is not found.</response>
         /// <response code="500">If there was an internal server error</response>
         [HttpGet("{PartyID}/Meals")]
-        [ProducesResponseType(typeof(PagedResponse<UserMealDM>), 200)]
+        [ProducesResponseType(typeof(PagedResponse<UserMealDTO>), 200)]
         [ProducesResponseType(400)]
         [ProducesResponseType(403)]
         [ProducesResponseType(404)]
@@ -973,7 +980,7 @@ namespace DinderMVC.Controllers
 
             UserIdentity id = APIServices.GetUserID(HttpContext.User.Claims);
 
-            var response = new PagedResponse<UserMealDM>();
+            var response = new PagedResponse<UserMealDTO>();
 
             try
             {
@@ -985,7 +992,7 @@ namespace DinderMVC.Controllers
                     return BadRequest();
                 }
 
-                response.Model = await DapperQueries.GetPartyMealsAsync(PartyID);
+                response.Model = (await DapperQueries.GetPartyMealsAsync(PartyID)).ConvertAll(x => x.ReturnDTO());
                 response.PageSize = 100;
 
 
@@ -1017,7 +1024,7 @@ namespace DinderMVC.Controllers
         /// <response code="404">If the party is not found.</response>
         /// <response code="500">If there was an internal server error</response>
         [HttpPost("{PartyID}/Meals/")]
-        [ProducesResponseType(typeof(SingleResponse<PartyMealDM>), 201)]
+        [ProducesResponseType(typeof(SingleResponse<PartyMealDTO>), 201)]
         [ProducesResponseType(400)]
         [ProducesResponseType(403)]
         [ProducesResponseType(404)]
@@ -1030,7 +1037,7 @@ namespace DinderMVC.Controllers
 
             string name = nameof(PostPartyMealAsync);
 
-            var response = new SingleResponse<PartyMealDM>();
+            var response = new SingleResponse<PartyMealDTO>();
 
             try
             {
@@ -1057,7 +1064,7 @@ namespace DinderMVC.Controllers
                 await DbContext.SaveChangesAsync();
 
                 // Set the entity to response model
-                response.Model = partyMeal.ReturnDM();
+                response.Model = partyMeal.ReturnDTO();
 
                 LogCustom("The party meal has been created successfully.", name);
             }

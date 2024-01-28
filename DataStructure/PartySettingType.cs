@@ -1,4 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using DinderDLL.DataModels;
+using DinderDLL.DTOs;
+using DinderMVC.DataStructure.Base;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -6,13 +9,13 @@ namespace DinderMVC.Models
 {
 #pragma warning disable CS1591
 
-    public class PartySettingType
+    public class PartySettingType : DataStructure<PartySettingTypeDM, PartySettingTypeDTO>
     {
         public int PartySettingID { get; set; }
 
         public string SettingName { get; set; }
 
-        public int SettingValueDataType { get; set; }        
+        public int SettingValueDataType { get; set; }
         public int DefaultSettingChoice { get; set; }
         public string DefaultSettingEntry { get; set; }
 
@@ -75,6 +78,15 @@ namespace DinderMVC.Models
             }
         }
 
+        public PartySettingTypeDM ReturnDM()
+        {
+            return new PartySettingTypeDM(PartySettingID, SettingName, SettingValueDataType, DefaultSettingChoice, DefaultSettingEntry);
+        }
+
+        public PartySettingTypeDTO ReturnDTO()
+        {
+            return ReturnDM().ReturnDTO();
+        }
     }
 
 

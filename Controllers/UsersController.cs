@@ -1,4 +1,5 @@
 ﻿using DinderDLL.DataModels;
+using DinderDLL.DTOs;
 using DinderDLL.Requests;
 using DinderDLL.Responses;
 using DinderMVC.Models;
@@ -39,7 +40,7 @@ namespace DinderMVC.Controllers
         /// <response code="400">For bad request</response>
         /// <response code="500">If there was an internal server error</response>
         [HttpGet("")]
-        [ProducesResponseType(typeof(PagedResponse<UserDM>), 200)]
+        [ProducesResponseType(typeof(PagedResponse<UserDTO>), 200)]
         [ProducesResponseType(400)]
         [ProducesResponseType(500)]
         [Authorize(AuthenticationSchemes = "Bearer")]
@@ -50,13 +51,13 @@ namespace DinderMVC.Controllers
 
             UserIdentity id = APIServices.GetUserID(HttpContext.User.Claims);
 
-            var response = new PagedResponse<UserDM>();
+            var response = new PagedResponse<UserDTO>();
 
             try
             {
                 LogMethodInvoked(name);
 
-                response.Model = await DapperQueries.GetUsersAsync(PageSize, PageNumber, DisplayName);
+                response.Model = (await DapperQueries.GetUsersAsync(PageSize, PageNumber, DisplayName)).ConvertAll(x => x.ReturnDTO());
 
                 response.PageSize = PageSize;
                 response.PageNumber = PageNumber;
@@ -144,7 +145,7 @@ namespace DinderMVC.Controllers
         /// <response code="404">If the user is not found.</response>
         /// <response code="500">If there was an internal server error</response>
         [HttpGet("{UserGuid}/Parties")]
-        [ProducesResponseType(typeof(PagedResponse<PartyDM>), 200)]
+        [ProducesResponseType(typeof(PagedResponse<PartyDTO>), 200)]
         [ProducesResponseType(400)]
         [ProducesResponseType(403)]
         [ProducesResponseType(404)]
@@ -156,7 +157,7 @@ namespace DinderMVC.Controllers
 
             UserIdentity id = APIServices.GetUserID(HttpContext.User.Claims);
 
-            var response = new PagedResponse<PartyDM>();
+            var response = new PagedResponse<PartyDTO>();
 
             try
             {
@@ -168,7 +169,7 @@ namespace DinderMVC.Controllers
                     return Forbid();
                 }
 
-                response.Model = await DapperQueries.GetUserPartiesAsync(UserGuid);
+                response.Model = (await DapperQueries.GetUserPartiesAsync(UserGuid)).ConvertAll(x => x.ReturnDTO());
                 response.PageSize = response.Model.Count;
                 response.ItemsCount = response.Model.Count;
                 response.PageNumber = 1;
@@ -195,7 +196,7 @@ namespace DinderMVC.Controllers
         /// <response code="404">If the user is not found.</response>
         /// <response code="500">If there was an internal server error</response>
         [HttpGet("{UserGuid}")]
-        [ProducesResponseType(typeof(SingleResponse<UserDM>), 200)]
+        [ProducesResponseType(typeof(SingleResponse<UserDTO>), 200)]
         [ProducesResponseType(404)]
         [ProducesResponseType(500)]
         [Authorize(AuthenticationSchemes = "Bearer")]
@@ -203,12 +204,12 @@ namespace DinderMVC.Controllers
         {
             string name = nameof(GetUserAsync);
 
-            var response = new SingleResponse<UserDM>();
+            var response = new SingleResponse<UserDTO>();
             try
             {
                 LogMethodInvoked(name);
 
-                response.Model = DbContext.Users.Where(x => x.UserGUID == UserGuid).FirstOrDefault().ReturnDM();
+                response.Model = (await DbContext.Users.Where(x => x.UserGUID == UserGuid).FirstOrDefaultAsync()).ReturnDTO();
 
                 LogCustom("The user has been retrieved successfully.", name);
             }
@@ -233,7 +234,7 @@ namespace DinderMVC.Controllers
         /// <response code="403">If the username you chose is taken./response>
         /// <response code="500">If there was an internal server error</response>
         [HttpPost("")]
-        [ProducesResponseType(typeof(SingleResponse<UserDM>), 201)]
+        [ProducesResponseType(typeof(SingleResponse<UserDTO>), 201)]
         [ProducesResponseType(400)]
         [ProducesResponseType(403)]
         [ProducesResponseType(500)]
@@ -241,7 +242,7 @@ namespace DinderMVC.Controllers
         public async Task<IActionResult> PostUserAsync([FromBody] PostUserRequest request)
         {
             string name = nameof(PostUserAsync);
-            var response = new SingleResponse<UserDM>();
+            var response = new SingleResponse<UserDTO>();
 
             try
             {
@@ -270,7 +271,7 @@ namespace DinderMVC.Controllers
                 await DbContext.SaveChangesAsync();
 
                 // Set the entity to response model
-                response.Model = entity.ReturnDM();
+                response.Model = entity.ReturnDTO();
 
                 LogCustom("The user has been created successfully.", name);
             }
@@ -297,7 +298,7 @@ namespace DinderMVC.Controllers
         /// <response code="404">If the user is not found.</response>
         /// <response code="500">If there was an internal server error</response>
         [HttpPut("{UserGuid}")]
-        [ProducesResponseType(typeof(SingleResponse<UserDM>), 200)]
+        [ProducesResponseType(typeof(SingleResponse<UserDTO>), 200)]
         [ProducesResponseType(400)]
         [ProducesResponseType(403)]
         [ProducesResponseType(404)]
@@ -309,7 +310,7 @@ namespace DinderMVC.Controllers
 
             UserIdentity id = APIServices.GetUserID(HttpContext.User.Claims);
 
-            var response = new SingleResponse<UserDM>();
+            var response = new SingleResponse<UserDTO>();
 
             try
             {
@@ -330,7 +331,7 @@ namespace DinderMVC.Controllers
 
                 await DbContext.SaveChangesAsync();
 
-                response.Model = user.ReturnDM();
+                response.Model = user.ReturnDTO();
 
                 LogCustom("The user has been updated successfully.", name);
             }
@@ -416,7 +417,7 @@ namespace DinderMVC.Controllers
         /// <response code="404">If the user is not found.</response>
         /// <response code="500">If there was an internal server error</response>
         [HttpPost("{UserGuid}/Friends/")]
-        [ProducesResponseType(typeof(SingleResponse<UserFriendDM>), 201)]
+        [ProducesResponseType(typeof(SingleResponse<UserFriendDTO>), 201)]
         [ProducesResponseType(400)]
         [ProducesResponseType(403)]
         [ProducesResponseType(404)]
@@ -428,7 +429,7 @@ namespace DinderMVC.Controllers
 
             UserIdentity id = APIServices.GetUserID(HttpContext.User.Claims);
 
-            var response = new SingleResponse<UserFriendDM>();
+            var response = new SingleResponse<UserFriendDTO>();
 
             try
             {
@@ -460,7 +461,7 @@ namespace DinderMVC.Controllers
                 await DbContext.SaveChangesAsync();
 
                 // Set the entity to response model
-                response.Model = entity.ReturnDM();
+                response.Model = entity.ReturnDTO();
 
                 LogCustom("The user friend has been created successfully.", name);
             }
@@ -488,7 +489,7 @@ namespace DinderMVC.Controllers
         /// <response code="404">If the user or the user friend is not found.</response>
         /// <response code="500">If there was an internal server error</response>
         [HttpPut("{UserGuid}/Friends/{FriendGuid}")]
-        [ProducesResponseType(typeof(SingleResponse<UserFriendDM>), 200)]
+        [ProducesResponseType(typeof(SingleResponse<UserFriendDTO>), 200)]
         [ProducesResponseType(400)]
         [ProducesResponseType(403)]
         [ProducesResponseType(404)]
@@ -500,7 +501,7 @@ namespace DinderMVC.Controllers
 
             UserIdentity id = APIServices.GetUserID(HttpContext.User.Claims);
 
-            var response = new SingleResponse<UserFriendDM>();
+            var response = new SingleResponse<UserFriendDTO>();
 
             try
             {
@@ -523,7 +524,7 @@ namespace DinderMVC.Controllers
 
                 await DbContext.SaveChangesAsync();
 
-                response.Model = entity.ReturnDM();
+                response.Model = entity.ReturnDTO();
 
                 LogCustom("The user friend has been updated successfully.", name);
             }
@@ -614,7 +615,7 @@ namespace DinderMVC.Controllers
         /// <response code="404">If the user is not found.</response>
         /// <response code="500">If there was an internal server error</response>
         [HttpGet("{UserGuid}/Meals")]
-        [ProducesResponseType(typeof(PagedResponse<UserMealDM>), 200)]
+        [ProducesResponseType(typeof(PagedResponse<UserMealDTO>), 200)]
         [ProducesResponseType(400)]
         [ProducesResponseType(403)]
         [ProducesResponseType(404)]
@@ -628,7 +629,7 @@ namespace DinderMVC.Controllers
 
             UserIdentity id = APIServices.GetUserID(HttpContext.User.Claims);
 
-            var response = new PagedResponse<UserMealDM>();
+            var response = new PagedResponse<UserMealDTO>();
 
             try
             {
@@ -650,7 +651,7 @@ namespace DinderMVC.Controllers
 
                 response.ItemsCount = await query.CountAsync();
 
-                response.Model = await query.Paging(PageSize, PageNumber).ToListAsync();
+                response.Model = (await query.Paging(PageSize, PageNumber).ToListAsync()).ConvertAll(x => x.ReturnDTO());
 
                 response.Message = string.Format("Page {0} of {1}, Total of meals: {2}.", PageNumber, response.PageCount, response.ItemsCount);
 
@@ -679,7 +680,7 @@ namespace DinderMVC.Controllers
         /// <response code="404">If the user or the meal does not exist</response>
         /// <response code="500">If there was an internal server error</response>
         [HttpGet("{UserGuid}/Meals/{MealID}")]
-        [ProducesResponseType(typeof(SingleResponse<UserMealDM>), 200)]
+        [ProducesResponseType(typeof(SingleResponse<UserMealDTO>), 200)]
         [ProducesResponseType(400)]
         [ProducesResponseType(403)]
         [ProducesResponseType(404)]
@@ -692,7 +693,7 @@ namespace DinderMVC.Controllers
 
             UserIdentity id = APIServices.GetUserID(HttpContext.User.Claims);
 
-            var response = new SingleResponse<UserMealDM>();
+            var response = new SingleResponse<UserMealDTO>();
 
             try
             {
@@ -708,7 +709,7 @@ namespace DinderMVC.Controllers
                 UserMeal meal = (await DbContext.GetUserMealByIDEditableAsync(UserGuid, MealID));
 
                 if (meal != null)
-                    response.Model = meal.ReturnDM();
+                    response.Model = meal.ReturnDTO();
 
                 response.detailed = false;
 
@@ -738,7 +739,7 @@ namespace DinderMVC.Controllers
         /// <response code="404">If the user was not found</response>
         /// <response code="500">If there was an internal server error</response>
         [HttpPost("{UserGuid}/Meals")]
-        [ProducesResponseType(typeof(SingleResponse<UserMealDM>), 201)]
+        [ProducesResponseType(typeof(SingleResponse<UserMealDTO>), 201)]
         [ProducesResponseType(400)]
         [ProducesResponseType(403)]
         [ProducesResponseType(404)]
@@ -751,7 +752,7 @@ namespace DinderMVC.Controllers
 
             UserIdentity id = APIServices.GetUserID(HttpContext.User.Claims);
 
-            var response = new SingleResponse<UserMealDM>();
+            var response = new SingleResponse<UserMealDTO>();
 
             try
             {
@@ -786,7 +787,7 @@ namespace DinderMVC.Controllers
                 await DbContext.SaveChangesAsync();
 
                 // Set the entity to response model
-                response.Model = entity.ReturnDM();
+                response.Model = entity.ReturnDTO();
                 response.detailed = false;
 
                 LogCustom("The user meal has been created successfully.", name);
@@ -879,7 +880,7 @@ namespace DinderMVC.Controllers
         /// <response code="404">If the user or the meal is not found</response>
         /// <response code="500">If there was an internal server error</response>
         [HttpPut("{UserGuid}/Meals/{MealID}")]
-        [ProducesResponseType(typeof(SingleResponse<UserMealDM>), 200)]
+        [ProducesResponseType(typeof(SingleResponse<UserMealDTO>), 200)]
         [ProducesResponseType(400)]
         [ProducesResponseType(403)]
         [ProducesResponseType(404)]
@@ -891,7 +892,7 @@ namespace DinderMVC.Controllers
 
             UserIdentity id = APIServices.GetUserID(HttpContext.User.Claims);
 
-            var response = new SingleResponse<UserMealDM>();
+            var response = new SingleResponse<UserMealDTO>();
 
             try
             {
@@ -929,7 +930,7 @@ namespace DinderMVC.Controllers
                 // Save entity in database
                 await DbContext.SaveChangesAsync();
 
-                response.Model = entity.ReturnDM();
+                response.Model = entity.ReturnDTO();
                 response.detailed = false;
 
                 LogCustom("The user meal has been updated successfully.", name);

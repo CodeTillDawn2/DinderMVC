@@ -1,4 +1,5 @@
 ﻿using DinderDLL.DataModels;
+using DinderDLL.DTOs;
 using DinderDLL.Responses;
 using DinderMVC.Models;
 using DinderMVC.Queries;
@@ -9,6 +10,7 @@ using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace DinderMVC.Controllers
@@ -43,7 +45,7 @@ namespace DinderMVC.Controllers
         /// <response code="200">Returns the global meals list</response>
         /// <response code="500">If there was an internal server error</response>
         [HttpGet("")]
-        [ProducesResponseType(typeof(PagedResponse<GlobalMealDM>), 200)]
+        [ProducesResponseType(typeof(PagedResponse<GlobalMealDTO>), 200)]
         [ProducesResponseType(400)]
         [ProducesResponseType(500)]
         [Authorize(AuthenticationSchemes = "Bearer")]
@@ -55,7 +57,7 @@ namespace DinderMVC.Controllers
 
             UserIdentity id = APIServices.GetUserID(HttpContext.User.Claims);
 
-            var response = new PagedResponse<GlobalMealDM>();
+            var response = new PagedResponse<GlobalMealDTO>();
 
             try
             {
@@ -77,7 +79,9 @@ namespace DinderMVC.Controllers
 
                 response.ItemsCount = await query.CountAsync();
 
-                response.Model = await query.Paging(pageSize, pageNumber).ToListAsync();
+                List<GlobalMealDM> list = await query.Paging(pageSize, pageNumber).ToListAsync();
+
+                response.Model = list.ConvertAll(x => x.ReturnDTO());
 
                 response.Message = string.Format("Page {0} of {1}, Total of meals: {2}.", pageNumber, response.PageCount, response.ItemsCount);
 
@@ -107,7 +111,7 @@ namespace DinderMVC.Controllers
         /// <response code="404">If meal is not exists</response>
         /// <response code="500">If there was an internal server error</response>
         [HttpGet("{globalMealGuid}")]
-        [ProducesResponseType(typeof(GlobalMealDM), 200)]
+        [ProducesResponseType(typeof(GlobalMealDTO), 200)]
         [ProducesResponseType(404)]
         [ProducesResponseType(500)]
         [Authorize(AuthenticationSchemes = "Bearer")]
@@ -117,7 +121,7 @@ namespace DinderMVC.Controllers
             string name = nameof(GetGlobalMealAsync);
 
             UserIdentity id = APIServices.GetUserID(HttpContext.User.Claims);
-            var response = new SingleResponse<GlobalMealDM>();
+            var response = new SingleResponse<GlobalMealDTO>();
 
             try
             {
@@ -135,7 +139,11 @@ namespace DinderMVC.Controllers
                 GlobalMeal meal = (await DbContext.GetGlobalMealEditableAsync(globalMealGuid));
 
                 if (meal != null)
-                    response.Model = meal.ReturnDM();
+                {
+                    GlobalMealDM mealDM = meal.ReturnDM();
+                    response.Model = meal.ReturnDTO();
+                }
+
 
                 response.detailed = false;
             }

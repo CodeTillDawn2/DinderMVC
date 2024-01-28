@@ -1,4 +1,6 @@
 ﻿using DinderDLL.DataModels;
+using DinderDLL.DTOs;
+using DinderMVC.DataStructure.Base;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System;
@@ -9,7 +11,7 @@ namespace DinderMVC.Models
 {
 #pragma warning disable CS1591
 
-    public class User
+    public class User : DataStructure<UserDM, UserDTO>
     {
         public Guid UserGUID { get; set; }
         public string UserName { get; set; }
@@ -35,6 +37,11 @@ namespace DinderMVC.Models
         public UserDM ReturnDM()
         {
             return new UserDM(UserGUID, UserName, DisplayName, CreateDate, LastActiveDate, Meals?.ConvertAll(x => x.ReturnDM()), Parties?.ConvertAll(x => x.ReturnDM()));
+        }
+
+        public UserDTO ReturnDTO()
+        {
+            return ReturnDM().ReturnDTO();
         }
 
         public class UsersConfiguration : IEntityTypeConfiguration<User>

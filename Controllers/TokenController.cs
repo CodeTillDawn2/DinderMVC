@@ -1,4 +1,5 @@
 ﻿using DinderDLL.DataModels;
+using DinderDLL.DTOs;
 using DinderDLL.Responses;
 using DinderMVC.Authentication;
 using DinderMVC.Models;
@@ -45,7 +46,7 @@ namespace DinderMVC.Controllers
         /// <response code="400">For a bad request</response>
         /// <response code="404">If app install ID does not exist</response>
         /// <response code="500">If there was an internal server error</response>
-        [ProducesResponseType(typeof(SingleResponse<DinderToken>), 200)]
+        [ProducesResponseType(typeof(SingleResponse<DinderTokenDTO>), 200)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
         [ProducesResponseType(500)]
@@ -54,7 +55,7 @@ namespace DinderMVC.Controllers
         public async Task<IActionResult> GetTokenAsync([BindRequired] Guid AppInstallID)
         {
             string name = nameof(GetTokenAsync);
-            var response = new SingleResponse<DinderTokenDM>();
+            var response = new SingleResponse<DinderTokenDTO>();
 
             try
             {
@@ -89,10 +90,7 @@ namespace DinderMVC.Controllers
 
                 response.detailed = false;
                 response.DidError = false;
-                response.Model = new DinderTokenDM();
-                response.Model.ExpirationDate = newToken.ExpirationDate;
-                response.Model.BearerToken = newToken.BearerToken;
-                response.Model.UserGuid = newToken.UserGuid;
+                response.Model = new DinderTokenDM(newToken.BearerToken, newToken.UserGuid, newToken.ExpirationDate).ReturnDTO();
 
                 LogCustom("The token has been created successfully.", name);
             }

@@ -1,3 +1,10 @@
+C:\DinderStuff\DinderMVC\obj\Debug\net7.0\DinderMVC.csproj.AssemblyReference.cache
+C:\DinderStuff\DinderMVC\obj\Debug\net7.0\DinderMVC.GeneratedMSBuildEditorConfig.editorconfig
+C:\DinderStuff\DinderMVC\obj\Debug\net7.0\DinderMVC.AssemblyInfoInputs.cache
+C:\DinderStuff\DinderMVC\obj\Debug\net7.0\DinderMVC.AssemblyInfo.cs
+C:\DinderStuff\DinderMVC\obj\Debug\net7.0\DinderMVC.csproj.CoreCompileInputs.cache
+C:\DinderStuff\DinderMVC\obj\Debug\net7.0\DinderMVC.MvcApplicationPartsAssemblyInfo.cs
+C:\DinderStuff\DinderMVC\obj\Debug\net7.0\DinderMVC.MvcApplicationPartsAssemblyInfo.cache
 C:\DinderStuff\DinderMVC\bin\Debug\net7.0\nuget.config
 C:\DinderStuff\DinderMVC\bin\Debug\net7.0\appsettings.Development.json
 C:\DinderStuff\DinderMVC\bin\Debug\net7.0\appsettings.json
@@ -53,14 +60,10 @@ C:\DinderStuff\DinderMVC\bin\Debug\net7.0\runtimes\win\lib\net6.0\System.Runtime
 C:\DinderStuff\DinderMVC\bin\Debug\net7.0\runtimes\win\lib\net6.0\System.Security.Cryptography.ProtectedData.dll
 C:\DinderStuff\DinderMVC\bin\Debug\net7.0\runtimes\win\lib\net6.0\System.Windows.Extensions.dll
 C:\DinderStuff\DinderMVC\bin\Debug\net7.0\DinderDLL.dll
+C:\DinderStuff\DinderMVC\bin\Debug\net7.0\Newtonsoft.Json.dll
 C:\DinderStuff\DinderMVC\bin\Debug\net7.0\DinderDLL.pdb
-C:\DinderStuff\DinderMVC\obj\Debug\net7.0\DinderMVC.csproj.AssemblyReference.cache
-C:\DinderStuff\DinderMVC\obj\Debug\net7.0\DinderMVC.GeneratedMSBuildEditorConfig.editorconfig
-C:\DinderStuff\DinderMVC\obj\Debug\net7.0\DinderMVC.AssemblyInfoInputs.cache
-C:\DinderStuff\DinderMVC\obj\Debug\net7.0\DinderMVC.AssemblyInfo.cs
-C:\DinderStuff\DinderMVC\obj\Debug\net7.0\DinderMVC.csproj.CoreCompileInputs.cache
-C:\DinderStuff\DinderMVC\obj\Debug\net7.0\DinderMVC.MvcApplicationPartsAssemblyInfo.cs
-C:\DinderStuff\DinderMVC\obj\Debug\net7.0\DinderMVC.MvcApplicationPartsAssemblyInfo.cache
+C:\DinderStuff\DinderMVC\bin\Debug\net7.0\DinderDLL.dll.config
+C:\DinderStuff\DinderMVC\bin\Debug\net7.0\Newtonsoft.Json.xml
 C:\DinderStuff\DinderMVC\obj\Debug\net7.0\staticwebassets\msbuild.DinderMVC.Microsoft.AspNetCore.StaticWebAssets.props
 C:\DinderStuff\DinderMVC\obj\Debug\net7.0\staticwebassets\msbuild.build.DinderMVC.props
 C:\DinderStuff\DinderMVC\obj\Debug\net7.0\staticwebassets\msbuild.buildMultiTargeting.DinderMVC.props
@@ -75,6 +78,3 @@ C:\DinderStuff\DinderMVC\obj\Debug\net7.0\refint\DinderMVC.dll
 C:\DinderStuff\DinderMVC\obj\Debug\net7.0\DinderMVC.pdb
 C:\DinderStuff\DinderMVC\obj\Debug\net7.0\DinderMVC.genruntimeconfig.cache
 C:\DinderStuff\DinderMVC\obj\Debug\net7.0\ref\DinderMVC.dll
-C:\DinderStuff\DinderMVC\bin\Debug\net7.0\Newtonsoft.Json.dll
-C:\DinderStuff\DinderMVC\bin\Debug\net7.0\DinderDLL.dll.config
-C:\DinderStuff\DinderMVC\bin\Debug\net7.0\Newtonsoft.Json.xml

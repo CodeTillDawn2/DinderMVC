@@ -1,11 +1,14 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using DinderDLL.DataModels;
+using DinderDLL.DTOs;
+using DinderMVC.DataStructure.Base;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace DinderMVC.Models
 {
 #pragma warning disable CS1591
 
-    public class DataType
+    public class DataType : DataStructure<DataTypeDM, DataTypeDTO>
     {
         public int DataTypeID { get; set; }
 
@@ -56,6 +59,15 @@ namespace DinderMVC.Models
             }
         }
 
+        public DataTypeDM ReturnDM()
+        {
+            return new DataTypeDM(DataTypeID, DataTypeDescription);
+        }
+
+        public DataTypeDTO ReturnDTO()
+        {
+            return ReturnDM().ReturnDTO();
+        }
     }
 
 

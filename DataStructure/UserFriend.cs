@@ -1,4 +1,6 @@
 ﻿using DinderDLL.DataModels;
+using DinderDLL.DTOs;
+using DinderMVC.DataStructure.Base;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System;
@@ -8,7 +10,7 @@ namespace DinderMVC.Models
 {
 #pragma warning disable CS1591
 
-    public class UserFriend
+    public class UserFriend : DataStructure<UserFriendDM, UserFriendDTO>
     {
         public Guid UserGUID { get; set; }
 
@@ -35,6 +37,11 @@ namespace DinderMVC.Models
         public UserFriendDM ReturnDM()
         {
             return new UserFriendDM(UserGUID, FriendGUID, FriendSinceDate, IsBlocked);
+        }
+
+        public UserFriendDTO ReturnDTO()
+        {
+            return ReturnDM().ReturnDTO();
         }
 
         public class UserFriendConfiguration : IEntityTypeConfiguration<UserFriend>

@@ -1,4 +1,6 @@
 ﻿using DinderDLL.DataModels;
+using DinderDLL.DTOs;
+using DinderMVC.DataStructure.Base;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System;
@@ -9,7 +11,7 @@ namespace DinderMVC.Models
 {
 #pragma warning disable CS1591
 
-    public class Party
+    public class Party : DataStructure<PartyDM, PartyDTO>
     {
 
         public int PartyID { get; set; }
@@ -55,6 +57,8 @@ namespace DinderMVC.Models
             StatusID = partyModel.StatusID;
         }
 
+
+
         public PartyDM ReturnDM()
         {
             List<UserMealDM> mealList = new List<UserMealDM>();
@@ -78,16 +82,7 @@ namespace DinderMVC.Models
 
             }
 
-            List<PartySettingsViewCO> settingsList = new List<PartySettingsViewCO>();
 
-            if (PartyInvites != null)
-            {
-                foreach (PartySettingMatrix set in Settings)
-                {
-                    settingsList.Add(set.ReturnCO());
-                }
-
-            }
 
             List<PartyChoiceDM> partyChoices = new List<PartyChoiceDM>();
 
@@ -100,7 +95,12 @@ namespace DinderMVC.Models
 
             }
 
-            return new PartyDM(PartyID, CookGuid, SessionName, SessionMessage, StatusID, mealList, InvitedGuidList, settingsList, partyChoices);
+            return new PartyDM(PartyID, CookGuid, SessionName, SessionMessage, StatusID, mealList, InvitedGuidList, partyChoices);
+        }
+
+        public PartyDTO ReturnDTO()
+        {
+            return ReturnDM().ReturnDTO();
         }
 
         public class PartyConfiguration : IEntityTypeConfiguration<Party>

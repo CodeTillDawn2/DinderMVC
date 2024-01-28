@@ -1,4 +1,6 @@
 ﻿using DinderDLL.DataModels;
+using DinderDLL.DTOs;
+using DinderMVC.DataStructure.Base;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System;
@@ -7,7 +9,7 @@ namespace DinderMVC.Models
 {
 #pragma warning disable CS1591
 
-    public class DinderToken
+    public class DinderToken : DataStructure<DinderTokenDM, DinderTokenDTO>
     {
         public String BearerToken { get; set; }
         public Guid UserGuid { get; set; }
@@ -28,6 +30,11 @@ namespace DinderMVC.Models
         public DinderTokenDM ReturnDM()
         {
             return new DinderTokenDM(BearerToken, UserGuid, ExpirationDate);
+        }
+
+        public DinderTokenDTO ReturnDTO()
+        {
+            return ReturnDM().ReturnDTO();
         }
 
         public class AppInstallConfiguration : IEntityTypeConfiguration<DinderToken>

@@ -1,7 +1,8 @@
 ﻿
 using DinderDLL.DataModels;
-using DinderDLL.Models;
+using DinderDLL.DTOs;
 using DinderDLL.Responses;
+using DinderDLL.Services;
 using DinderMVC.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -39,21 +40,21 @@ namespace DinderMVC.Controllers
         /// <response code="200">Returns the api versions available</response>
         /// <response code="500">If there was an internal server error</response>
         [HttpGet("")]
-        [ProducesResponseType(typeof(PagedResponse<LinkCO>), 200)]
+        [ProducesResponseType(typeof(PagedResponse<LinkDTO>), 200)]
         [ProducesResponseType(500)]
         public async Task<IActionResult> GetVersions()
         {
             string name = nameof(GetVersions);
             LogMethodInvoked(name);
 
-            var response = new PagedResponse<LinkCO>();
+            var response = new PagedResponse<LinkDTO>();
 
             try
             {
 
-                List<LinkCO> ResponseLinks = new List<LinkCO>();
-                ResponseLinks.Add(new LinkCO(LinkService.REL_get_self, LinkService.HREF_api));
-                ResponseLinks.Add(new LinkCO(LinkService.REL_version_one, LinkService.HREF_versionone));
+                List<LinkDTO> ResponseLinks = new List<LinkDTO>();
+                ResponseLinks.Add(new LinkCO(LinkService.REL_get_self, LinkService.HREF_api).ReturnDTO());
+                ResponseLinks.Add(new LinkCO(LinkService.REL_version_one, LinkService.HREF_versionone).ReturnDTO());
 
                 // Get the total rows
                 response.ItemsCount = ResponseLinks.Count();
@@ -90,7 +91,7 @@ namespace DinderMVC.Controllers
             string name = nameof(GetVersions);
             LogMethodInvoked(name);
 
-            var response = new PagedResponse<LinkCO>();
+            var response = new PagedResponse<LinkDTO>();
 
             try
             {
@@ -156,7 +157,7 @@ namespace DinderMVC.Controllers
                 response.PageSize = ResponseLinks.Count();
                 response.detailed = false;
 
-                response.Model = ResponseLinks;
+                response.Model = ResponseLinks.ConvertAll(x => x.ReturnDTO());
 
                 LogCustom("The versions have been retrieved successfully.", name);
             }

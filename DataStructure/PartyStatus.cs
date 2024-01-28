@@ -1,11 +1,14 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using DinderDLL.DataModels;
+using DinderDLL.DTOs;
+using DinderMVC.DataStructure.Base;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace DinderMVC.Models
 {
 #pragma warning disable CS1591
 
-    public class PartyStatus
+    public class PartyStatus : DataStructure<PartyStatusDM, PartyStatusDTO>
     {
 
         public int PartyStatusID { get; set; }
@@ -48,6 +51,15 @@ namespace DinderMVC.Models
             }
         }
 
+        public PartyStatusDM ReturnDM()
+        {
+            return new PartyStatusDM(PartyStatusID, PartyStatusDescription);
+        }
+
+        public PartyStatusDTO ReturnDTO()
+        {
+            return ReturnDM().ReturnDTO();
+        }
     }
 
 

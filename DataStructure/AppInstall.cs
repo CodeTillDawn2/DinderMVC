@@ -1,4 +1,6 @@
 ﻿using DinderDLL.DataModels;
+using DinderDLL.DTOs;
+using DinderMVC.DataStructure.Base;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System;
@@ -7,11 +9,9 @@ namespace DinderMVC.Models
 {
 #pragma warning disable CS1591
 
-    public class AppInstall
+    public class AppInstall : DataStructure<AppInstallDM, AppInstallDTO>
     {
         public Guid AppInstallGUID { get; set; }
-
-
 
         public DateTime InstallDate { get; set; }
 
@@ -26,10 +26,7 @@ namespace DinderMVC.Models
             AppInstallGUID = appInstallGUID;
         }
 
-        public AppInstallDM ReturnDTO()
-        {
-            return new AppInstallDM(AppInstallGUID, InstallDate, IPAddress);
-        }
+
 
         public class AppInstallConfiguration : IEntityTypeConfiguration<AppInstall>
         {
@@ -61,6 +58,15 @@ namespace DinderMVC.Models
             }
         }
 
+        public AppInstallDM ReturnDM()
+        {
+            return new AppInstallDM(AppInstallGUID, InstallDate, IPAddress);
+        }
+
+        public AppInstallDTO ReturnDTO()
+        {
+            return ReturnDM().ReturnDTO();
+        }
     }
 
 
