@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using DinderDLL.DataModels;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System;
 
@@ -24,7 +25,10 @@ namespace DinderMVC.Models
         {
             BearerToken = bearerToken;
         }
-
+        public DinderTokenDM ReturnDM()
+        {
+            return new DinderTokenDM(BearerToken, UserGuid, ExpirationDate);
+        }
 
         public class AppInstallConfiguration : IEntityTypeConfiguration<DinderToken>
         {

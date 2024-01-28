@@ -1,4 +1,5 @@
-﻿using DinderDLL.Responses;
+﻿using DinderDLL.DataModels;
+using DinderDLL.Responses;
 using DinderMVC.Authentication;
 using DinderMVC.Models;
 using DinderMVC.Queries;
@@ -53,7 +54,7 @@ namespace DinderMVC.Controllers
         public async Task<IActionResult> GetTokenAsync([BindRequired] Guid AppInstallID)
         {
             string name = nameof(GetTokenAsync);
-            var response = new SingleResponse<DinderToken>();
+            var response = new SingleResponse<DinderTokenDM>();
 
             try
             {
@@ -88,10 +89,7 @@ namespace DinderMVC.Controllers
 
                 response.detailed = false;
                 response.DidError = false;
-                response.Model = new DinderToken();
-                response.Model.AppInstallGuid = newToken.AppInstallGuid;
-                response.Model.IPAddress = newToken.IPAddress;
-                response.Model.IssueDate = newToken.IssueDate;
+                response.Model = new DinderTokenDM();
                 response.Model.ExpirationDate = newToken.ExpirationDate;
                 response.Model.BearerToken = newToken.BearerToken;
                 response.Model.UserGuid = newToken.UserGuid;

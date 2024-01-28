@@ -75,3 +75,6 @@ C:\DinderStuff\DinderMVC\obj\Debug\net7.0\refint\DinderMVC.dll
 C:\DinderStuff\DinderMVC\obj\Debug\net7.0\DinderMVC.pdb
 C:\DinderStuff\DinderMVC\obj\Debug\net7.0\DinderMVC.genruntimeconfig.cache
 C:\DinderStuff\DinderMVC\obj\Debug\net7.0\ref\DinderMVC.dll
+C:\DinderStuff\DinderMVC\bin\Debug\net7.0\Newtonsoft.Json.dll
+C:\DinderStuff\DinderMVC\bin\Debug\net7.0\DinderDLL.dll.config
+C:\DinderStuff\DinderMVC\bin\Debug\net7.0\Newtonsoft.Json.xml
