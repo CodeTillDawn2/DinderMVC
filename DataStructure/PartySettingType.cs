@@ -3,6 +3,7 @@ using DinderDLL.DTOs;
 using DinderMVC.DataStructure.Base;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using System;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace DinderMVC.Models
@@ -17,7 +18,7 @@ namespace DinderMVC.Models
 
         public int SettingValueDataType { get; set; }
         public int DefaultSettingChoice { get; set; }
-        public string DefaultSettingEntry { get; set; }
+        public String DefaultSettingEntry { get; set; }
 
         [NotMapped]
         public DataType DataType { get; set; }
@@ -26,11 +27,14 @@ namespace DinderMVC.Models
         {
         }
 
-        public PartySettingType(int partySettingID, string settingName, int settingValueDataType)
+        public PartySettingType(int partySettingID, string settingName, int settingValueDataType, Int32 defaultSettingChoice, String defaultSettingEntry)
         {
             PartySettingID = partySettingID;
             SettingName = settingName;
             SettingValueDataType = settingValueDataType;
+            DefaultSettingChoice = defaultSettingChoice;
+            DefaultSettingEntry = defaultSettingEntry;
+
         }
 
         public class PartySettingTypeConfiguration : IEntityTypeConfiguration<PartySettingType>
@@ -45,17 +49,6 @@ namespace DinderMVC.Models
                 // Set key for entity
                 builder.HasKey(p => p.PartySettingID);
 
-                // Columns with default value
-
-                builder
-                    .Property(p => p.DefaultSettingChoice)
-                    .HasColumnType("int")
-                    .IsRequired();
-
-                builder
-                    .Property(p => p.DefaultSettingEntry)
-                    .HasColumnType("varchar(255)")
-                    .IsRequired();
 
                 builder
                     .Property(p => p.PartySettingID)
@@ -71,6 +64,15 @@ namespace DinderMVC.Models
                     .Property(p => p.SettingValueDataType)
                     .HasColumnType("int")
                     .IsRequired();
+
+                builder
+                    .Property(p => p.DefaultSettingChoice)
+                    .HasColumnType("int")
+                    .IsRequired();
+
+                builder
+                    .Property(p => p.DefaultSettingEntry)
+                    .HasColumnType("varchar(255)");
 
 
                 builder.HasOne(x => x.DataType).WithOne().HasForeignKey<DataType>(a => a.DataTypeID).OnDelete(DeleteBehavior.Restrict);

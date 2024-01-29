@@ -51,7 +51,7 @@ namespace DinderDLL.DataModels
 
         private List<LinkCO> _links;
         public override List<LinkCO> Links { get { return _links; } set { _links = value; } }
-
+        public UserDM() { }
         public UserDM(Guid userGuid, string userName, string displayName, DateTime? createDate, DateTime? lastActiveDate, List<UserMealDM> meals, List<PartyDM> parties)
         {
             UserGUID = userGuid;

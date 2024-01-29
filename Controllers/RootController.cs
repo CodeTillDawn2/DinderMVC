@@ -122,7 +122,7 @@ namespace DinderMVC.Controllers
                 ResponseLinks.Add(new LinkCO(LinkService.REL_get_party_choices, LinkService.HREF_party_choices()));
                 ResponseLinks.Add(new LinkCO(LinkService.REL_create_party_invite, LinkService.HREF_party_invites()));
                 ResponseLinks.Add(new LinkCO(LinkService.REL_get_party_meals, LinkService.HREF_party_meals()));
-                ResponseLinks.Add(new LinkCO(LinkService.REL_create_party_meal, LinkService.HREF_party_meal()));
+                ResponseLinks.Add(new LinkCO(LinkService.REL_create_party_meal, LinkService.HREF_party_meals()));
                 ResponseLinks.Add(new LinkCO(LinkService.REL_delete_party_meal, LinkService.HREF_party_meal()));
 
                 //Token

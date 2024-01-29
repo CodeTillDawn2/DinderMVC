@@ -219,7 +219,7 @@ namespace DinderMVC.Controllers
         [ProducesResponseType(404)]
         [ProducesResponseType(500)]
         [Authorize(AuthenticationSchemes = "Bearer")]
-        public async Task<IActionResult> GetPartyAsync([BindRequired] int PartyID, [BindRequired] bool IsDetailed = false)
+        public async Task<IActionResult> GetPartyAsync([BindRequired] int PartyID, bool IsDetailed = false)
         {
             string name = nameof(GetPartyAsync);
 
@@ -428,7 +428,7 @@ namespace DinderMVC.Controllers
         [ProducesResponseType(404)]
         [ProducesResponseType(500)]
         [Authorize(AuthenticationSchemes = "Bearer")]
-        public async Task<IActionResult> PutPartyAsync([BindRequired] int PartyID, [FromBody] PutPartyRequest request, [BindRequired] bool IsDetailed = false)
+        public async Task<IActionResult> PutPartyAsync([BindRequired] int PartyID, [FromBody] PutPartyRequest request, bool IsDetailed = false)
         {
             string name = nameof(PutPartyAsync);
 
@@ -459,10 +459,6 @@ namespace DinderMVC.Controllers
                     entity.SessionName = request.sessionName;
                 if (request.sessionMessage != null)
                     entity.SessionMessage = request.sessionMessage;
-
-                // Update entity in repository
-                DbContext.Update(entity);
-
                 // Save entity in database
                 await DbContext.SaveChangesAsync();
 
@@ -576,7 +572,7 @@ namespace DinderMVC.Controllers
                 LogMethodInvoked(name);
 
 
-                if (!(UserGuid != id.UserGuid))
+                if (UserGuid != id.UserGuid)
                 {
                     LogGatekeeperInfraction_NotSameUser(id.AppInstallGuid, id.UserGuid, name);
                     return Forbid();
@@ -709,7 +705,7 @@ namespace DinderMVC.Controllers
             {
                 LogMethodInvoked(name);
 
-                if (!(UserGuid != id.UserGuid))
+                if (UserGuid != id.UserGuid)
                 {
                     LogGatekeeperInfraction_NotSameUser(id.AppInstallGuid, id.UserGuid, name);
                     return Forbid();
@@ -783,7 +779,7 @@ namespace DinderMVC.Controllers
 
             try
             {
-                if (!(UserGuid != id.UserGuid))
+                if (UserGuid != id.UserGuid)
                 {
                     LogGatekeeperInfraction_NotSameUser(id.AppInstallGuid, id.UserGuid, name);
                     return Forbid();
@@ -924,7 +920,7 @@ namespace DinderMVC.Controllers
                 if (party.HostGuid != id.UserGuid)
                 {
                     LogGatekeeperInfraction_NotHost(id.AppInstallGuid, id.UserGuid, name);
-                    return BadRequest();
+                    return Forbid();
                 }
 
                 if (!ModelState.IsValid)

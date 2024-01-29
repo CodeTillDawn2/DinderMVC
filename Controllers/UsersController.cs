@@ -108,7 +108,7 @@ namespace DinderMVC.Controllers
             {
                 LogMethodInvoked(name);
 
-                if (!(UserGuid != id.UserGuid))
+                if (UserGuid != id.UserGuid)
                 {
                     LogGatekeeperInfraction_NotSameUser(id.AppInstallGuid, id.UserGuid, name);
                     return Forbid();
@@ -163,7 +163,7 @@ namespace DinderMVC.Controllers
             {
                 LogMethodInvoked(name);
 
-                if (!(UserGuid != id.UserGuid))
+                if (UserGuid != id.UserGuid)
                 {
                     LogGatekeeperInfraction_NotSameUser(id.AppInstallGuid, id.UserGuid, name);
                     return Forbid();
@@ -316,7 +316,7 @@ namespace DinderMVC.Controllers
             {
                 LogMethodInvoked(name);
 
-                if (!(UserGuid != id.UserGuid))
+                if (UserGuid != id.UserGuid)
                 {
                     LogGatekeeperInfraction_NotSameUser(id.AppInstallGuid, id.UserGuid, name);
                     return Forbid();
@@ -376,7 +376,7 @@ namespace DinderMVC.Controllers
             {
                 LogMethodInvoked(name);
 
-                if (!(UserGuid != id.UserGuid))
+                if (UserGuid != id.UserGuid)
                 {
                     LogGatekeeperInfraction_NotSameUser(id.AppInstallGuid, id.UserGuid, name);
                     return Forbid();
@@ -435,7 +435,7 @@ namespace DinderMVC.Controllers
             {
                 LogMethodInvoked(name);
 
-                if (!(UserGuid != id.UserGuid))
+                if (UserGuid != id.UserGuid)
                 {
                     LogGatekeeperInfraction_NotSameUser(id.AppInstallGuid, id.UserGuid, name);
                     return Forbid();
@@ -507,7 +507,7 @@ namespace DinderMVC.Controllers
             {
                 LogMethodInvoked(name);
 
-                if (!(UserGuid != id.UserGuid))
+                if (UserGuid != id.UserGuid)
                 {
                     LogGatekeeperInfraction_NotSameUser(id.AppInstallGuid, id.UserGuid, name);
                     return Forbid();
@@ -569,7 +569,7 @@ namespace DinderMVC.Controllers
             {
                 LogMethodInvoked(name);
 
-                if (!(UserGuid != id.UserGuid))
+                if (UserGuid != id.UserGuid)
                 {
                     LogGatekeeperInfraction_NotSameUser(id.AppInstallGuid, id.UserGuid, name);
                     return Forbid();
@@ -636,7 +636,7 @@ namespace DinderMVC.Controllers
 
                 LogMethodInvoked(name);
 
-                if (!(UserGuid != id.UserGuid))
+                if (UserGuid != id.UserGuid)
                 {
                     LogGatekeeperInfraction_NotSameUser(id.AppInstallGuid, id.UserGuid, name);
                     return Forbid();
@@ -700,7 +700,7 @@ namespace DinderMVC.Controllers
                 LogMethodInvoked(name);
 
 
-                if (!(UserGuid != id.UserGuid))
+                if (UserGuid != id.UserGuid)
                 {
                     LogGatekeeperInfraction_NotSameUser(id.AppInstallGuid, id.UserGuid, name);
                     return Forbid();
@@ -758,7 +758,7 @@ namespace DinderMVC.Controllers
             {
                 LogMethodInvoked(name);
 
-                if (!(UserGuid != id.UserGuid))
+                if (UserGuid != id.UserGuid)
                 {
                     LogGatekeeperInfraction_NotSameUser(id.AppInstallGuid, id.UserGuid, name);
                     return Forbid();
@@ -833,7 +833,7 @@ namespace DinderMVC.Controllers
             {
                 LogMethodInvoked(name);
 
-                if (!(UserGuid != id.UserGuid))
+                if (UserGuid != id.UserGuid)
                 {
                     LogGatekeeperInfraction_NotSameUser(id.AppInstallGuid, id.UserGuid, name);
                     return Forbid();
@@ -901,7 +901,7 @@ namespace DinderMVC.Controllers
                 // Get stock item by id
                 var entity = await DbContext.GetUserMealByIDEditableAsync(UserGuid, MealID);
 
-                if (!(UserGuid != id.UserGuid))
+                if (UserGuid != id.UserGuid)
                 {
                     LogGatekeeperInfraction_NotSameUser(id.AppInstallGuid, id.UserGuid, name);
                     return Forbid();

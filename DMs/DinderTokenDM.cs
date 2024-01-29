@@ -16,7 +16,7 @@ namespace DinderDLL.DataModels
         private List<LinkCO> _links;
         public override List<LinkCO> Links { get { return _links; } set { _links = value; } }
 
-
+        public DinderTokenDM() { }
         public DinderTokenDM(String bearerToken, Guid userGuid, DateTime expirationDate)
         {
             BearerToken = bearerToken;

@@ -20,6 +20,7 @@ namespace DinderDLL.DataModels
         private List<LinkCO> _links;
         public override List<LinkCO> Links { get { return _links; } set { _links = value; } }
 
+        public AppInstallDM() { }
 
         public AppInstallDM(Guid appInstallGuid, DateTime installDate, string ipAddress)
         {

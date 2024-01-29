@@ -189,7 +189,7 @@ namespace DinderMVC.Queries
             whereclause += " PartyID = @partyID and (UserGuid = @userGuid or HostGuid = @userGuid)";
             whereclause = " Where " + whereclause;
 
-            string sql = @"SELECT * from dbo.PartyChoices " +
+            string sql = @"SELECT * from dbo.PartyChoicesView " +
                 whereclause;
 
             // Run query using Dapper

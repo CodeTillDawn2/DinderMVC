@@ -29,7 +29,7 @@ namespace DinderDLL.DataModels
         private List<LinkCO> _links;
         public override List<LinkCO> Links { get { return _links; } set { _links = value; } }
 
-
+        public PartyDM() { }
         public PartyDM(int partyID, Guid hostGuid, string sessionName, string sessionMessage, int statusID, List<UserMealDM> mealList,
             List<PartyInviteDM> partyInvites, List<PartyChoiceDM> partyChoices)
         {
@@ -64,7 +64,7 @@ namespace DinderDLL.DataModels
         public override PartyDTO ReturnDTO()
         {
             return new PartyDTO(PartyID, HostGuid, SessionName, SessionMessage, _links.ConvertAll(x => x.ReturnDTO()),
-                _inviteList.ConvertAll(x => x.ReturnDTO()), _partyChoices.ConvertAll(x => x.ReturnDTO()));
+                _inviteList.ConvertAll(x => x.ReturnDTO()), _partyChoices.ConvertAll(x => x.ReturnDTO()), MealList.ConvertAll(x => x.ReturnDTO()));
         }
     }
 #pragma warning restore CS1591

@@ -16,7 +16,7 @@ namespace DinderDLL.DataModels
 
         private List<LinkCO> _links;
         public override List<LinkCO> Links { get { return _links; } set { _links = value; } }
-
+        public PartySettingValueDM() { }
         public PartySettingValueDM(int settingID, int settingChoiceID, string settingChoiceName, string settingChoiceValue)
         {
 

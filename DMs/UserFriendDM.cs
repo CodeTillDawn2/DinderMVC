@@ -20,7 +20,7 @@ namespace DinderDLL.DataModels
         public override List<LinkCO> Links { get { return _links; } set { _links = value; } }
 
 
-
+        public UserFriendDM() { }
         public UserFriendDM(Guid userGUID, Guid friendGUID, DateTime? friendSinceDate, bool isBlocked)
         {
 

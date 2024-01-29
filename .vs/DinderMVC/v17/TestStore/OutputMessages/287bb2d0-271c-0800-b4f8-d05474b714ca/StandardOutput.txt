@@ -1,0 +1,206 @@
+info: DinderMVC.Authentication.BearerAuthenticationHandler[7]
+      Bearer was not authenticated. Failure message: Missing Authorization Header
+info: DinderMVC.Controllers.RootController[0]
+      The versions have been retrieved successfully.
+info: DinderMVC.Authentication.BearerAuthenticationHandler[7]
+      Bearer was not authenticated. Failure message: Missing Authorization Header
+info: DinderMVC.Controllers.RootController[0]
+      The versions have been retrieved successfully.
+info: DinderMVC.Authentication.BearerAuthenticationHandler[7]
+      Bearer was not authenticated. Failure message: Missing Authorization Header
+warn: Microsoft.EntityFrameworkCore.Model.Validation[10400]
+      Sensitive data logging is enabled. Log entries and exception messages may include sensitive application data; this mode should only be enabled during development.
+info: DinderMVC.Controllers.TokenController[0]
+      The token has been created successfully.
+info: DinderMVC.Authentication.BearerAuthenticationHandler[7]
+      Bearer was not authenticated. Failure message: Missing Authorization Header
+info: DinderMVC.Controllers.TokenController[0]
+      The token has been created successfully.
+info: DinderMVC.Authentication.BearerAuthenticationHandler[7]
+      Bearer was not authenticated. Failure message: Missing Authorization Header
+info: DinderMVC.Controllers.TokenController[0]
+      The token has been created successfully.
+info: DinderMVC.Authentication.BearerAuthenticationHandler[7]
+      Bearer was not authenticated. Failure message: Missing Authorization Header
+info: DinderMVC.Controllers.TokenController[0]
+      The token has been created successfully.
+info: DinderMVC.Controllers.UsersController[0]
+      The user meal has been created successfully.
+info: DinderMVC.Controllers.UsersController[0]
+      The user meal has been created successfully.
+info: DinderMVC.Controllers.UsersController[0]
+      The user meal has been created successfully.
+info: DinderMVC.Controllers.UsersController[0]
+      The user meal has been created successfully.
+info: DinderMVC.Controllers.UsersController[0]
+      The user meal has been created successfully.
+info: DinderMVC.Controllers.UsersController[0]
+      The user meal has been created successfully.
+info: DinderMVC.Controllers.UsersController[0]
+      The user meal has been created successfully.
+info: DinderMVC.Controllers.UsersController[0]
+      The user meal has been created successfully.
+info: DinderMVC.Controllers.UsersController[0]
+      The user meal has been created successfully.
+info: DinderMVC.Controllers.UsersController[0]
+      The user meal has been created successfully.
+info: DinderMVC.Controllers.UsersController[0]
+      The user meal has been created successfully.
+info: DinderMVC.Controllers.UsersController[0]
+      The user meal has been created successfully.
+info: DinderMVC.Controllers.UsersController[0]
+      The user meal has been created successfully.
+info: DinderMVC.Controllers.UsersController[0]
+      The user meal has been created successfully.
+info: DinderMVC.Controllers.UsersController[0]
+      The user meal has been created successfully.
+info: DinderMVC.Controllers.UsersController[0]
+      The user meal has been created successfully.
+info: DinderMVC.Controllers.UsersController[0]
+      The user meal has been created successfully.
+info: DinderMVC.Controllers.UsersController[0]
+      The user meal has been created successfully.
+info: DinderMVC.Controllers.UsersController[0]
+      The user meal has been created successfully.
+info: DinderMVC.Controllers.UsersController[0]
+      The user meal has been created successfully.
+info: DinderMVC.Controllers.PartiesController[0]
+      The party has been created successfully.
+info: DinderMVC.Controllers.PartiesController[0]
+      Created 3 settings.
+info: DinderMVC.Controllers.PartiesController[0]
+      The party has been created successfully.
+info: DinderMVC.Controllers.PartiesController[0]
+      Created 3 settings.
+info: DinderMVC.Controllers.PartiesController[0]
+      The party has been created successfully.
+info: DinderMVC.Controllers.PartiesController[0]
+      Created 3 settings.
+info: DinderMVC.Controllers.PartiesController[0]
+      The party has been created successfully.
+info: DinderMVC.Controllers.PartiesController[0]
+      Created 3 settings.
+warn: Microsoft.EntityFrameworkCore.Query[10102]
+      The query uses a row limiting operator ('Skip'/'Take') without an 'OrderBy' operator. This may lead to unpredictable results. If the 'Distinct' operator is used after 'OrderBy', then make sure to use the 'OrderBy' operator after 'Distinct' as the ordering would otherwise get erased.
+warn: Microsoft.EntityFrameworkCore.Query[10102]
+      The query uses a row limiting operator ('Skip'/'Take') without an 'OrderBy' operator. This may lead to unpredictable results. If the 'Distinct' operator is used after 'OrderBy', then make sure to use the 'OrderBy' operator after 'Distinct' as the ordering would otherwise get erased.
+info: DinderMVC.Controllers.UsersController[0]
+      The user meals have been retrieved successfully.
+warn: Microsoft.EntityFrameworkCore.Query[10102]
+      The query uses a row limiting operator ('Skip'/'Take') without an 'OrderBy' operator. This may lead to unpredictable results. If the 'Distinct' operator is used after 'OrderBy', then make sure to use the 'OrderBy' operator after 'Distinct' as the ordering would otherwise get erased.
+warn: Microsoft.EntityFrameworkCore.Query[10102]
+      The query uses a row limiting operator ('Skip'/'Take') without an 'OrderBy' operator. This may lead to unpredictable results. If the 'Distinct' operator is used after 'OrderBy', then make sure to use the 'OrderBy' operator after 'Distinct' as the ordering would otherwise get erased.
+info: DinderMVC.Controllers.PartiesController[0]
+      The parties have been retrieved successfully.
+info: DinderMVC.Controllers.PartiesController[0]
+      The party meal has been created successfully.
+info: DinderMVC.Controllers.PartiesController[0]
+      The party meal has been created successfully.
+info: DinderMVC.Controllers.PartiesController[0]
+      The party meal has been created successfully.
+info: DinderMVC.Controllers.UsersController[0]
+      The users have been retrieved successfully.
+info: DinderMVC.Controllers.PartiesController[0]
+      The party invite has been created successfully.
+info: DinderMVC.Controllers.PartiesController[0]
+      The party invite has been created successfully.
+info: DinderMVC.Controllers.PartiesController[0]
+      The party setting has been updated successfully.
+info: DinderMVC.Controllers.PartiesController[0]
+      The party setting has been updated successfully.
+info: DinderMVC.Controllers.PartiesController[0]
+      The party setting has been updated successfully.
+warn: Microsoft.EntityFrameworkCore.Query[20504]
+      Compiling a query which loads related collections for more than one collection navigation, either via 'Include' or through projection, but no 'QuerySplittingBehavior' has been configured. By default, Entity Framework will use 'QuerySplittingBehavior.SingleQuery', which can potentially result in slow query performance. See https://go.microsoft.com/fwlink/?linkid=2134277 for more information. To identify the query that's triggering this warning call 'ConfigureWarnings(w => w.Throw(RelationalEventId.MultipleCollectionIncludeWarning))'.
+info: DinderMVC.Controllers.PartiesController[0]
+      The party has been retrieved successfully.
+info: DinderMVC.Controllers.UsersController[0]
+      The user meals have been retrieved successfully.
+info: DinderMVC.Controllers.PartiesController[0]
+      The parties have been retrieved successfully.
+info: DinderMVC.Controllers.PartiesController[0]
+      The party meal has been created successfully.
+info: DinderMVC.Controllers.PartiesController[0]
+      The party meal has been created successfully.
+info: DinderMVC.Controllers.PartiesController[0]
+      The party invite has been created successfully.
+info: DinderMVC.Controllers.PartiesController[0]
+      The party invite has been created successfully.
+info: DinderMVC.Controllers.PartiesController[0]
+      The party invite has been created successfully.
+info: DinderMVC.Controllers.PartiesController[0]
+      The party setting has been updated successfully.
+info: DinderMVC.Controllers.PartiesController[0]
+      The party setting has been updated successfully.
+info: DinderMVC.Controllers.PartiesController[0]
+      The party setting has been updated successfully.
+info: DinderMVC.Controllers.UsersController[0]
+      The user meals have been retrieved successfully.
+info: DinderMVC.Controllers.PartiesController[0]
+      The parties have been retrieved successfully.
+info: DinderMVC.Controllers.PartiesController[0]
+      The party invite has been created successfully.
+info: DinderMVC.Controllers.PartiesController[0]
+      The party setting has been updated successfully.
+info: DinderMVC.Controllers.PartiesController[0]
+      The party setting has been updated successfully.
+info: DinderMVC.Controllers.PartiesController[0]
+      The party setting has been updated successfully.
+info: DinderMVC.Controllers.UsersController[0]
+      The user meals have been retrieved successfully.
+info: DinderMVC.Controllers.PartiesController[0]
+      The parties have been retrieved successfully.
+info: DinderMVC.Controllers.PartiesController[0]
+      The party invite has been created successfully.
+info: DinderMVC.Controllers.PartiesController[0]
+      The party invite has been created successfully.
+info: DinderMVC.Controllers.PartiesController[0]
+      The party invite has been created successfully.
+info: DinderMVC.Controllers.PartiesController[0]
+      The party setting has been updated successfully.
+info: DinderMVC.Controllers.PartiesController[0]
+      The party setting has been updated successfully.
+info: DinderMVC.Controllers.PartiesController[0]
+      The party setting has been updated successfully.
+info: DinderMVC.Controllers.PartiesController[0]
+      The parties have been retrieved successfully.
+info: DinderMVC.Controllers.PartiesController[0]
+      The parties have been retrieved successfully.
+info: DinderMVC.Controllers.PartiesController[0]
+      The parties have been retrieved successfully.
+info: DinderMVC.Controllers.PartiesController[0]
+      The parties have been retrieved successfully.
+info: DinderMVC.Controllers.PartiesController[0]
+      The party has been updated successfully.
+info: DinderMVC.Controllers.PartiesController[0]
+      The party has been updated successfully.
+info: DinderMVC.Controllers.PartiesController[0]
+      The party has been retrieved successfully.
+info: DinderMVC.Controllers.PartiesController[0]
+      The party has been retrieved successfully.
+info: DinderMVC.Controllers.PartiesController[0]
+      The party setting has been updated successfully.
+info: DinderMVC.Controllers.PartiesController[0]
+      The party settings have been retrieved successfully.
+info: DinderMVC.Controllers.PartiesController[0]
+      The party invite has been updated successfully.
+info: DinderMVC.Controllers.PartiesController[0]
+      The party invite has been updated successfully.
+info: DinderMVC.Controllers.PartiesController[0]
+      The party invite has been updated successfully.
+info: DinderMVC.Controllers.PartiesController[0]
+      The party invite has been updated successfully.
+info: DinderMVC.Controllers.PartiesController[0]
+      The party invite has been updated successfully.
+info: DinderMVC.Controllers.PartiesController[0]
+      The party invite has been updated successfully.
+info: DinderMVC.Controllers.PartiesController[0]
+      The party invite has been updated successfully.
+info: DinderMVC.Controllers.PartiesController[0]
+      The party invites have been retrieved successfully.
+info: DinderMVC.Controllers.PartiesController[0]
+      The party invite has been deleted successfully.
+info: DinderMVC.Controllers.PartiesController[0]
+      The party invites have been retrieved successfully.
+info: DinderMVC.Controllers.PartiesController[0]
+      The party choices have been retrieved successfully.

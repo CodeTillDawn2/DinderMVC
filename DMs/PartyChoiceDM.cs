@@ -20,7 +20,7 @@ namespace DinderDLL.DataModels
         public override List<LinkCO> Links { get { return _links; } set { _links = value; } }
 
 
-
+        public PartyChoiceDM() { }
         public PartyChoiceDM(int partyID, Guid userGuid, int mealID, int swipeChoice)
         {
 

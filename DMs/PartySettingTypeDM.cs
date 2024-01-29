@@ -1,6 +1,7 @@
 ﻿
 
 using DinderDLL.DTOs;
+using System;
 using System.Collections.Generic;
 
 namespace DinderDLL.DataModels
@@ -14,13 +15,14 @@ namespace DinderDLL.DataModels
         public string SettingName { get; set; }
 
         public int SettingValueDataType { get; set; }
-        public int DefaultSettingChoice { get; set; }
-        public string DefaultSettingEntry { get; set; }
+        public Int32 DefaultSettingChoice { get; set; }
+        public String DefaultSettingEntry { get; set; }
 
         private List<LinkCO> _links;
         public override List<LinkCO> Links { get { return _links; } set { _links = value; } }
 
-        public PartySettingTypeDM(int partySettingID, string settingName, int settingValueDataType, int defaultSettingChoice, string defaultSettingEntry)
+        public PartySettingTypeDM() { }
+        public PartySettingTypeDM(int partySettingID, string settingName, int settingValueDataType, Int32 defaultSettingChoice, String defaultSettingEntry)
         {
             PartySettingID = partySettingID;
             SettingName = settingName;

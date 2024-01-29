@@ -20,7 +20,7 @@ namespace DinderDLL.DataModels
         private List<LinkCO> _links;
         public override List<LinkCO> Links { get { return _links; } set { _links = value; } }
 
-
+        public GlobalMealDM() { }
         public GlobalMealDM(Guid globalMealGuid, string mealName, string mealDesc, Guid mealCreator, DateTime createDate)
         {
             GlobalMealGUID = globalMealGuid;
