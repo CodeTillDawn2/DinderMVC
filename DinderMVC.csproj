@@ -40,7 +40,7 @@
 
   <ItemGroup>
     <Reference Include="DinderDLL">
-      <HintPath>..\DinderDLL\bin\Debug\DinderDLL.dll</HintPath>
+      <HintPath>..\DinderDLL\bin\Debug\net6.0\DinderDLL.dll</HintPath>
     </Reference>
   </ItemGroup>
 
