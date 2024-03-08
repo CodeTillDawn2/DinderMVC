@@ -75,7 +75,7 @@ namespace DinderDLL.DataModels
 
         public override UserDTO ReturnDTO()
         {
-            return new UserDTO(UserGUID, DisplayName, Links.ConvertAll(x => x.ReturnDTO()), MealList.ConvertAll(x => x.ReturnDTO()));
+            return new UserDTO(UserGUID, DisplayName, Links.ConvertAll(x => x.ReturnDTO()), MealList != null ? MealList.ConvertAll(x => x.ReturnDTO()) : null);
         }
 
     }
